@@ -83,7 +83,7 @@ class _Middle extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 35.0),
           child: Text(
             ' 여러분의 학교 생활을 돕습니다!',
-            style: textTheme.displayMedium!.copyWith(color: Colors.grey),
+            style: textTheme.displayMedium!.copyWith(fontSize: 18,color: Colors.grey),
           ),
         ),
       ],
