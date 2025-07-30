@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:handori/screen/BustimeScreen.dart';
+import 'package:handori/screen/Emptyclass.dart';
 import 'package:handori/screen/TodayMeal.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -30,7 +32,14 @@ class HomeScreen extends StatelessWidget {
                       onIconButtonPressed: () {},
                     ),
                     Todaymeal(),
+                    SizedBox(height: 10,),
                     _HeaderText(title: '강의실 조회', showIconButton: false),
+
+                    Emptyclass(),
+
+                    _HeaderText(title: '다음버스'),
+
+                    Bustimescreen(),
 
                   ],
                 ),
