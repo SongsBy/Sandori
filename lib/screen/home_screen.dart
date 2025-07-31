@@ -9,43 +9,45 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final smallText = TextTheme.of(context).displaySmall;
+    final padding = SizedBox(height: 20,);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            ///상단
-            _Top(onBellPressed: () {}, onUserPressed: () {}),
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28.0,
-                  vertical: 40,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _HeaderText(
-                      title: '오늘의 식단표',
-                      showIconButton: true,
-                      onIconButtonPressed: () {},
-                    ),
-                    Todaymeal(),
-                    SizedBox(height: 10,),
-                    _HeaderText(title: '강의실 조회', showIconButton: false),
-
-                    Emptyclass(),
-
-                    _HeaderText(title: '다음버스'),
-
-                    Bustimescreen(),
-
-                  ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ///상단
+              _Top(onBellPressed: () {}, onUserPressed: () {}),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 21.0,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _HeaderText(
+                        title: '오늘의 식단표',
+                        showIconButton: true,
+                        onIconButtonPressed: () {},
+                      ),
+                      Todaymeal(),
+                      padding,
+                      _HeaderText(title: '강의실 조회', showIconButton: false),
+                      padding,
+                      Emptyclass(),
+                      padding,
+                      _HeaderText(title: '다음버스', showIconButton: false),
+                      padding,
+                      Bustimescreen(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -80,14 +82,14 @@ class _Top extends StatelessWidget {
                 '2025년 7월 26일',
                 style: TextTheme.of(
                   context,
-                ).displayLarge!.copyWith(fontSize: 21),
+                ).displayLarge?.copyWith(fontSize: 21),
               ),
               SizedBox(height: 4),
               Text(
                 '오늘 하루도 맛있는 하루 되세요!',
                 style: TextTheme.of(
                   context,
-                ).displayMedium!.copyWith(fontSize: 13),
+                ).displayMedium?.copyWith(fontSize: 13),
               ),
             ],
           ),
@@ -105,7 +107,7 @@ class _Top extends StatelessWidget {
     );
   }
 }
-/// 각 카트섹션 텍스트
+/// 각 카트섹션 헤더 텍스트
 class _HeaderText extends StatelessWidget {
   final String title;
   final VoidCallback? onIconButtonPressed;
@@ -119,14 +121,13 @@ class _HeaderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediumText = Theme.of(context).textTheme.displayMedium;
     return Row(
       children: [
         Expanded(
           child: Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.displayLarge!.copyWith(fontSize: 21),
+            style:mediumText?.copyWith(fontSize: 21 , color:Colors.black87, fontWeight: FontWeight.w600),
           ),
         ),
         if (showIconButton)

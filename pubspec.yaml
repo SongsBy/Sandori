@@ -51,22 +51,20 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
   assets:
     - assets/img/
+
   fonts:
-    - family: krub
+    - family: Pretendard
       fonts:
-        - asset: assets/fonts/Krub-Regular.ttf
-        - asset: assets/fonts/Krub-Light.ttf
+        - asset: assets/fonts/Pretendard-Light.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Medium.otf
           weight: 300
-        - asset: assets/fonts/Krub-SemiBold.ttf
+        - asset: assets/fonts/Pretendard-SemiBold.otf
           weight: 500
-        - asset: assets/fonts/Krub-Bold.ttf
+        - asset: assets/fonts/Pretendard-Black.otf
           weight: 700
 
   # To add assets to your application, add an assets section, like this:

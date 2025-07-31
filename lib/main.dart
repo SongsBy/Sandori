@@ -14,25 +14,21 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Splashscreen(),
       theme: ThemeData(
-        fontFamily: 'Krub',
+        fontFamily: 'Pretendard',
             textTheme: TextTheme(
-
               displayLarge: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 30,
               ),
-
               displayMedium: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
               ),
-
-              displaySmall: TextStyle(
+              bodySmall: TextStyle(
                 fontWeight: FontWeight.w300,
                 color: Colors.black,
                 fontSize: 16,
               ),
-
       ),
 
       ),

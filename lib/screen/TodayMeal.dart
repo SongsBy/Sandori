@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+
 class Todaymeal extends StatelessWidget {
   const Todaymeal({super.key});
 
   @override
   Widget build(BuildContext context) {
     final smallText = TextTheme.of(context).displaySmall;
+    final largeText = Theme.of(context).textTheme.displayLarge;
+    final mediumText = Theme.of(context).textTheme.displayMedium;
+    final extraThinText = Theme.of(context).textTheme.bodySmall;
+    final List<Map<String, dynamic>> Meal = [
+      {
+        'mainDish': '재육 덮밥',
+        'sideDish': ['두부 미소국', '배추김치', '요구르트'],
+      },
+    ];
+
     return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      color: Color(0XFFF5F8FC),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      color: Color(0xFFF5F8FC),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -21,29 +30,44 @@ class Todaymeal extends StatelessWidget {
               children: [
                 Text(
                   'E동 학생식당 ',
-                  style: TextTheme.of(
-                    context,
-                  ).displayLarge!.copyWith(fontSize: 22),
+                  style: mediumText?.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                      textStyle: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 15)
+                    foregroundColor: Colors.grey,
+                    textStyle: mediumText,
                   ),
                   onPressed: () {},
                   child: Text('전체식당보기'),
                 ),
               ],
             ),
-            Text('대표메뉴: 제육덮밥',
-                style:smallText),
-            SizedBox(height: 10),
-            Text('두부 미소국',
-              style: smallText,),
-            Text('배추김치',
-              style: smallText,),
-            Text('요구르트',
-              style: smallText,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:
+                  Meal.map((item) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '대표메뉴: ${item['mainDish']}',
+                          style: mediumText?.copyWith(color: Color(0XFFFF6F00)),
+                        ),
+                        SizedBox(height: 10),
+                        ...(item['sideDish'] as List<String>).map(
+                          (dish) => Text(
+                            dish,
+                            style: mediumText?.copyWith(color: Colors.grey),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    );
+                  }).toList(),
+            ),
           ],
         ),
       ),

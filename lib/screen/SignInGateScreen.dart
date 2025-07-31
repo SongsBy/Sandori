@@ -38,8 +38,6 @@ class SignInGateScreen extends StatelessWidget {
     );
   }
 
-
-
 /// 벼튼 클릭시 동작 함수
   void _navigateToLogin(BuildContext context){
     Navigator.of(context).push(

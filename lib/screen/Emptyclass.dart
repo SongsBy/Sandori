@@ -5,15 +5,23 @@ class Emptyclass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final smallText = TextTheme.of(context).displaySmall;
+    final smallText = TextTheme.of(context).displaySmall;
+    final largeText = Theme.of(context).textTheme.displayLarge;
+    final mediumText = Theme.of(context).textTheme.displayMedium;
+    final extraThinText = Theme.of(context).textTheme.bodySmall;
+    final List<Map<String , dynamic>>emptyBuilding = [
+      {'buildingName': 'E동' , 'emptyCount':'24', 'trafficLight': 'assets/img/green.png'},
+      {'buildingName': 'G동' , 'emptyCount':'14', 'trafficLight': 'assets/img/orange.png'},
+      {'buildingName': 'C동' , 'emptyCount':'5', 'trafficLight': 'assets/img/red.png'},
+    ];
     return Card(
-      elevation: 1,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      color: Color(0XFFF5F8FC),
+      color: Color(0xFFF5F8FC),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -22,54 +30,34 @@ class Emptyclass extends StatelessWidget {
               children: [
                 Text(
                   '지금 비어 있는 강의실  ',
-                  style: TextTheme.of(
-                    context,
-                  ).displayLarge!.copyWith(fontSize: 22),
+                  style: mediumText?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
                       foregroundColor: Colors.grey,
-                      textStyle: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 15)
+                      textStyle: mediumText
                   ),
                   onPressed: () {},
                   child: Text('강의실 보기'),
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text('E동:',
-                    style:smallText),
-                SizedBox(width: 5,),
-                Text('24',
-                style: smallText,),
-                SizedBox(width: 9,),
-                Image.asset('assets/img/green.png')
-              ],
+            Column(
+              children: emptyBuilding.map((item) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text((item['buildingName']),
+                        style:mediumText),
+                    SizedBox(width: 5,),
+                    Text(item['emptyCount'],
+                        style: mediumText),
+                    SizedBox(width: 9,),
+                    Image.asset(item['trafficLight'])
+                  ],
+                ),
+              ),).toList()
             ),
-            Row(
-              children: [
-                Text('G동:',
-                    style:smallText),
-                SizedBox(width: 5,),
-                Text('14',
-                  style: smallText,),
-                SizedBox(width: 9,),
-                Image.asset('assets/img/orange.png')
-              ],
-            ),
-            Row(
-              children: [
-                Text('C동:',
-                    style:smallText),
-                SizedBox(width: 5,),
-                Text('5',
-                  style: smallText,),
-                SizedBox(width: 9,),
-                Image.asset('assets/img/red.png')
-              ],
-            ),
-
           ],
         ),
       ),
