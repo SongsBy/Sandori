@@ -17,7 +17,7 @@ class Todaymeal extends StatelessWidget {
     ];
 
     return Card(
-      elevation: 0,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: Color(0xFFF5F8FC),
       child: Padding(

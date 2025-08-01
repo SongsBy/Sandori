@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:handori/screen/LoginScreen.dart';
 import 'package:handori/screen/home_screen.dart';
 
 class SignInGateScreen extends StatelessWidget {
@@ -16,15 +17,16 @@ class SignInGateScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              paddingY(170.0),
-                ///상단
-                _Top(),
-                paddingY(70.0),
-
+              paddingY(80.0),
                 ///중단
                 _Middle(textTheme: textTheme),
-                paddingY(60),
-
+                paddingY(2),
+                ///상단
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: _Top(),
+                ),
+                paddingY(50.0),
                 ///하단 버튼
                 _Bottom(
                   textTheme:textTheme,
@@ -42,7 +44,7 @@ class SignInGateScreen extends StatelessWidget {
   void _navigateToLogin(BuildContext context){
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (BuildContext context) => HomeScreen(),
+        builder: (BuildContext context) => Loginscreen(),
       ),
     );
   }
@@ -58,7 +60,7 @@ class _Top extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment(-0.1, 1),
-      child: Image.asset('assets/img/logo.png'),
+      child: Image.asset('assets/img/saldol.png'),
     );
   }
 }
@@ -73,15 +75,15 @@ class _Middle extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '챗봇에서 새로 리뉴얼 된\n산돌이',
+          '새롭게 돌아온 산돌이',
           textAlign: TextAlign.center,
           style: textTheme.displayLarge,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 35.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: Text(
-            ' 여러분의 학교 생활을 돕습니다!',
-            style: textTheme.displayMedium!.copyWith(fontSize: 18,color: Colors.grey),
+            ' 여러분의 학교 생활을 \n편하게 만들어드랄게요',
+            style: textTheme.displayMedium?.copyWith(fontSize: 19,color: Colors.grey),
           ),
         ),
       ],
@@ -97,10 +99,10 @@ class _Bottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final baseButtonStyle = RoundedRectangleBorder(borderRadius: BorderRadius.circular(15));
+    final baseButtonStyle = RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ElevatedButton(

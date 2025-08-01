@@ -15,7 +15,7 @@ class Emptyclass extends StatelessWidget {
       {'buildingName': 'C동' , 'emptyCount':'5', 'trafficLight': 'assets/img/red.png'},
     ];
     return Card(
-      elevation: 0,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),

@@ -16,7 +16,7 @@ class Bustimescreen extends StatelessWidget {
       {'busNumber':'assets/img/bus21.png' , 'goTo':'정왕역 방면', 'time': '5분'},
     ];
     return Card(
-      elevation: 0,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: Color(0xFFF5F8FC),
       child: Padding(
@@ -43,7 +43,7 @@ class Bustimescreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Text('15분 후 출발 ', style: mediumText!.copyWith(color: Colors.red)),
+              Text('15분 후 출발 ', style: mediumText?.copyWith(color: Colors.red)),
               SizedBox(height: 10),
               Text('정문 버스정류장', style: mediumText?.copyWith(fontSize: 20, fontWeight: FontWeight.w600)),
 
