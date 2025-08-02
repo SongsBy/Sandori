@@ -33,14 +33,17 @@ class HomeScreen extends StatelessWidget {
                         showIconButton: true,
                         onIconButtonPressed: () {},
                       ),
+                      ///오늘의 식단 카드 섹션
                       Todaymeal(),
                       padding,
                       _HeaderText(title: '강의실 조회', showIconButton: false),
                       padding,
+                      ///빈 강의실 카드 섹션
                       Emptyclass(),
                       padding,
                       _HeaderText(title: '다음버스', showIconButton: false),
                       padding,
+                      ///셔틀 버스 카드 섹션
                       Bustimescreen(),
                     ],
                   ),
