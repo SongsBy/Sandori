@@ -29,8 +29,14 @@ class MyApp extends StatelessWidget {
                 color: Colors.black,
                 fontSize: 16,
               ),
-      ),
 
+              titleLarge: TextStyle(
+                fontFamily: 'Krub',
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w700
+              )
+      ),
       ),
     );
   }

@@ -71,12 +71,14 @@ class _Middle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleLarge = Theme.of(context).textTheme.titleLarge;
+
     return Column(
       children: [
         Text(
           '새롭게 돌아온 산돌이',
           textAlign: TextAlign.center,
-          style: textTheme.displayLarge,
+          style: titleLarge?.copyWith(fontSize: 30),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -113,29 +115,14 @@ class _Bottom extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0XFF4EA6AA),
             shape: baseButtonStyle,
-            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 17),
+            padding: EdgeInsets.symmetric(horizontal: 120, vertical: 17),
           ),
           onPressed: onPressed,
           child: Text(
-            '로그인',
+            '시작하기',
             style: (textTheme.displayMedium ?? const TextStyle(fontSize: 20))
                 .copyWith(color: Colors.white),
           ),
-        ),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            shape: baseButtonStyle,
-            side: BorderSide(color: Colors.black),
-            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 17),
-          ),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) => Signinscreen(),
-              ),
-            );
-          },
-          child: Text('회원가입', style: textTheme.displayMedium),
         ),
       ],
     );

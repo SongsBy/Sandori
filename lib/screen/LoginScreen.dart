@@ -24,33 +24,39 @@ class _LoginscreenState extends State<Loginscreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Align(
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                SizedBox(height: 10),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Align(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
 
-                /// 상단 이미지와 텍스트
-                _Top(),
+                  /// 상단 이미지와 텍스트
+                  _Top(),
 
-                ///소셜 로그인
-                _Middle(
-                  onGooglePressed: googleLogin,
-                  onApplePressed: appleLogin,
-                  onKakaoPressed: kakaoLogin,
-                ),
+                  ///소셜 로그인
+                  _Middle(
+                    onGooglePressed: googleLogin,
+                    onApplePressed: appleLogin,
+                    onKakaoPressed: kakaoLogin,
+                  ),
 
-                ///회원 아이디로 로그인
-                _Bottom(
-                  controllers: controllers,
-                  onLoginPressed: login,
-                  onSigninPressed: signin,
-                ),
-              ],
+                  ///회원 아이디로 로그인
+                  _Bottom(
+                    controllers: controllers,
+                    onLoginPressed: login,
+                    onSigninPressed: signin,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -88,6 +94,7 @@ class _Top extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
     final largeText = Theme.of(context).textTheme.displayLarge;
+    final titleLarge = Theme.of(context).textTheme.titleLarge;
     final padding = SizedBox(height: 10);
     return Column(
       children: [
@@ -98,7 +105,7 @@ class _Top extends StatelessWidget {
         padding,
         Text('쉽게 로그인하고', style: mediumText?.copyWith(fontSize: 22)),
         padding,
-        Text('다양한 서비스를 이용해봐요', style: largeText?.copyWith(fontSize: 27)),
+        Text('다양한 서비스를 이용해봐요', style: titleLarge?.copyWith(fontSize: 26)),
         SizedBox(height: 50),
       ],
     );
@@ -209,14 +216,14 @@ class _Bottom extends StatelessWidget {
 
     final List<Map<String, dynamic>> fields = [
       {
-        'label': 'ID',
-        'hint': '아이디를 입력하세요',
+        'label': '아이디',
+       // 'hint': '아이디를 입력하세요',
         'key': 'username',
         'obscure': false,
       },
       {
-        'label': 'Password',
-        'hint': '비밀번호를 입력하세요',
+        'label': '비밀번호',
+       // 'hint': '비밀번호를 입력하세요',
         'key': 'password',
         'obscure': true,
       },
@@ -240,7 +247,7 @@ class _Bottom extends StatelessWidget {
                     obscureText: item['obscure'],
                     decoration: InputDecoration(
                       labelText: item['label'],
-                      hintText: item['hint'],
+                    //  hintText: item['hint'],
                       labelStyle: TextStyle(color: Colors.black),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
