@@ -5,7 +5,9 @@
   - splashScreen
   - LoginGateScreen
   - LoginScreen(Kakao , Google , Apple)
+  - SigninScreen
   - HomeScreen 각각 card로 분리 3개의 별도 스크린 (TodayMeal , Emptyclass , BustimeScreen)
+    
 
 
  
@@ -22,4 +24,3 @@
 
 - 개발 예정
   - 각 식당 , 강의실 , 버스조회 상세페이지 제작
-  - SinginScreen.dart
