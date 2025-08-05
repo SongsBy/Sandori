@@ -12,7 +12,7 @@
 
  
 - 코드 설명
-  - main.dart에 TextThem으로 4가지
+  - main.dart에 TextThem으로 텍스트 데이터 4가지
     -  displayLarge(w700) : 주로 큰 텍스트 헤더, 타이틀
     -  displayMedium(w500) :  중간텍스트
     -  displaySmall(w300) :  작은 사이즈의 글씨
