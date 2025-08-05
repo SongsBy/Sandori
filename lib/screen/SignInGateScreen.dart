@@ -72,13 +72,14 @@ class _Middle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleLarge = Theme.of(context).textTheme.titleLarge;
+    final Large = Theme.of(context).textTheme.displayLarge;
 
     return Column(
       children: [
         Text(
           '새롭게 돌아온 산돌이',
           textAlign: TextAlign.center,
-          style: titleLarge?.copyWith(fontSize: 30),
+          style: Large?.copyWith(fontSize: 30),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0),

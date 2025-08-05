@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 21.0,
+                    horizontal: 30.0,
                     vertical: 20,
                   ),
                   child: Column(
@@ -96,7 +96,7 @@ class _Top extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: 42),
+          SizedBox(width: 6),
           IconButton(
             onPressed: onBellPressed,
             icon: Image.asset('assets/img/bell.png'),

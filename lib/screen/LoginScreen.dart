@@ -294,7 +294,7 @@ class _Bottom extends StatelessWidget {
                     style: extraThinText?.copyWith(color: Color(0XFF4EA6AA)),
                   ),
                   Container(
-                    width: 84,
+                    width: 78,
                     height: 1,
                     color: Color(0XFF4EA6AA),
                   )
