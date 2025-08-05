@@ -37,7 +37,7 @@ class _LoginscreenState extends State<Loginscreen> {
               alignment: Alignment.center,
               child: Column(
                 children: [
-                  SizedBox(height: 10),
+                  SizedBox(height: 60),
 
                   /// 상단 이미지와 텍스트
                   _Top(),
@@ -106,7 +106,7 @@ class _Top extends StatelessWidget {
         Text('쉽게 로그인하고', style: mediumText?.copyWith(fontSize: 22)),
         padding,
         Text('다양한 서비스를 이용해봐요', style: titleLarge?.copyWith(fontSize: 26)),
-        SizedBox(height: 50),
+        SizedBox(height: 30),
       ],
     );
   }

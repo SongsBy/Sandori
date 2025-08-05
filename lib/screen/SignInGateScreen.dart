@@ -21,7 +21,7 @@ class SignInGateScreen extends StatelessWidget {
 
                 ///중단
                 _Middle(textTheme: textTheme),
-                paddingY(2),
+                paddingY(4),
 
                 ///상단
                 Padding(padding: const EdgeInsets.all(16.0), child: _Top()),
@@ -58,7 +58,7 @@ class _Top extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment(-0.1, 1),
+      alignment: Alignment(1, 1),
       child: Image.asset('assets/img/saldol.png'),
     );
   }
