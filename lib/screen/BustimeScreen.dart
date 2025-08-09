@@ -16,9 +16,9 @@ class Bustimescreen extends StatelessWidget {
       {'busNumber':'assets/img/bus21.png' , 'goTo':'정왕역 방면', 'time': '5분'},
     ];
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: Color(0xFFF5F8FC),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Padding(

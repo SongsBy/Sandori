@@ -160,7 +160,6 @@ class _TextField extends StatelessWidget {
           signintext.asMap().entries.map((entry) {
             int index = entry.key;
             final item = entry.value;
-
             return Column(
               children: [
                 Padding(
@@ -195,7 +194,7 @@ class _TextField extends StatelessWidget {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
-                          borderSide: BorderSide(color: Color(0XFF4EA6AA)),
+                          borderSide: BorderSide(color: Color(0XFF00C4F9)),
                         ),
                       ),
                     ),
@@ -226,7 +225,6 @@ class _CheckBox extends StatelessWidget {
   required this.setStateCallback,
   super.key,
 });
-
   @override
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
@@ -257,7 +255,7 @@ class _CheckBox extends StatelessWidget {
                       agreeText[index]['checked'] = value!;
                     });
                   },
-                  activeColor: Color(0XFF4EA6AA),
+                  activeColor: Color(0XFF00C4F9),
                   checkColor: Colors.white,
                 ),
               ],
@@ -284,7 +282,7 @@ class _Bottom extends StatelessWidget {
     );
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0XFF4EA6AA),
+        backgroundColor: Color(0XFF95E0F4),
         shape: baseButtonStyle,
         padding: EdgeInsets.symmetric(
           horizontal: 120,
@@ -294,7 +292,7 @@ class _Bottom extends StatelessWidget {
       onPressed: onSigninPressed,
       child: Text(
         '회원가입하기',
-        style: mediumText?.copyWith(color: Colors.white),
+        style: mediumText?.copyWith(color: Colors.black),
       ),
     );
   }

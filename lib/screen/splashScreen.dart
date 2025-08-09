@@ -52,7 +52,7 @@ class _ShowBackground extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0XFF74C0C4), Color(0XFFB7D96A)]
+            colors: [Color(0xFF95E0F4), Color(0xFFB2F0E8)]
       ),
       ),
     );
@@ -67,8 +67,8 @@ class _Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment(-0.1, 0),
-      child:   Image.asset('assets/img/logo.png'),
+      alignment: Alignment.center,
+      child:   Image.asset('assets/img/logo1.png', width: 140,height: 140,),
     );
   }
 }

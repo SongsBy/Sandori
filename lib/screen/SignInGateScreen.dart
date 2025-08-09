@@ -59,7 +59,7 @@ class _Top extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment(1, 1),
-      child: Image.asset('assets/img/saldol.png'),
+      child: Image.asset('assets/img/gatelogo4.png'),
     );
   }
 }
@@ -100,7 +100,12 @@ class _Middle extends StatelessWidget {
 class _Bottom extends StatelessWidget {
   final TextTheme textTheme;
   final VoidCallback onPressed;
-  const _Bottom({required this.textTheme, required this.onPressed, super.key});
+  const _Bottom({
+    required this.textTheme,
+    required this.onPressed,
+    super.key,
+  });
+
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +119,7 @@ class _Bottom extends StatelessWidget {
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0XFF4EA6AA),
+            backgroundColor: Color(0XFF95E0F4),
             shape: baseButtonStyle,
             padding: EdgeInsets.symmetric(horizontal: 120, vertical: 17),
           ),
@@ -122,7 +127,7 @@ class _Bottom extends StatelessWidget {
           child: Text(
             '시작하기',
             style: (textTheme.displayMedium ?? const TextStyle(fontSize: 20))
-                .copyWith(color: Colors.white),
+                .copyWith(color: Colors.black),
           ),
         ),
       ],

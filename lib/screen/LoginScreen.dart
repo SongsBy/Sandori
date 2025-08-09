@@ -99,8 +99,8 @@ class _Top extends StatelessWidget {
     return Column(
       children: [
         Align(
-          alignment: Alignment(-0.1, 0),
-          child: Image.asset('assets/img/logo.png', width: 90, height: 140),
+          alignment: Alignment.center,
+          child: Image.asset('assets/img/sig.png', width: 130, height: 130),
         ),
         padding,
         Text('쉽게 로그인하고', style: mediumText?.copyWith(fontSize: 22)),
@@ -256,7 +256,7 @@ class _Bottom extends StatelessWidget {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide(
-                          color: Color(0XFF4EA6AA),
+                          color: Color(0XFF00C4F9),
                           width: 2.0,
                         ),
                       ),
@@ -269,7 +269,7 @@ class _Bottom extends StatelessWidget {
         SizedBox(height: 20),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0XFF4EA6AA),
+            backgroundColor: Color(0XFF95E0F4),
             shape: baseButtonStyle,
             padding: EdgeInsets.symmetric(horizontal: 154, vertical: 17),
           ),
@@ -277,7 +277,7 @@ class _Bottom extends StatelessWidget {
           child: Text(
             '로그인',
             style: (mediumText ?? const TextStyle(fontSize: 20)).copyWith(
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ),
@@ -291,12 +291,12 @@ class _Bottom extends StatelessWidget {
                 children: [
                   Text(
                     '회원가입하기',
-                    style: extraThinText?.copyWith(color: Color(0XFF4EA6AA)),
+                    style: extraThinText?.copyWith(color: Color(0XFF00C4F9)),
                   ),
                   Container(
                     width: 78,
                     height: 1,
-                    color: Color(0XFF4EA6AA),
+                    color: Color(0XFF95E0F4),
                   )
                 ],
               ),
@@ -307,3 +307,4 @@ class _Bottom extends StatelessWidget {
     );
   }
 }
+

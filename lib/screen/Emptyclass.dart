@@ -15,11 +15,11 @@ class Emptyclass extends StatelessWidget {
       {'buildingName': 'C동' , 'emptyCount':'5', 'trafficLight': 'assets/img/red.png'},
     ];
     return Card(
-      elevation: 4,
+      elevation: 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(15),
       ),
-      color: Color(0xFFF5F8FC),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
