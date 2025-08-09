@@ -2,28 +2,47 @@ import 'package:flutter/material.dart';
 
 class Meal {
   final String Name;
-  final String mainDIsh;
-  final List<String> sideDish;
-  Meal({required this.Name, required this.mainDIsh, required this.sideDish});
+  final String mainDish;
+  final List<String> sideDishes;
+  Meal({required this.Name, required this.mainDish, required this.sideDishes});
 }
 
-class Todaymeal extends StatelessWidget {
+class Todaymeal extends StatefulWidget {
   final List<Meal> meals;
   const Todaymeal({required this.meals, super.key});
 
   @override
+  State<Todaymeal> createState() => _TodaymealState();
+}
+
+class _TodaymealState extends State<Todaymeal> {
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    _controller = PageController(viewportFraction: 0.7);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
+    if (widget.meals.isEmpty)return SizedBox.shrink();
     return SizedBox(
       height: 150,
-      child: ListView.separated(
+      child: PageView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 1),
-        physics: const BouncingScrollPhysics(),
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemCount: meals.length,
+        controller: _controller,
+        padEnds: false,
+        itemCount: widget.meals.length,
         itemBuilder: (context, i) {
-          final m = meals[i];
+          final m = widget.meals[i];
           return SizedBox(
             width: 260,
             child: Card(
@@ -56,14 +75,14 @@ class Todaymeal extends StatelessWidget {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      '대표메뉴: ${m.mainDIsh}',
+                      '대표메뉴: ${m.mainDish}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mediumText?.copyWith(color: Color(0xFFFF6F00),
                       ),
                     ),
                     SizedBox(height: 4),
-                    Text(m.sideDish.join(' . '),
+                    Text(m.sideDishes.join(' . '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: mediumText?.copyWith(color: Colors.grey),

@@ -1,7 +1,40 @@
 import 'package:flutter/material.dart';
 
-class Emptyclass extends StatelessWidget {
-  const Emptyclass({super.key});
+class classStateInfo {
+  final String className;
+  final String classCount;
+  final String trfficIcon;
+  final List<String> classList;
+  classStateInfo({
+    required this.className,
+    required this.classCount,
+    required this.trfficIcon,
+    required this.classList,
+  });
+}
+
+class Emptyclass extends StatefulWidget {
+  final List<classStateInfo> classstate;
+  const Emptyclass({required this.classstate, super.key});
+
+  @override
+  State<Emptyclass> createState() => _EmptyclassState();
+}
+
+class _EmptyclassState extends State<Emptyclass> {
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    _controller = PageController(viewportFraction: 0.49);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,57 +42,66 @@ class Emptyclass extends StatelessWidget {
     final largeText = Theme.of(context).textTheme.displayLarge;
     final mediumText = Theme.of(context).textTheme.displayMedium;
     final extraThinText = Theme.of(context).textTheme.bodySmall;
-    final List<Map<String , dynamic>>emptyBuilding = [
-      {'buildingName': 'E동' , 'emptyCount':'24', 'trafficLight': 'assets/img/green.png'},
-      {'buildingName': 'G동' , 'emptyCount':'14', 'trafficLight': 'assets/img/orange.png'},
-      {'buildingName': 'C동' , 'emptyCount':'5', 'trafficLight': 'assets/img/red.png'},
-    ];
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '지금 비어 있는 강의실  ',
-                  style: mediumText?.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                      textStyle: mediumText
-                  ),
-                  onPressed: () {},
-                  child: Text('강의실 보기'),
-                ),
-              ],
-            ),
-            Column(
-              children: emptyBuilding.map((item) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
+    if (widget.classstate.isEmpty) return SizedBox.shrink();
+    return SizedBox(
+      height: 300,
+      child: PageView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: _controller,
+
+        padEnds: false,
+        itemCount: widget.classstate.length,
+        itemBuilder: (context, i) {
+          final c = widget.classstate[i];
+          return SizedBox(
+            width: 220,
+            child: Card(
+              elevation: 1,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text((item['buildingName']),
-                        style:mediumText),
-                    SizedBox(width: 5,),
-                    Text(item['emptyCount'],
-                        style: mediumText),
-                    SizedBox(width: 9,),
-                    Image.asset(item['trafficLight'])
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          c.className,
+                          style: mediumText?.copyWith(fontSize: 20),
+                        ),
+
+                        Text(
+                          maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            c.classCount, style: TextStyle(fontSize: 16)),
+                        Expanded(
+                          child: Image.asset(
+                            c.trfficIcon,
+                            width: 30,
+                            height: 22,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Column(
+                        children: c.classList.map((item) => Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(item, style: TextStyle(color: Colors.black54),),
+                        )).toList(),
+                      ),
                   ],
                 ),
-              ),).toList()
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

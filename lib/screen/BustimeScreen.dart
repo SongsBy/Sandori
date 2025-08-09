@@ -12,8 +12,8 @@ class Bustimescreen extends StatelessWidget {
 
 
     final List<Map<String , dynamic>>nextBus = [
-      {'busNumber':'assets/img/bus33.png' , 'goTo':'정왕역 방면', 'time': '2분'},
-      {'busNumber':'assets/img/bus21.png' , 'goTo':'정왕역 방면', 'time': '5분'},
+      {'busImage':'assets/img/bus.png' , 'busNumber' : '33', 'goTo':'정왕역 방면', 'time': '2분'},
+      {'busImage':'assets/img/bus.png' , 'busNumber' : '20-1','goTo':'정왕역 방면', 'time': '5분'},
     ];
     return Card(
       elevation: 1,
@@ -22,27 +22,15 @@ class Bustimescreen extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 14.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
                   Text(
                     '셔틀버스 ',
                     style: mediumText!.copyWith(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                      textStyle: mediumText
-                    ),
-                    onPressed: () {},
-                    child: Text('버스 시간표 상세보기'),
-                  ),
-                ],
-              ),
+                  SizedBox(height: 8),
               Text('15분 후 출발 ', style: mediumText?.copyWith(color: Colors.red)),
               SizedBox(height: 10),
               Text('정문 버스정류장', style: mediumText?.copyWith(fontSize: 20, fontWeight: FontWeight.w600)),
@@ -52,7 +40,9 @@ class Bustimescreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
-                      Image.asset(item['busNumber']),
+                      Image.asset(item['busImage']),
+                      SizedBox(width: 5),
+                      Text(item['busNumber'], style: mediumText?.copyWith(color: Colors.green)),
                       SizedBox(width: 9),
                       Text(item['goTo'], style: mediumText?.copyWith(color: Colors.grey)),
                       SizedBox(width: 9),

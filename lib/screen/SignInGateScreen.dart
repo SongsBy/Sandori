@@ -25,7 +25,7 @@ class SignInGateScreen extends StatelessWidget {
 
                 ///상단
                 Padding(padding: const EdgeInsets.all(16.0), child: _Top()),
-                paddingY(50.0),
+                paddingY(100.0),
 
                 ///하단 버튼
                 _Bottom(
@@ -59,7 +59,7 @@ class _Top extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment(1, 1),
-      child: Image.asset('assets/img/gatelogo4.png'),
+      child: Image.asset('assets/img/gatelogo.png'),
     );
   }
 }

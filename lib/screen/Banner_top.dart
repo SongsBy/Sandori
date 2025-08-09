@@ -21,7 +21,7 @@ class _BannerTopState extends State<BannerTop> {
   late final PageController _controller;
   @override
   void initState() {
-    _controller = PageController(viewportFraction: 0.98);
+    _controller = PageController(viewportFraction: 0.99);
     super.initState();
   }
   @override

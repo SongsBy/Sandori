@@ -11,21 +11,74 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final smallText = TextTheme.of(context).displaySmall;
     final meals = [
-      Meal(Name: 'E동학생식당', mainDIsh: '제육덮밥', sideDish:['두부 미소국', '배추김치', '요구르트']),
-      Meal(Name: 'TIP 학생식당', mainDIsh: '제육덮밥', sideDish:['두부 미소국', '배추김치', '요구르트']),
-      Meal(Name: '세미콘', mainDIsh: '제육덮밥', sideDish:['두부 미소국', '배추김치', '요구르트']),
-      Meal(Name: '미가 식당', mainDIsh: '제육덮밥', sideDish:['두부 미소국', '배추김치', '요구르트']),
-      Meal(Name: '가가 식당', mainDIsh: '제육덮밥', sideDish:['두부 미소국', '배추김치', '요구르트']),
+      Meal(
+        Name: 'E동 학생식당',
+        mainDish: '소불고기 덮밥',
+        sideDishes: ['미역국', '배추김치', '오이무침'],
+      ),
+      Meal(
+        Name: 'TIP 학생식당',
+        mainDish: '크림 파스타',
+        sideDishes: ['마늘빵', '양상추 샐러드', '피클'],
+      ),
+      Meal(
+        Name: '세미콘',
+        mainDish: '치즈 돈까스',
+        sideDishes: ['우동 국물', '단무지', '양배추 샐러드'],
+      ),
+      Meal(
+        Name: '미가 식당',
+        mainDish: '해물 순두부찌개',
+        sideDishes: ['잡곡밥', '김치', '계란찜'],
+      ),
+      Meal(
+        Name: '가가 식당',
+        mainDish: '참치 마요 덮밥',
+        sideDishes: ['된장국', '단무지', '시금치 무침'],
+      ),
     ];
-    
+
     final banner = [
       Banners(banner: ['assets/img/banner1.png']),
       Banners(banner: ['assets/img/banner2.png']),
       Banners(banner: ['assets/img/banner3.png']),
     ];
 
+    final classState = [
+      classStateInfo(
+        className: 'E동 : ',
+        classCount: '24',
+        trfficIcon: 'assets/img/green.png',
+        classList: ['E234', 'E303', 'E402', 'E220','E321','E502'],
+      ),
+      classStateInfo(
+        className: 'C동 : ',
+        classCount: '18',
+        trfficIcon: 'assets/img/orange.png',
+        classList: ['C234', 'C303', 'C402', 'C220', 'C321', 'C502'],
+      ),
+      classStateInfo(
+        className: 'G동 : ',
+        classCount: '10',
+        trfficIcon: 'assets/img/red.png',
+        classList: ['G234', 'G303', 'G402', 'G220', 'G321', 'G502'],
+      ),
+      classStateInfo(
+        className: 'A동 : ',
+        classCount: '13',
+        trfficIcon: 'assets/img/orange.png',
+        classList: ['A234', 'A303', 'A402', 'A220', 'A321', 'A502'],
+      ),
+      classStateInfo(
+        className: 'D동 : ',
+        classCount: '20',
+        trfficIcon: 'assets/img/green.png',
+        classList: ['D234', 'D303', 'D402', 'D220', 'D321', 'D502'],
+      ),
+    ];
 
-    final padding = SizedBox(height: 20,);
+
+    final padding = SizedBox(height: 20);
     return Scaffold(
       backgroundColor: Color(0xFFFAFAFA),
       body: SafeArea(
@@ -46,21 +99,22 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       BannerTop(images: banner),
                       padding,
-                      _HeaderText(
-                        title: '학식/식당',
-                        showIconButton: false,
-                      ),
+                      _HeaderText(title: '학식/식당', showIconButton: true, onTextButtonPressed: onShowMealPressed,),
+
                       SizedBox(height: 20),
+
                       ///오늘의 식단 카드 섹션
                       Todaymeal(meals: meals),
                       padding,
-                      _HeaderText(title: '강의실', showIconButton: false),
+                      _HeaderText(title: '빈 강의실', showIconButton: true, onTextButtonPressed: onShowClassPressed,),
                       padding,
+
                       ///빈 강의실 카드 섹션
-                      Emptyclass(),
+                      Emptyclass(classstate: classState),
                       padding,
-                      _HeaderText(title: '버스', showIconButton: false),
+                      _HeaderText(title: '버스', showIconButton: true, onTextButtonPressed: onShowBusPressed,),
                       padding,
+
                       ///셔틀 버스 카드 섹션
                       Bustimescreen(),
                     ],
@@ -72,6 +126,15 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+  void onShowMealPressed(){
+
+  }
+  void onShowClassPressed(){
+
+  }
+  void onShowBusPressed(){
+
   }
 }
 
@@ -102,7 +165,8 @@ class _Top extends StatelessWidget {
                     '2025년 7월 26일',
                     style: TextTheme.of(
                       context,
-                    ).displayLarge?.copyWith(fontSize: 21),overflow: TextOverflow.ellipsis,
+                    ).displayLarge?.copyWith(fontSize: 21),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -120,7 +184,7 @@ class _Top extends StatelessWidget {
             ),
             IconButton(
               onPressed: onUserPressed,
-              icon: Image.asset('assets/img/user.png'),
+              icon: Icon(Icons.account_circle)
             ),
           ],
         ),
@@ -128,15 +192,16 @@ class _Top extends StatelessWidget {
     );
   }
 }
+
 /// 각 카트섹션 헤더 텍스트
 class _HeaderText extends StatelessWidget {
   final String title;
-  final VoidCallback? onIconButtonPressed;
+  final VoidCallback? onTextButtonPressed;
   final bool showIconButton;
   const _HeaderText({
     required this.title,
     this.showIconButton = true,
-    this.onIconButtonPressed,
+    this.onTextButtonPressed,
     super.key,
   });
 
@@ -148,14 +213,17 @@ class _HeaderText extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style:mediumText?.copyWith(fontSize: 25 , color:Colors.black87, fontWeight: FontWeight.w600),
+            style: mediumText?.copyWith(
+              fontSize: 25,
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         if (showIconButton)
-          IconButton(
-            onPressed: onIconButtonPressed,
-            icon: Image.asset('assets/img/dot.png'),
-          ),
+          TextButton(
+              onPressed: onTextButtonPressed,
+              child: Text('더보기', style: TextStyle(color: Colors.grey),))
       ],
     );
   }
