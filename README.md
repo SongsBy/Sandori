@@ -42,4 +42,4 @@
 
 - 개발 예정
   - 각 식당 , 강의실 , 버스조회 상세페이지 제작
-  - homeScreen.dart 디자인 수정
+  - LoginGateScreen 이미지 밑 디자인 수정 
