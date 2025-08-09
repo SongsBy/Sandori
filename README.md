@@ -7,6 +7,9 @@
   - LoginScreen(Kakao , Google , Apple)
   - SigninScreen
   - HomeScreen 각각 card로 분리 3개의 별도 스크린 (TodayMeal , Emptyclass , BustimeScreen)
+    - homeScreen 배너 광고 추가
+    - 학식/식당 가로 스크롤 카드 변경
+    
     
 
 
@@ -34,4 +37,3 @@
 - 개발 예정
   - 각 식당 , 강의실 , 버스조회 상세페이지 제작
   - homeScreen.dart 디자인 수정
-  - logo이미지 수정
