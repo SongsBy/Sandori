@@ -6,11 +6,13 @@ import 'package:handori/model/banner_model.dart';
 import 'package:handori/model/class_model.dart';
 import 'package:handori/model/meal_model.dart';
 import 'package:handori/repository/static_repository.dart';
+import 'package:handori/screen/BusTime_detail_screen.dart';
+import 'package:handori/screen/Empty_detail_screen.dart';
+import 'package:handori/screen/Restaurant_detail_screen.dart';
 import '../component/BannerCard_top.dart';
 import '../component/BustimeCardScreen.dart';
 import '../component/EmptyclassCard.dart';
 import '../component/MealCard.dart';
-
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,7 +20,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataRepository = GetIt.I<StaticDataRepository>();
-    final List<Meal>meals = dataRepository.meals;
+    final List<Meal> meals = dataRepository.meals;
     final List<Banners> banner = dataRepository.banners;
     final List<EmptyClass> classState = dataRepository.emptyclass;
     final smallText = TextTheme.of(context).displaySmall;
@@ -49,7 +51,13 @@ class HomeScreen extends StatelessWidget {
                       HeaderText(
                         title: '학식/식당',
                         showIconButton: true,
-                        onTextButtonPressed: onShowMealPressed,
+                        onTextButtonPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => RestaurantDetailScreen(),
+                            ),
+                          );
+                        },
                       ),
 
                       SizedBox(height: 20),
@@ -61,9 +69,16 @@ class HomeScreen extends StatelessWidget {
                       HeaderText(
                         title: '빈 강의실',
                         showIconButton: true,
-                        onTextButtonPressed: onShowClassPressed,
+                        onTextButtonPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EmptyDetailScreen(),
+                            ),
+                          );
+                        },
                       ),
                       padding,
+
                       ///빈 강의실
                       ClassStateSection(classstate: classState),
                       padding,
@@ -71,7 +86,13 @@ class HomeScreen extends StatelessWidget {
                       HeaderText(
                         title: '버스',
                         showIconButton: true,
-                        onTextButtonPressed: onShowBusPressed,
+                        onTextButtonPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => BusTimeDetailScreen(),
+                            ),
+                          );
+                        },
                       ),
                       padding,
 
@@ -87,10 +108,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-  void onShowMealPressed() {}
-  void onShowClassPressed() {}
-  void onShowBusPressed() {}
 }
-
-
