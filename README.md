@@ -38,7 +38,13 @@
   - 가로 스크롤 카드는 PageViewController를 사용해 각각 카드섹션마다 계속 스크롤 되는게 아닌 각 카드섹션마다 정지하도록 설정
   - PageView.builder 사용해 상태와 리스트를 homeScreen에서 주입하도록 변경 (추후 데이터베에스에서 불러와 자동 할당 시 오버플로우 방어)
   ---
-
+  - component
+    - BannerCard_top : 상단 광고배너 카드섹션 로직 구현부
+    - MealCard : 홈화면 학식리스트 카드섹션 로직 구현부
+    - EmptyclassCard : 홈화면 빈 강의실 카드섹션 로직 구현부
+    - BusTimeCardScreen : 홈화면 버스시간표 카드섹션 로직 구현부     
+    - TopBar : 상단의 날짜, 인삿말, 알림 , 유저 이미지 상단바 로직 구현부
+    - HeaderText : 각 카드섹션 헤더 텍스트와 상세페이지 유도 버튼 구현부 
 
 - 개발 예정
   - 각 식당 , 강의실 , 버스조회 상세페이지 제작
