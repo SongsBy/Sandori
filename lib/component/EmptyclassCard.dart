@@ -1,27 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:handori/model/class_model.dart';
 
-class classStateInfo {
-  final String className;
-  final String classCount;
-  final String trfficIcon;
-  final List<String> classList;
-  classStateInfo({
-    required this.className,
-    required this.classCount,
-    required this.trfficIcon,
-    required this.classList,
-  });
-}
-
-class Emptyclass extends StatefulWidget {
-  final List<classStateInfo> classstate;
-  const Emptyclass({required this.classstate, super.key});
+class ClassStateSection extends StatefulWidget {
+  final List<EmptyClass> classstate;
+  const ClassStateSection({required this.classstate, super.key});
 
   @override
-  State<Emptyclass> createState() => _EmptyclassState();
+  State<ClassStateSection> createState() => _ClassStateSectionState();
 }
 
-class _EmptyclassState extends State<Emptyclass> {
+class _ClassStateSectionState extends State<ClassStateSection> {
   late final PageController _controller;
 
   @override
@@ -82,7 +70,7 @@ class _EmptyclassState extends State<Emptyclass> {
                             c.classCount, style: TextStyle(fontSize: 16)),
                         Expanded(
                           child: Image.asset(
-                            c.trfficIcon,
+                            c.trafficIcon,
                             width: 30,
                             height: 22,
                           ),

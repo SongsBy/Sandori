@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-class Meal {
-  final String Name;
-  final String mainDish;
-  final List<String> sideDishes;
-  Meal({required this.Name, required this.mainDish, required this.sideDishes});
-}
+import '../model/meal_model.dart';
+
+
 
 class Todaymeal extends StatefulWidget {
   final List<Meal> meals;

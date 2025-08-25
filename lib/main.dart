@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:handori/repository/static_repository.dart';
 import 'package:handori/screen/home_screen.dart';
 import 'package:handori/screen/splashScreen.dart';
 
 void main() {
+  GetIt.I.registerSingleton<StaticDataRepository>(StaticDataRepository());
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

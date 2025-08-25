@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Banners {
-  final List<String> banner;
+import '../model/banner_model.dart';
 
-  Banners({
-    required this.banner});
-}
 
 class BannerTop extends StatefulWidget {
   final List<Banners> images;
@@ -52,7 +48,7 @@ class _BannerTopState extends State<BannerTop> {
                 child: SizedBox(
                   height: 150,
                   width: double.infinity,
-                  child: Image.asset(m.banner.first, fit: BoxFit.fill),
+                  child: Image.asset(m.ImagePath, fit: BoxFit.fill),
                 ),
               ),
             );
