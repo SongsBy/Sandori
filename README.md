@@ -38,13 +38,23 @@
   - 가로 스크롤 카드는 PageViewController를 사용해 각각 카드섹션마다 계속 스크롤 되는게 아닌 각 카드섹션마다 정지하도록 설정
   - PageView.builder 사용해 상태와 리스트를 homeScreen에서 주입하도록 변경 (추후 데이터베에스에서 불러와 자동 할당 시 오버플로우 방어)
   ---
+
+  - screen 
+
+
   - component
     - BannerCard_top : 상단 광고배너 카드섹션 로직 구현부
     - MealCard : 홈화면 학식리스트 카드섹션 로직 구현부
     - EmptyclassCard : 홈화면 빈 강의실 카드섹션 로직 구현부
     - BusTimeCardScreen : 홈화면 버스시간표 카드섹션 로직 구현부     
     - TopBar : 상단의 날짜, 인삿말, 알림 , 유저 이미지 상단바 로직 구현부
-    - HeaderText : 각 카드섹션 헤더 텍스트와 상세페이지 유도 버튼 구현부 
+    - HeaderText : 각 카드섹션 헤더 텍스트와 상세페이지 유도 버튼 구현부
+  - model
+    - banner_model : 배너에 들어갈 데이터 양식 파일 정의
+    - class_model  : 빈 강의실을 구현하는 데이터 양식 파일 정의
+    - meal_model   : 오늘의 식단을 구현하는 데이터 양식 파일 정의
+  - repository
+    - static_repository : 배너 , 빈 강의실 , 오늘의 식단 을 구성하는 임시 리스트 구현 추후에 API나 데이터 베이스 로직이 붙을시 이부분만 수정하면 되도록 제작.
 
 - 개발 예정
   - 각 식당 , 강의실 , 버스조회 상세페이지 제작
