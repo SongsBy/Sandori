@@ -38,8 +38,16 @@
   - 가로 스크롤 카드는 PageViewController를 사용해 각각 카드섹션마다 계속 스크롤 되는게 아닌 각 카드섹션마다 정지하도록 설정
   - PageView.builder 사용해 상태와 리스트를 homeScreen에서 주입하도록 변경 (추후 데이터베에스에서 불러와 자동 할당 시 오버플로우 방어)
   ---
-
-  - screen 
+### 설명
+  - screen
+    - splashScreen : 스플레시 스크린 
+    - SigninGateScreen : 간단한 소개와 회원가입 유도
+    - LoginScreen : 로그인 화면 
+    - SignScreen : 회원가입 화면 
+    - homeScreen : 홈화면 
+    - Restaurant_detail_screen : 학식 상세페이지 (8/26개발 예정)
+    - Empty_detail_screen : 빈 강의실 상세 페이지 (8/26개발 예정)
+    - BusTime_detail_screen : 버스 시간표 상세페이지 (8/26개발 예정)
 
 
   - component
