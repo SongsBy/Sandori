@@ -1,46 +1,61 @@
-# Sandori
+#  Sandori (산돌이)
+
+**한국공학대학교 학생들을 위한 캠퍼스 생활 정보 앱**
+
 ---
-## 한국공학대학교 챗봇 산돌이 어플 제작 
-- 구현 내용 
-  - splashScreen
-  - LoginGateScreen
-  - LoginScreen(Kakao , Google , Apple)
-  - SigninScreen
-  - HomeScreen
-    - 각각 card로 분리 3개의 별도 스크린 (TodayMeal , Emptyclass , BustimeScreen)
-    - homeScreen 배너 광고 추가
-    - 학식/식당 가로 스크롤 카드 변경
-    - 빈 강의실 카드 가로스크롤 각 동 마다 남은 강의실과 상태를 신호등으로 변경 밑에 빈강의실 리스트 6개 미리보기
-    - 셔틀버스 이미지 변경 
-    
-    
 
+## 🛠️ 개발 아키텍처 및 주요 구현 사항
 
- 
-- 코드 설명
-  - main.dart에 TextThem으로 텍스트 데이터 4가지
-    -  displayLarge(w700) : 주로 큰 텍스트 헤더, 타이틀
-    -  displayMedium(w500) :  중간텍스트
-    -  displaySmall(w300) :  작은 사이즈의 글씨
-    -  titleLarge(w700) : Krub폰트 타이틀 사용시
-  -  다른 텍스트들 향후 추가 예정이지만 위 ThemeData를 앱천체 필드 텍스트로 지정해 반복되는 코드 줄임 "Theme.of(context).textTheme.위의 이름들" 형태로 Build함수에서 사용
-  ---
-  - 각 Build함수 내 로직은 최소화 하고 위젯을 top, middile , bottom으로 별도의 stlessWidget으로 선언해 가독성 확보
-  - 로직 구현부는 함수로 두었습니다.
-  ---
-  - HomeScreen의 홈 카드 섹션 3가지 전부 별도의 스크린으로 구분 추후에 로직이 붙을 것 을 예상
-  - 각 식당별 오늘의 식단 리스트 , 비어있는 강의실 리스트 , 다음버스 리스트를 데이터베이스에서 받아 보여주기위해 각각 카트섹션마다 별도 스크린과 리스트생성 후 map함수 사용해 자동 정렬
-  ---
-  - 로그인 페이지: 카카오,구글, 애플, 앱내 로그인 구현. 상태 위에서 관리
-  - 회원가입 페이지 제작 List를 사용한 map함수로 텍스트 저장후 콜백 처리
-  - 약관 동의 asMap사용
-  ---
-  - 가로 스크롤 카드는 PageViewController를 사용해 각각 카드섹션마다 계속 스크롤 되는게 아닌 각 카드섹션마다 정지하도록 설정
-  - PageView.builder 사용해 상태와 리스트를 homeScreen에서 주입하도록 변경 (추후 데이터베에스에서 불러와 자동 할당 시 오버플로우 방어)
-  ---
+### 1. 일관된 UI/UX를 위한 테마(Theming) 관리
+-   `main.dart`에 `ThemeData`를 정의하여 앱 전체의 폰트와 텍스트 스타일을 중앙에서 관리합니다. 이를 통해 반복되는 `TextStyle` 코드를 줄이고 디자인의 일관성을 확보했습니다.
+    -   `displayLarge` (w700): 주로 큰 텍스트 헤더, 타이틀
+    -   `displayMedium` (w500): 중간 크기 텍스트
+    -   `displaySmall` (w300): 작은 크기 텍스트
+    -   `titleLarge` (w700): 'Krub' 폰트를 사용하는 특정 타이틀
+-   모든 화면에서는 `Theme.of(context).textTheme.displayLarge` 와 같은 형태로 정의된 스타일을 가져와 사용합니다.
 
+### 2. 가독성 및 유지보수를 위한 코드 구조화
+-   각 화면(`Screen`)의 `build` 메소드 내 로직을 최소화하고, UI를 기능 단위의 `StatelessWidget` 컴포넌트로 분리하여 가독성과 재사용성을 높였습니다.
+-   복잡한 로직은 별도의 함수로 분리하여 관리합니다.
 
-- 개발 예정
-  - 각 식당 , 강의실 , 버스조회 상세페이지 제작
-  - OAuth로그인 인증 방식 변경 (키카오,구글 , 애플) 각자 요구하는 API 발급 과 인증방식을 통알해야하는 변수가 있음
+### 3. 데이터 처리 및 컴포넌트 설계
+-   **데이터 추상화**: `repository` 계층을 두어 데이터 소스를 UI와 분리했습니다. 추후 API나 실제 데이터베이스로 교체하더라도 UI 코드의 변경을 최소화할 수 있도록 설계했습니다.
+-   **효율적인 리스트 렌더링**: 홈 화면의 카드 섹션들은 `PageView.builder`를 사용하여 메모리 효율성을 고려했으며, 외부(`HomeScreen`)에서 데이터를 주입받는 구조로 설계하여 오버플로우를 방지했습니다.
+-   **페이지 컨트롤러**: 각 가로 스크롤 카드 섹션은 독립적인 `PageController`를 사용하여, 하나의 섹션을 스크롤해도 다른 섹션에 영향을 주지 않도록 구현했습니다.
 
+---
+
+## 📂 주요 디렉토리 구조
+
+-   `screen` : 각 페이지 UI를 구성하는 메인 화면 폴더
+    -   `SplashScreen`: 앱 실행 시 표시되는 스플래시 화면
+    -   `SigninGateScreen`: 간단한 소개 및 회원가입 유도 화면
+    -   `LoginScreen`: 로그인 화면
+    -   `SignScreen`: 회원가입 화면
+    -   `HomeScreen`: 앱의 메인 홈 화면
+    -   `Restaurant_detail_screen`: 학식 상세 페이지
+    -   `Empty_detail_screen`: 빈 강의실 상세 페이지
+    -   `BusTime_detail_screen`: 버스 시간표 상세 페이지
+
+-   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
+    -   `BannerCard_top`: 상단 광고 배너 UI
+    -   `MealCard`: 홈 화면 학식 리스트 카드 UI
+    -   `EmptyclassCard`: 홈 화면 빈 강의실 카드 UI
+    -   `BusTimeCardScreen`: 홈 화면 버스 시간표 카드 UI
+    -   `TopBar`: 상단바 (날짜, 인삿말, 알림, 유저 프로필) UI
+    -   `HeaderText`: 각 카드 섹션의 제목 및 '더보기' 버튼 UI
+
+-   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더
+    -   `banner_model`: 배너 데이터 모델
+    -   `class_model`: 빈 강의실 데이터 모델
+    -   `meal_model`: 식단 데이터 모델
+
+-   `repository` : 데이터 소스를 관리하는 저장소 폴더
+    -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
+
+---
+
+## 🚀 향후 개발 계획
+-   각 상세 페이지(학식, 빈 강의실, 버스) 기능 완성
+-   소셜 로그인(Kakao, Google, Apple)의 OAuth 2.0 인증 방식 적용 및 각 플랫폼별 API 가이드라인 준수
+-   실시간 데이터 연동을 위한 백엔드 API 구축 및 연결
