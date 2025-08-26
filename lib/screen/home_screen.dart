@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataRepository = GetIt.I<StaticDataRepository>();
-    final List<Meal> meals = dataRepository.meals;
+    final List<Meal> meals = StaticDataRepository.meals;
     final List<Banners> banner = dataRepository.banners;
     final List<EmptyClass> classState = dataRepository.emptyclass;
     final smallText = TextTheme.of(context).displaySmall;
@@ -32,7 +32,10 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               ///상단 바
-              TopBar(onBellPressed: () {}, onUserPressed: () {}),
+              TopBar(
+                headerText:'산돌이',
+                  onBellPressed: () {},
+                  onUserPressed: () {}),
               SizedBox(
                 width: double.infinity,
                 child: Padding(
@@ -50,7 +53,6 @@ class HomeScreen extends StatelessWidget {
                       //각 섹션 헤더 텍스트
                       HeaderText(
                         title: '학식/식당',
-                        showIconButton: true,
                         onTextButtonPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -59,7 +61,6 @@ class HomeScreen extends StatelessWidget {
                           );
                         },
                       ),
-
                       SizedBox(height: 20),
 
                       ///오늘의 식단
@@ -68,7 +69,6 @@ class HomeScreen extends StatelessWidget {
 
                       HeaderText(
                         title: '빈 강의실',
-                        showIconButton: true,
                         onTextButtonPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -85,7 +85,6 @@ class HomeScreen extends StatelessWidget {
 
                       HeaderText(
                         title: '버스',
-                        showIconButton: true,
                         onTextButtonPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(

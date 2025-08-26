@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:handori/model/Meals_ranking.dart';
 import 'package:handori/model/banner_model.dart';
 import 'package:handori/model/class_model.dart';
 import 'package:handori/model/meal_model.dart';
 
 class StaticDataRepository {
-  final List<Meal> meals = [
+ static final List<Meal> meals = [
     Meal(
       Name: 'E동 학생식당',
       mainDish: '소불고기 덮밥',
@@ -75,4 +76,27 @@ class StaticDataRepository {
       classList: ['D234', 'D303', 'D402', 'D220', 'D321', 'D502'],
     ),
   ];
+
+
+  static final List<MealsRaking> mealRakings = _createMealRakings(meals);
+
+  static List<MealsRaking> _createMealRakings(List<Meal> meals) {
+    final List<MealsRaking> result = [];
+
+    final medals = ['assets/img/gold.png', 'assets/img/silver.png', 'assets/img/bronze.png'];
+    final borderColors = [Color(0XFFFFD700), Color(0XFFBDBDBD), Color(0XFFCD7F32)];
+
+    for(int i =0 ; i < 3; i++ ){
+      final meal = meals[i];
+      final ranking = MealsRaking(
+          medalImage: medals[i],
+          name: meal.Name,
+          menu: meal.mainDish,
+          borderColor: borderColors[i]
+      );
+      result.add(ranking);
+    }
+    return result;
+  }
+
 }

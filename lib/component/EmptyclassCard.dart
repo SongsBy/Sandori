@@ -36,7 +36,6 @@ class _ClassStateSectionState extends State<ClassStateSection> {
       child: PageView.builder(
         scrollDirection: Axis.horizontal,
         controller: _controller,
-
         padEnds: false,
         itemCount: widget.classstate.length,
         itemBuilder: (context, i) {

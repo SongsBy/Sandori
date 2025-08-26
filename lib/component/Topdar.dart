@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class TopBar extends StatelessWidget {
   final VoidCallback onBellPressed;
   final VoidCallback onUserPressed;
+  final String? headerText;
   const TopBar({
     required this.onBellPressed,
     required this.onUserPressed,
+    this.headerText,
     super.key
   });
 
@@ -23,19 +25,13 @@ class TopBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '2025년 7월 26일',
+                    headerText?? '',
                     style: TextTheme.of(
                       context,
-                    ).displayLarge?.copyWith(fontSize: 21),
+                    ).displayLarge?.copyWith(fontSize: 25),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '오늘 하루도 맛있는 하루 되세요!',
-                    style: TextTheme.of(
-                      context,
-                    ).displayMedium?.copyWith(fontSize: 13),
-                  ),
+                  SizedBox(height: 4),
                 ],
               ),
             ),
