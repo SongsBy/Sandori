@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:handori/component/Header_text.dart';
 import 'package:handori/component/Topdar.dart';
 import 'package:handori/const/colors.dart';
-import 'package:handori/model/Meals_ranking.dart';
+import 'package:handori/model/Meals_ranking_model.dart';
 import 'package:handori/model/meal_model.dart';
 import 'package:handori/repository/static_repository.dart';
 
@@ -30,34 +30,48 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final padding = SizedBox(height: 20,);
     final meals = StaticDataRepository.meals;
     final raking = StaticDataRepository.mealRakings;
-    if (meals.isEmpty) return Center(
+    if (meals.isEmpty)
+      return Center(
       child: Text('데이터가 없습니다'),
     );
     return Scaffold(
       backgroundColor: Color(0xFFFAFAFA),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: Color(0xFFFAFAFA),
+            foregroundColor: Colors.black,
+            surfaceTintColor: Colors.transparent,
+            flexibleSpace: FlexibleSpaceBar(
+              background: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: TopBar(
+                    headerText: '학식조회',
+                    onBellPressed: () {},
+                    onUserPressed: () {},
+                  ),
+                ),
+              ),
+            ),
+      ),
+        SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
-              TopBar(
-                headerText: '한국공학대학교 학식',
-                onBellPressed: () {},
-                onUserPressed: () {},
+              padding,
+              HeaderText(
+                title: '오늘 식당 리스트',
+                titleImagePath: 'assets/img/fork.png',
               ),
+              padding,
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 25,
-                ),
-                child: HeaderText(
-                  title: '오늘 식당 리스트',
-                  titleImagePath: 'assets/img/fork.png',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: SizedBox(
                   height: 350,
                   child: PageView.builder(
@@ -75,22 +89,19 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 35.0,
-                ),
-                child: HeaderText(
-                  title: '오늘의 인기 학식',
-                  titleImagePath: 'assets/img/fire.png',
-                ),
+              padding,
+              HeaderText(
+                title: '오늘의 인기 학식',
+                titleImagePath: 'assets/img/fire.png',
               ),
-
+              padding,
               ///오늘의 인기 학식 로직
               _Ranking(Ranking: raking),
             ],
           ),
         ),
+        )
+            ]
       ),
     );
   }
@@ -146,12 +157,9 @@ class _MealsCard extends StatelessWidget {
               children:
                   meals.sideDishes
                       .map(
-                        (e) => Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            '${e}',
-                            style: mediumText?.copyWith(fontSize: 20),
-                          ),
+                        (e) => Text(
+                          '${e}',
+                          style: mediumText?.copyWith(fontSize: 20),
                         ),
                       )
                       .toList(),

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:handori/model/Meals_ranking.dart';
+import 'package:handori/model/Meals_ranking_model.dart';
 import 'package:handori/model/banner_model.dart';
 import 'package:handori/model/class_model.dart';
 import 'package:handori/model/meal_model.dart';
+
+import '../model/bus_model.dart';
 
 class StaticDataRepository {
  static final List<Meal> meals = [
@@ -98,5 +100,13 @@ class StaticDataRepository {
     }
     return result;
   }
+  
+  static final List<Bus> bus =[
+    Bus(busIcon: 'assets/img/bus.png', busNumber: '33', busTime: '2분'),
+    Bus(busIcon: 'assets/img/bus.png', busNumber: '20-1', busTime: '7분'),
+    Bus(busIcon: 'assets/img/bus.png', busNumber: '26-1', busTime: '3분'),
+
+  ];
+  
 
 }

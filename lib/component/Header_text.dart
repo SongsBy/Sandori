@@ -17,10 +17,7 @@ class HeaderText extends StatelessWidget {
     return Row(
       children: [
         if(titleImagePath != null)
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(titleImagePath!, width: 30,height: 30,),
-        ),
+        Image.asset(titleImagePath!, width: 30,height: 30,),
         Expanded(
           child: Text(
             title,

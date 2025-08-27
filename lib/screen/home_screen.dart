@@ -29,79 +29,74 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Color(0xFFFAFAFA),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ///상단 바
-              TopBar(
-                headerText:'산돌이',
-                  onBellPressed: () {},
-                  onUserPressed: () {}),
-              SizedBox(
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30.0,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// 상단 배너
-                      BannerTop(images: banner),
-                      //패딩값
-                      padding,
-                      //각 섹션 헤더 텍스트
-                      HeaderText(
-                        title: '학식/식당',
-                        onTextButtonPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => RestaurantDetailScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+            child: Column(
+              children: [
+                ///상단 바
+                TopBar(
+                  headerText:'산돌이',
+                    onBellPressed: () {},
+                    onUserPressed: () {}),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    padding,
+                    /// 상단 배너
+                    BannerTop(images: banner),
+                    //패딩값
+                    padding,
+                    //각 섹션 헤더 텍스트
+                    HeaderText(
+                      title: '학식/식당',
+                      onTextButtonPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => RestaurantDetailScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20),
 
-                      ///오늘의 식단
-                      Todaymeal(meals: meals),
-                      padding,
+                    ///오늘의 식단
+                    Todaymeal(meals: meals),
+                    padding,
 
-                      HeaderText(
-                        title: '빈 강의실',
-                        onTextButtonPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => EmptyDetailScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      padding,
+                    HeaderText(
+                      title: '빈 강의실',
+                      onTextButtonPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => EmptyDetailScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    padding,
 
-                      ///빈 강의실
-                      ClassStateSection(classstate: classState),
-                      padding,
+                    ///빈 강의실
+                    ClassStateSection(classstate: classState),
+                    padding,
 
-                      HeaderText(
-                        title: '버스',
-                        onTextButtonPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BusTimeDetailScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      padding,
+                    HeaderText(
+                      title: '버스',
+                      onTextButtonPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BusTimeDetailScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    padding,
 
-                      ///셔틀 버스 카드 섹션
-                      Bustimescreen(),
-                    ],
-                  ),
+                    ///셔틀 버스 카드 섹션
+                    Bustimescreen(),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
