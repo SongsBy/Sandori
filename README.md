@@ -45,10 +45,13 @@
     -   `TopBar`: 상단바 (날짜, 인삿말, 알림, 유저 프로필) UI
     -   `HeaderText`: 각 카드 섹션의 제목 및 '더보기' 버튼 UI
 
+-   `const` : 랭킹을 구성하는 재사용 가능한 색상폴더(향후 모든 색상 추가예정)
+
 -   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더
     -   `banner_model`: 배너 데이터 모델
     -   `class_model`: 빈 강의실 데이터 모델
     -   `meal_model`: 식단 데이터 모델
+    -   `mealsranking_model`: 식단 랭킹 데이터 모델
 
 -   `repository` : 데이터 소스를 관리하는 저장소 폴더
     -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
