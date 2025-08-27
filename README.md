@@ -52,6 +52,7 @@
     -   `class_model`: 빈 강의실 데이터 모델
     -   `meal_model`: 식단 데이터 모델
     -   `mealsranking_model`: 식단 랭킹 데이터 모델
+    -   `bus_model`: 버스시간표 모델
 
 -   `repository` : 데이터 소스를 관리하는 저장소 폴더
     -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
