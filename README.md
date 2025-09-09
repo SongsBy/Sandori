@@ -70,3 +70,20 @@
 -   공지사항, 상세페이지
 -   설정 페이지 (유저 설정페이지)
 -   전반적인 코드 정리와 상태관리9/1)
+
+---
+
+## 🚀 설치 & 실행 방법
+
+```bash
+# 저장소 클론
+git clone https://github.com/username/remind.git
+
+# 패키지 설치
+flutter pub get
+
+# iOS 실행
+flutter run -d ios
+
+# Android 실행
+flutter run -d android
