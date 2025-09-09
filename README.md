@@ -77,7 +77,7 @@
 
 ```bash
 # 저장소 클론
-git clone https://github.com/username/remind.git
+git clone https://github.com/username/remind.git](https://github.com/SongsBy/Sandori.git
 
 # 패키지 설치
 flutter pub get
