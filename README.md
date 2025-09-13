@@ -39,8 +39,9 @@
     -   `SignScreen`: 회원가입 화면
     -   `HomeScreen`: 앱의 메인 홈 화면
     -   `Restaurant_detail_screen`: 학식 상세 페이지
-    -   `Empty_detail_screen`: 빈 강의실 상세 페이지
+    -   `Empty_detail_screen`: 빈 강의실 상세 페이지(지도 위에 마커들로 현재 남은 강의실을 표사했고 SlidibgUpPanner로 구현 하였음)
     -   `BusTime_detail_screen`: 버스 시간표 상세 페이지
+
 
 -   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
     -   `BannerCard_top`: 상단 광고 배너 UI
@@ -52,7 +53,7 @@
 
 -   `const` : 랭킹을 구성하는 재사용 가능한 색상폴더(향후 모든 색상 추가예정)
 
--   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더
+-   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더(현재는 더미 데이터만 저장하고 있음)
     -   `banner_model`: 배너 데이터 모델
     -   `class_model`: 빈 강의실 데이터 모델
     -   `meal_model`: 식단 데이터 모델
@@ -61,6 +62,7 @@
 
 -   `repository` : 데이터 소스를 관리하는 저장소 폴더
     -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
+    -   `Empty_Class_repository`: 빈 강이실 더미 데이터를 저장하고 있는 repository 추후에 데이터 베이스에서 받아올 것 
 
 ---
 
