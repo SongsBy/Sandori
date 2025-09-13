@@ -46,7 +46,7 @@
 -   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
     -   `BannerCard_top`: 상단 광고 배너 UI
     -   `MealCard`: 홈 화면 학식 리스트 카드 UI
-    -   `EmptyclassCard`: 홈 화면 빈 강의실 카드 UI
+    -   `EmptyclassCard`: 홈 화면 빈 강의실 카드 UI(9/13수정) 
     -   `BusTimeCardScreen`: 홈 화면 버스 시간표 카드 UI
     -   `TopBar`: 상단바 (날짜, 인삿말, 알림, 유저 프로필) UI
     -   `HeaderText`: 각 카드 섹션의 제목 및 '더보기' 버튼 UI
