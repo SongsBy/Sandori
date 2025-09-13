@@ -46,40 +46,6 @@ class StaticDataRepository {
 
 
 
-  final List<EmptyClass> emptyclass = [
-    EmptyClass(
-      className: 'E동 : ',
-      classCount: '24',
-      trafficIcon: 'assets/img/green.png',
-      classList: ['E234', 'E303', 'E402', 'E220', 'E321', 'E502'],
-    ),
-    EmptyClass(
-      className: 'C동 : ',
-      classCount: '18',
-      trafficIcon: 'assets/img/orange.png',
-      classList: ['C234', 'C303', 'C402', 'C220', 'C321', 'C502'],
-    ),
-    EmptyClass(
-      className: 'G동 : ',
-      classCount: '10',
-      trafficIcon: 'assets/img/red.png',
-      classList: ['G234', 'G303', 'G402', 'G220', 'G321', 'G502'],
-    ),
-    EmptyClass(
-      className: 'A동 : ',
-      classCount: '13',
-      trafficIcon: 'assets/img/orange.png',
-      classList: ['A234', 'A303', 'A402', 'A220', 'A321', 'A502'],
-    ),
-    EmptyClass(
-      className: 'D동 : ',
-      classCount: '20',
-      trafficIcon: 'assets/img/green.png',
-      classList: ['D234', 'D303', 'D402', 'D220', 'D321', 'D502'],
-    ),
-  ];
-
-
   static final List<MealsRaking> mealRakings = _createMealRakings(meals);
 
   static List<MealsRaking> _createMealRakings(List<Meal> meals) {

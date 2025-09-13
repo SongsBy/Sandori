@@ -107,7 +107,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   }
 }
 
-
 /// 오늘 식당 리스트 로직
 class _MealsCard extends StatelessWidget {
   final PageController? controller;

@@ -170,6 +170,7 @@ class _BusTimeDetailScreenState extends State<BusTimeDetailScreen> {
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height *1,
                   child: GoogleMap(
+                    mapType: MapType.normal,
                     initialCameraPosition: initailPosition,
                     markers: {
                       Marker(
@@ -197,7 +198,6 @@ class _BusTimeDetailScreenState extends State<BusTimeDetailScreen> {
                   ),
                 ),
               ),
-
           ]
           ),
         );
