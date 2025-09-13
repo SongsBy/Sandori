@@ -1,95 +1,134 @@
 import 'package:flutter/material.dart';
 import 'package:handori/model/class_model.dart';
 
-class ClassStateSection extends StatefulWidget {
-  final List<EmptyClass> classstate;
-  const ClassStateSection({required this.classstate, super.key});
+class ClassStateCard extends StatelessWidget {
+  final List<EmptyClass> items;
+  final int maxItems;
+  final VoidCallback? onMore;
 
-  @override
-  State<ClassStateSection> createState() => _ClassStateSectionState();
-}
-
-class _ClassStateSectionState extends State<ClassStateSection> {
-  late final PageController _controller;
-
-  @override
-  void initState() {
-    _controller = PageController(viewportFraction: 0.49);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  const ClassStateCard({
+    super.key,
+    required this.items,
+    this.maxItems = 6,
+    this.onMore,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final smallText = TextTheme.of(context).displaySmall;
-    final largeText = Theme.of(context).textTheme.displayLarge;
-    final mediumText = Theme.of(context).textTheme.displayMedium;
-    final extraThinText = Theme.of(context).textTheme.bodySmall;
-    if (widget.classstate.isEmpty) return SizedBox.shrink();
-    return SizedBox(
-      height: 300,
-      child: PageView.builder(
-        scrollDirection: Axis.horizontal,
-        controller: _controller,
-        padEnds: false,
-        itemCount: widget.classstate.length,
-        itemBuilder: (context, i) {
-          final c = widget.classstate[i];
-          return SizedBox(
-            width: 220,
-            child: Card(
-              elevation: 1,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          c.className,
-                          style: mediumText?.copyWith(fontSize: 20),
-                        ),
+    if (items.isEmpty) return const SizedBox.shrink();
 
-                        Text(
-                          maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            c.classCount, style: TextStyle(fontSize: 16)),
-                        Expanded(
-                          child: Image.asset(
-                            c.trafficIcon,
-                            width: 30,
-                            height: 22,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Column(
-                        children: c.classList.map((item) => Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(item, style: TextStyle(color: Colors.black54),),
-                        )).toList(),
-                      ),
-                  ],
+
+    final visible = items.take(maxItems).toList();
+    final hasMore = items.length > visible.length;
+
+    return Card(
+      elevation: 1,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 8),
+                Text(
+                  '빈 강의실 현황',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
+                const Spacer(),
+                if (hasMore && onMore != null)
+                  TextButton(
+                    onPressed: onMore,
+                    child: const Text('더보기'),
+                  ),
+              ],
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            ...List.generate(visible.length, (i) {
+              final c = visible[i];
+              return Column(
+                children: [
+                  _ClassLine(
+                    title: c.className,
+                    countText: '총 ${c.classCount}개',
+                    leadingAsset: c.classIcons,
+                  ),
+                  if (i != visible.length - 1)
+                    const Divider(height: 14, thickness: 0.8),
+                ],
+              );
+            }),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _ClassLine extends StatelessWidget {
+  final String title;
+  final String countText;
+  final String? leadingAsset;
+
+  const _ClassLine({
+    required this.title,
+    required this.countText,
+    this.leadingAsset,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (leadingAsset != null && leadingAsset!.isNotEmpty)
+          Container(
+            width: 34,
+            height: 34,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xFFF3F4FF),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(leadingAsset!, fit: BoxFit.contain),
+          )
+        else
+          Icon(Icons.apartment_rounded, color: Colors.black54, size: 28),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 16.5,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+          ),
+        ),
+
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: const Color(0xFFE5E7FB)),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Text(
+            countText,
+            style: const TextStyle(
+              fontSize: 12.5,
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

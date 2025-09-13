@@ -179,6 +179,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                     myLocationButtonEnabled: false,
                     onMapCreated: (c) => _mapController = c,
                     markers: _markers,
+                    mapType: MapType.normal,
                   ),
                 ),
 

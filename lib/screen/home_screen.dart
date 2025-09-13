@@ -82,7 +82,6 @@ class HomeScreen extends StatelessWidget {
                     ),
                     padding,
 
-                    // ⬇️ Repository 비동기 결과 표시
                     FutureBuilder<List<EmptyClass>>(
                       future: emptyClassesFuture,
                       builder: (context, snapshot) {
@@ -93,8 +92,9 @@ class HomeScreen extends StatelessWidget {
                           return Center(child: Text('오류: ${snapshot.error}'));
                         }
                         final data = snapshot.data ?? const <EmptyClass>[];
-                        // EmptyclassCard.dart 안의 섹션 위젯이 List<EmptyClass>를 받는다고 가정
-                        return ClassStateSection(classstate: data);
+                        return ClassStateCard(items:data,
+                        maxItems: 5,
+                        onMore: (){},);
                       },
                     ),
 
