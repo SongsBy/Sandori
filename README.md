@@ -61,6 +61,7 @@
 
 -   `repository` : 데이터 소스를 관리하는 저장소 폴더
     -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
+    -   `Empty_Class_repository`: 빈 강이실 더미 데이터를 저장하고 있는 repository 추후에 데이터 베이스에서 받아올 것 
 
 ---
 
