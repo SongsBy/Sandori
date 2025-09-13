@@ -23,6 +23,11 @@
 -   **효율적인 리스트 렌더링**: 홈 화면의 카드 섹션들은 `PageView.builder`를 사용하여 메모리 효율성을 고려했으며, 외부(`HomeScreen`)에서 데이터를 주입받는 구조로 설계하여 오버플로우를 방지했습니다.
 -   **페이지 컨트롤러**: 각 가로 스크롤 카드 섹션은 독립적인 `PageController`를 사용하여, 하나의 섹션을 스크롤해도 다른 섹션에 영향을 주지 않도록 구현했습니다.
 
+### 3. 오픈소스 플러그인 
+- `GoogleMap` : 구글맵 API를 활용하기위한 플러그인
+- `GeoLocator`: 구글맵에서 지도를 활용하기위한 플러그인
+-  `GetIt` : 데이터 처리를 간편하게 하는 플러그인
+
 ---
 
 ## 📂 주요 디렉토리 구조
@@ -52,13 +57,33 @@
     -   `class_model`: 빈 강의실 데이터 모델
     -   `meal_model`: 식단 데이터 모델
     -   `mealsranking_model`: 식단 랭킹 데이터 모델
+    -   `bus_model`: 버스시간표 모델
 
 -   `repository` : 데이터 소스를 관리하는 저장소 폴더
     -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
 
 ---
 
-## 🚀 향후 개발 계획
--   각 상세 페이지(학식, 빈 강의실, 버스) 기능 완성
+## 🚀 향후 개발 계획 
 -   소셜 로그인(Kakao, Google, Apple)의 OAuth 2.0 인증 방식 적용 및 각 플랫폼별 API 가이드라인 준수
 -   실시간 데이터 연동을 위한 백엔드 API 구축 및 연결
+-   공지사항, 상세페이지
+-   설정 페이지 (유저 설정페이지)
+-   전반적인 코드 정리와 상태관리9/1)
+
+---
+
+## 🚀 설치 & 실행 방법
+
+```bash
+# 저장소 클론
+git clone https://github.com/username/remind.git](https://github.com/SongsBy/Sandori.git
+
+# 패키지 설치
+flutter pub get
+
+# iOS 실행
+flutter run -d ios
+
+# Android 실행
+flutter run -d android
