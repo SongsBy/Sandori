@@ -82,7 +82,8 @@
 
 ---
 
-<img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 - 2025-09-14 at 21 49 54" src="https://github.com/user-attachments/assets/355d237b-2183-4f7c-852f-16ce3e334be5" />
+<img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 <img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 - 2025-09-14 at 21 49 59" src="https://github.com/user-attachments/assets/18a41eda-a7c1-4d16-b16e-8e65293d9672" />
+- 2025-09-14 at 21 49 54" src="https://github.com/user-attachments/assets/355d237b-2183-4f7c-852f-16ce3e334be5" />
 
 
 ## 🚀 설치 & 실행 방법
