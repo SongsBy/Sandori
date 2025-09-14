@@ -84,7 +84,8 @@ lib/
 <p float="left">
   <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
   <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
-  <img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 - 2025-09-14 at 21 54 23" src="https://github.com/user-attachments/assets/f41eefbe-e751-4aa5-a910-e11ab299c929" />
+  <img width="320" src="https://github.com/user-attachments/assets/f41eefbe-e751-4aa5-a910-e11ab299c929" alt="Restaurant Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/099bcb99-c0f4-4fb4-bd38-64860ca82277" alt="BusTime Screenshot" />
 </p>
 
 
