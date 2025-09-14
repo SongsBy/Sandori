@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:handori/repository/empty_class_repository.dart';
 import 'package:handori/repository/static_repository.dart';
+import 'package:handori/screen/maain_shell.dart';
 import 'package:handori/screen/splashScreen.dart';
 
 final getIt = GetIt.instance;
@@ -16,6 +17,7 @@ void setupLocator() {
 }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   runApp(const MyApp());
 }
@@ -27,6 +29,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const Splashscreen(),
+      routes: {
+        '/main': (_) => const MainShell()
+      },
       theme: ThemeData(
         fontFamily: 'Pretendard',
         textTheme: const TextTheme(

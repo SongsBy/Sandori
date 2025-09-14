@@ -16,7 +16,7 @@ class _LoginscreenState extends State<Loginscreen> {
     'password': TextEditingController(),
   };
   @override
-  dispose() {
+  void dispose() {
     for (var controller in controllers.values) {
       controller.dispose();
     }
@@ -77,9 +77,7 @@ class _LoginscreenState extends State<Loginscreen> {
   }
 ///회원 로그인 구동 함수
   void login() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
   }
 ///회원 가입 로그인 구동 함수
   void signin() {

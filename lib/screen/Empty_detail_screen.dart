@@ -10,6 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:handori/model/class_model.dart';
 import 'package:handori/repository/empty_class_repository.dart';
 
+import 'maain_shell.dart';
+
 class EmptyDetailScreen extends StatefulWidget {
   const EmptyDetailScreen({super.key});
 
@@ -27,6 +29,15 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
   String _query = '';
   double _panelPos = 0.0;
+
+  void _handleBack() {
+    final shell = MainShell.of(context);
+    if (shell != null) {
+      shell.jumpTo(0);
+    } else if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
 
 
   late GoogleMapController _mapController;
@@ -132,7 +143,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final double fabBottomStart = 140.0;
+    final double fabBottomStart = 210.0;
     final double fabBottomEndExtra = 220.0;
     final double fabBottom = lerpDouble(
       fabBottomStart,
@@ -162,7 +173,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
             controller: _panelController,
             color: const Color(0XFFFAFAFA),
             maxHeight: panelMaxHeight,
-            minHeight: 120.0,
+            minHeight: 80.0,
             panelSnapping: true,
             snapPoint: 0.5,
             parallaxEnabled: true,
@@ -194,7 +205,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                           elevation: 2,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(12),
-                            onTap: () => Navigator.pop(context),
+                            onTap:_handleBack,
                             child: const SizedBox(
                               width: 44,
                               height: 44,
@@ -381,7 +392,7 @@ class _EmptyClassCard extends StatelessWidget {
                         style: theme.titleMedium?.copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color:Color(0xFF5660C8),
+                          color:Colors.black,
                         ),
                       ),
                     ),
@@ -398,7 +409,7 @@ class _EmptyClassCard extends StatelessWidget {
                         '총 ${item.classCount}개',
                         style:  TextStyle(
                           fontSize: 12.5,
-                          color: Color(0xFF4E56B9),
+                          color: Colors.black,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -440,13 +451,13 @@ class _Chip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFF6D7AC9)),
+          Icon(icon, size: 14, color: const Color(0xFF4EA6AA)),
           SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
               fontSize: 12.5,
-              color: Color(0xFF4E56B9),
+              color: Colors.black,
               fontWeight: FontWeight.w600,
             ),
           ),
