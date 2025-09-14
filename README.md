@@ -81,11 +81,14 @@ lib/
 -   전반적인 코드 정리와 상태관리9/1)
 
 ---
+---
 <p float="left">
   <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
   <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
   <img width="320" src="https://github.com/user-attachments/assets/f41eefbe-e751-4aa5-a910-e11ab299c929" alt="Restaurant Screenshot" />
   <img width="320" src="https://github.com/user-attachments/assets/099bcb99-c0f4-4fb4-bd38-64860ca82277" alt="BusTime Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/8cf0f292-4aa8-4a43-8742-d69f81c60e5b" alt="Notice Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/c86d3722-1d26-4096-9796-88d8d0d9d13c" alt="More Screenshot" />
 </p>
 
 
