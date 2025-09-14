@@ -38,40 +38,40 @@
 ---
 
 ## 📂 주요 디렉토리 구조
-
--   `screen` : 각 페이지 UI를 구성하는 메인 화면 폴더
-    -   `SplashScreen`: 앱 실행 시 표시되는 스플래시 화면
-    -   `SigninGateScreen`: 간단한 소개 및 회원가입 유도 화면
-    -   `LoginScreen`: 로그인 화면
-    -   `SignScreen`: 회원가입 화면
-    -   `HomeScreen`: 앱의 메인 홈 화면
-    -   `Restaurant_detail_screen`: 학식 상세 페이지
-    -   `Empty_detail_screen`: 빈 강의실 상세 페이지(지도 위에 마커들로 현재 남은 강의실을 표사했고 SlidibgUpPanner로 구현 하였음)
-    -   `BusTime_detail_screen`: 버스 시간표 상세 페이지
-    -   `Notice_screen`: 공지사항 조회 페이지
-
-
--   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
-    -   `BannerCard_top`: 상단 광고 배너 UI
-    -   `MealCard`: 홈 화면 학식 리스트 카드 UI
-    -   `EmptyclassCard`: 홈 화면 빈 강의실 카드 UI(9/13수정) 
-    -   `BusTimeCardScreen`: 홈 화면 버스 시간표 카드 UI
-    -   `TopBar`: 상단바 (날짜, 인삿말, 알림, 유저 프로필) UI
-    -   `HeaderText`: 각 카드 섹션의 제목 및 '더보기' 버튼 UI
-
--   `const` : 랭킹을 구성하는 재사용 가능한 색상폴더(향후 모든 색상 추가예정)
-
--   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더(현재는 더미 데이터만 저장하고 있음)
-    -   `banner_model`: 배너 데이터 모델
-    -   `class_model`: 빈 강의실 데이터 모델
-    -   `meal_model`: 식단 데이터 모델
-    -   `mealsranking_model`: 식단 랭킹 데이터 모델
-    -   `bus_model`: 버스시간표 모델
-
--   `repository` : 데이터 소스를 관리하는 저장소 폴더
-    -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
-    -   `Empty_Class_repository`: 빈 강이실 더미 데이터를 저장하고 있는 repository 추후에 데이터 베이스에서 받아올 것 
-
+```
+lib/
+├─ screen/                      # 각 페이지
+│  ├─ Splash_screen.dart
+│  ├─ Signin_gate_screen.dart
+│  ├─ Login_screen.dart
+│  ├─ Sign_screen.dart
+│  ├─ Home_screen.dart
+│  ├─ Restaurant_detail_screen.dart
+│  ├─ Empty_detail_screen.dart   # 지도+마커, SlidingUpPanel
+│  ├─ BusTime_detail_screen.dart
+│  └─ Notice_screen.dart         # WebView 래핑
+│
+├─ component/                   # 재사용 위젯
+│  ├─ BannerCard_top.dart       # 상단 배너 (오토슬라이드)
+│  ├─ MealCard.dart             # 학식 카드
+│  ├─ EmptyclassCard.dart       # 빈 강의실 카드
+│  ├─ BusTimeCardScreen.dart    # 버스 카드
+│  ├─ TopBar.dart               # 상단바(날짜/인사/알림/유저)
+│  └─ HeaderText.dart           # 섹션 헤더(+더보기)
+│
+├─ const/                       # 공용 색/상수 (랭킹 등 → 추후 확장)
+│
+├─ model/                       # 데이터 모델 (더미 중심)
+│  ├─ banner_model.dart
+│  ├─ class_model.dart
+│  ├─ meal_model.dart
+│  ├─ meals_ranking_model.dart
+│  └─ bus_model.dart
+│
+└─ repository/
+   ├─ static_repository.dart    # 임시 정적 데이터
+   └─ empty_class_repository.dart
+```
 ---
 
 ##  향후 개발 계획 
@@ -81,9 +81,12 @@
 -   전반적인 코드 정리와 상태관리9/1)
 
 ---
+<p float="left">
+  <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
+</p>
 
-<img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 <img width="1179" height="2556" alt="Simulator Screenshot - iPhone 16 - 2025-09-14 at 21 49 59" src="https://github.com/user-attachments/assets/18a41eda-a7c1-4d16-b16e-8e65293d9672" />
-- 2025-09-14 at 21 49 54" src="https://github.com/user-attachments/assets/355d237b-2183-4f7c-852f-16ce3e334be5" />
+
 
 
 ## 🚀 설치 & 실행 방법
