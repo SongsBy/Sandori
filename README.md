@@ -82,8 +82,9 @@ lib/
 
 ---
 <p float="left">
-  <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
   <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
+
 </p>
 
 
