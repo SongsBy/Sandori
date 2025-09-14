@@ -47,6 +47,7 @@
     -   `Restaurant_detail_screen`: 학식 상세 페이지
     -   `Empty_detail_screen`: 빈 강의실 상세 페이지(지도 위에 마커들로 현재 남은 강의실을 표사했고 SlidibgUpPanner로 구현 하였음)
     -   `BusTime_detail_screen`: 버스 시간표 상세 페이지
+    -   `Notice_screen`: 공지사항 조회 페이지
 
 
 -   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
