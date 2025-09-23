@@ -70,8 +70,8 @@ lib/
 │  ├─ banner_model.dart         # 배너 들의 데이터를 구조화 
 │  ├─ class_model.dart          # 빈 강의실 리스트를 구조화
 │  ├─ meal_model.dart           # 오늘의 식단 리스트를 구조화
-│  ├─ meals_ranking_model.dart
-│  └─ bus_model.dart
+│  ├─ meals_ranking_model.dart  # 오늘으 식단 랭킹을 구조화 
+│  └─ bus_model.dart            # 버스 모댈들을 구조화 
 │
 └─ repository/
    ├─ static_repository.dart    # 임시 정적 데이터
