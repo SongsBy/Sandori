@@ -69,7 +69,7 @@ lib/
 ├─ model/                       # 데이터 모델 (더미 중심)
 │  ├─ banner_model.dart         # 배너 들의 데이터를 구조화 
 │  ├─ class_model.dart          # 빈 강의실 리스트를 구조화
-│  ├─ meal_model.dart
+│  ├─ meal_model.dart           # 오늘의 식단 리스트를 구조화
 │  ├─ meals_ranking_model.dart
 │  └─ bus_model.dart
 │
