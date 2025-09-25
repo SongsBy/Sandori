@@ -74,7 +74,7 @@ lib/
 │  └─ bus_model.dart            # 버스 모댈들을 구조화 
 │
 └─ repository/
-   ├─ static_repository.dart    # 임시 정적 데이터
+   ├─ static_repository.dart    # 더미데이터 
    └─ empty_class_repository.dart
 ```
 ---
