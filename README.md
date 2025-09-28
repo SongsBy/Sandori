@@ -81,7 +81,7 @@ lib/
 ##  향후 개발 계획 
 -   소셜 로그인(Kakao, Google, Apple)의 OAuth 2.0 인증 방식 적용 및 각 플랫폼별 API 가이드라인 준수
 -   실시간 데이터 연동을 위한 백엔드 API 구축 및 연결
--   본격적인 개발에 엎서 전체적인 ui코드 통합 repository생성 
+-   본격적인 개발에 엎서 전체적인 ui코드 통합 repository생성  
 ---
 ---
 <p float="left">
