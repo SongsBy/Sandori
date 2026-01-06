@@ -26,6 +26,7 @@
     -   `displaySmall` (w300): 작은 크기 텍스트
     -   `titleLarge` (w700): 'Krub' 폰트를 사용하는 특정 타이틀
 -   모든 화면에서는 `Theme.of(context).textTheme.displayLarge` 와 같은 형태로 정의된 스타일을 가져와 사용합니다.
+
  
 ### 2. 가독성 및 유지보수를 위한 코드 구조화
 -   각 화면(`Screen`)의 `build` 메소드 내 로직을 최소화하고, UI를 기능 단위의 `StatelessWidget` 컴포넌트로 분리하여 가독성과 재사용성을 높였습니다.
