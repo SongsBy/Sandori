@@ -1,90 +1,216 @@
-#  Sandori (산돌이)
+# Sandori (산돌이)
 
 **한국공학대학교 학생들을 위한 캠퍼스 생활 정보 앱**
 
 ---
 
-## 🛠️ 개발 아키텍처 및 주요 구현 사항
+## 🛠️ 개발 아키텍처
 
-### 1. 일관된 UI/UX를 위한 테마(Theming) 관리
--   `main.dart`에 `ThemeData`를 정의하여 앱 전체의 폰트와 텍스트 스타일을 중앙에서 관리합니다. 이를 통해 반복되는 `TextStyle` 코드를 줄이고 디자인의 일관성을 확보했습니다.
-    -   `displayLarge` (w700): 주로 큰 텍스트 헤더, 타이틀
-    -   `displayMedium` (w500): 중간 크기 텍스트
-    -   `displaySmall` (w300): 작은 크기 텍스트
-    -   `titleLarge` (w700): 'Krub' 폰트를 사용하는 특정 타이틀
--   모든 화면에서는 `Theme.of(context).textTheme.displayLarge` 와 같은 형태로 정의된 스타일을 가져와 사용합니다.
+### 아키텍처: Feature-First + 3-Layer
 
-### 2. 가독성 및 유지보수를 위한 코드 구조화
--   각 화면(`Screen`)의 `build` 메소드 내 로직을 최소화하고, UI를 기능 단위의 `StatelessWidget` 컴포넌트로 분리하여 가독성과 재사용성을 높였습니다.
--   복잡한 로직은 별도의 함수로 분리하여 관리합니다.
+기능별 모듈 단위로 코드를 분리하고, 각 기능 안에서 data / domain / presentation 3계층을 유지합니다.
 
-### 3. 데이터 처리 및 컴포넌트 설계
--   **데이터 추상화**: `repository` 계층을 두어 데이터 소스를 UI와 분리했습니다. 추후 API나 실제 데이터베이스로 교체하더라도 UI 코드의 변경을 최소화할 수 있도록 설계했습니다.
--   **효율적인 리스트 렌더링**: 홈 화면의 카드 섹션들은 `PageView.builder`를 사용하여 메모리 효율성을 고려했으며, 외부(`HomeScreen`)에서 데이터를 주입받는 구조로 설계하여 오버플로우를 방지했습니다.
--   **페이지 컨트롤러**: 각 가로 스크롤 카드 섹션은 독립적인 `PageController`를 사용하여, 하나의 섹션을 스크롤해도 다른 섹션에 영향을 주지 않도록 구현했습니다.
+- `presentation` → `domain` 참조 허용
+- `presentation` → `data` (DTO 직접 참조) 금지
+- feature 간 직접 참조 금지 → 공유 시 `shared/`로 추출
 
-### 3. 오픈소스 플러그인 
-- `GoogleMap` : 구글맵 API를 활용하기위한 플러그인
-- `GeoLocator`: 구글맵에서 지도를 활용하기위한 플러그인
--  `GetIt` : 데이터 처리를 간편하게 하는 플러그인
+### 상태관리: Riverpod (코드 생성 방식)
 
----
+`@riverpod` 어노테이션만 사용. `StateProvider`, `StateNotifierProvider` 등 수동 선언 금지.
 
-## 📂 주요 디렉토리 구조
+### 네트워킹: Retrofit + Dio
 
--   `screen` : 각 페이지 UI를 구성하는 메인 화면 폴더
-    -   `SplashScreen`: 앱 실행 시 표시되는 스플래시 화면
-    -   `SigninGateScreen`: 간단한 소개 및 회원가입 유도 화면
-    -   `LoginScreen`: 로그인 화면
-    -   `SignScreen`: 회원가입 화면
-    -   `HomeScreen`: 앱의 메인 홈 화면
-    -   `Restaurant_detail_screen`: 학식 상세 페이지
-    -   `Empty_detail_screen`: 빈 강의실 상세 페이지(지도 위에 마커들로 현재 남은 강의실을 표사했고 SlidibgUpPanner로 구현 하였음)
-    -   `BusTime_detail_screen`: 버스 시간표 상세 페이지
+`@RestApi` 인터페이스로 API 선언. Dio는 `keepAlive: true` 싱글톤, 인터셉터 순서: Auth → Error → Logging.
 
+### 라우팅: GoRouter
 
--   `component` : 화면을 구성하는 재사용 가능한 위젯 폴더
-    -   `BannerCard_top`: 상단 광고 배너 UI
-    -   `MealCard`: 홈 화면 학식 리스트 카드 UI
-    -   `EmptyclassCard`: 홈 화면 빈 강의실 카드 UI(9/13수정) 
-    -   `BusTimeCardScreen`: 홈 화면 버스 시간표 카드 UI
-    -   `TopBar`: 상단바 (날짜, 인삿말, 알림, 유저 프로필) UI
-    -   `HeaderText`: 각 카드 섹션의 제목 및 '더보기' 버튼 UI
+`context.go()` / `context.push()` 만 사용. `Navigator.push()` 직접 사용 금지.
 
--   `const` : 랭킹을 구성하는 재사용 가능한 색상폴더(향후 모든 색상 추가예정)
+### 코드 생성 도구
 
--   `model` : 데이터의 구조를 정의하는 모델 클래스 폴더(현재는 더미 데이터만 저장하고 있음)
-    -   `banner_model`: 배너 데이터 모델
-    -   `class_model`: 빈 강의실 데이터 모델
-    -   `meal_model`: 식단 데이터 모델
-    -   `mealsranking_model`: 식단 랭킹 데이터 모델
-    -   `bus_model`: 버스시간표 모델
+| 역할 | 패키지 |
+|---|---|
+| JSON 직렬화 | `json_serializable` + `json_annotation` |
+| API 클라이언트 | `retrofit_generator` |
+| 상태관리 | `riverpod_generator` |
+| 불변 모델 | `freezed` |
 
--   `repository` : 데이터 소스를 관리하는 저장소 폴더
-    -   `static_repository`: 현재 임시 정적 데이터를 제공하며, 추후 실제 데이터 로직으로 교체될 예정
-    -   `Empty_Class_repository`: 빈 강이실 더미 데이터를 저장하고 있는 repository 추후에 데이터 베이스에서 받아올 것 
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ---
 
-##  향후 개발 계획 
--   소셜 로그인(Kakao, Google, Apple)의 OAuth 2.0 인증 방식 적용 및 각 플랫폼별 API 가이드라인 준수
--   실시간 데이터 연동을 위한 백엔드 API 구축 및 연결
--   공지사항,
--   전반적인 코드 정리와 상태관리9/1)
+## 📂 디렉토리 구조
+
+```
+lib/
+├── main.dart
+│
+├── core/                          # 전역 공통
+│   ├── constants/
+│   │   └── api_constants.dart     # baseUrl 등 API 상수
+│   ├── network/
+│   │   └── dio_provider.dart      # Dio 싱글톤 프로바이더
+│   ├── router/
+│   │   ├── app_router.dart        # GoRouter 설정
+│   │   └── route_paths.dart       # 경로 상수
+│   └── utils/
+│       └── date_formatter.dart    # ISO 8601 → yyyy.MM.dd 포맷터
+│
+├── features/                      # 기능별 모듈
+│   └── notice/                    # 공지사항 기능
+│       ├── data/
+│       │   ├── data_source/
+│       │   │   └── notice_api.dart            # @RestApi Retrofit 인터페이스
+│       │   ├── dto/
+│       │   │   ├── notice_item_response.dart
+│       │   │   ├── paginated_notice_response.dart
+│       │   │   ├── shuttle_item_response.dart
+│       │   │   ├── paginated_shuttle_response.dart
+│       │   │   └── shuttle_recent_response.dart
+│       │   └── repository/
+│       │       └── notice_repository_impl.dart
+│       ├── domain/
+│       │   ├── model/
+│       │   │   ├── notice.dart
+│       │   │   ├── shuttle.dart
+│       │   │   └── shuttle_recent.dart
+│       │   └── repository/
+│       │       └── notice_repository.dart     # abstract Repository
+│       └── presentation/
+│           ├── page/
+│           │   ├── notice_page.dart           # 탭(일반/기숙사/셔틀) 목록
+│           │   └── notice_detail_page.dart    # WebView 상세
+│           ├── provider/
+│           │   └── notice_provider.dart       # @riverpod Notifier
+│           └── widget/
+│               ├── notice_card.dart
+│               └── shuttle_card.dart          # 이미지 탭 → 전체화면 뷰어
+│
+├── shared/                        # feature 간 공유
+│   ├── model/
+│   │   └── pagination_state.dart  # @freezed PaginationState<T>
+│   └── widget/
+│       └── full_screen_image_viewer.dart  # InteractiveViewer 전체화면 이미지
+│
+├── screen/                        # 메인 화면 (구 구조, 점진적 마이그레이션 예정)
+│   ├── maain_shell.dart           # IndexedStack 바텀탭 셸
+│   ├── splashScreen.dart
+│   ├── SignInGateScreen.dart
+│   ├── LoginScreen.dart
+│   ├── SigninScreen.dart
+│   ├── home_screen.dart
+│   ├── Restaurant_detail_screen.dart
+│   ├── BusTime_detail_screen.dart
+│   ├── Empty_detail_screen.dart   # 빈 강의실 지도 + SlidingUpPanel
+│   └── Notice_Screen.dart         # (레거시 WebView 공지, NoticePage로 교체됨)
+│
+├── component/                     # 재사용 위젯 (구 구조)
+│   ├── BannerCard_top.dart        # 상단 배너 슬라이더
+│   ├── MealCard.dart              # 홈 학식 리스트 (세로 컴팩트)
+│   ├── EmptyclassCard.dart        # 홈 빈 강의실 카드
+│   ├── BustimeCardScreen.dart     # 홈 버스 카드
+│   ├── Header_text.dart           # 섹션 헤더 텍스트
+│   ├── SelectableIconButton.dart  # 선택형 아이콘 버튼
+│   ├── Topdar.dart                # 상단바 (날짜, 인삿말, 알림, 프로필)
+│   └── app_bottom_nav.dart        # 바텀 네비게이션 바
+│
+├── model/                         # 도메인 모델 (구 구조)
+│   ├── banner_model.dart
+│   ├── class_model.dart           # EmptyClass
+│   ├── meal_model.dart
+│   ├── Meals_ranking_model.dart
+│   └── bus_model.dart
+│
+├── repository/                    # 데이터 저장소 (구 구조)
+│   ├── static_repository.dart     # 정적 더미 데이터
+│   └── Empty_Class_Repository.dart
+│
+└── const/
+    └── colors.dart
+```
+
+### 바텀 네비게이션 탭 순서
+
+| 인덱스 | 탭 | 화면 |
+|---|---|---|
+| 0 | 버스시간표 | `BusTimeDetailScreen` |
+| 1 | 학식 | `RestaurantDetailScreen` |
+| **2** | **홈 (중앙)** | **`HomeScreen`** |
+| 3 | 공지사항 | `NoticePage` |
+| 4 | 빈 강의실 | `EmptyDetailScreen` |
 
 ---
 
-## 🚀 설치 & 실행 방법
+## 🎨 색상 팔레트
+
+| 용도 | 색상값 |
+|---|---|
+| 메인 포인트 | `Color(0xFF00C4F9)` |
+| 서브 포인트 | `Color(0xFF95E0F4)` |
+| 배경 | `Colors.white` |
+| 서브 배경 | `Color(0xFFFAFAFA)` |
+| 텍스트 기본 | `Colors.black` / `Colors.black87` |
+| 텍스트 보조 | `Colors.grey` |
+
+> Flutter 기본 보라/파랑 계열(`Colors.blue`, `Colors.purple` 등) 사용 금지.
+> `CircularProgressIndicator`, `TabBar`, `ElevatedButton` 등 기본값이 보라색인 위젯은 반드시 색상 지정.
+
+---
+
+## 📦 주요 의존성
+
+```yaml
+dependencies:
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  dio: ^5.9.2
+  retrofit: ">=4.6.0 <4.9.0"
+  json_annotation: ^4.9.0
+  freezed_annotation: ^2.4.4
+  go_router: ^17.1.0
+  flutter_secure_storage: ^10.0.0
+  get_it: ^9.2.1
+  google_maps_flutter: ^2.15.0
+  geolocator: ^14.0.2
+  sliding_up_panel: ^2.0.0+1
+  webview_flutter: ^4.13.1
+
+dev_dependencies:
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.4.3
+  retrofit_generator: ^9.0.0
+  json_serializable: ^6.9.4
+  freezed: ^2.5.7
+```
+
+---
+
+## 🚀 설치 & 실행
 
 ```bash
 # 저장소 클론
-git clone https://github.com/username/remind.git](https://github.com/SongsBy/Sandori.git
+git clone https://github.com/SongsBy/Sandori.git
 
 # 패키지 설치
 flutter pub get
+
+# 코드 생성
+dart run build_runner build --delete-conflicting-outputs
 
 # iOS 실행
 flutter run -d ios
 
 # Android 실행
 flutter run -d android
+```
+
+---
+
+## 🗺️ 향후 개발 계획
+
+- 소셜 로그인 (Kakao / Google / Apple) — PKCE + state 파라미터 적용
+- 실시간 API 연동 (학식 메뉴, 버스 시간표)
+- `screen/`, `component/`, `model/`, `repository/` 레거시 코드 → Feature-First 구조로 점진적 마이그레이션
+- 푸시 알림 (공지사항, 셔틀 출발 알림)
