@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:handori/screen/SignInGateScreen.dart';
-import 'package:handori/screen/SigninScreen.dart';
-import 'package:handori/screen/home_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:handori/core/router/route_paths.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -75,14 +74,11 @@ class _LoginscreenState extends State<Loginscreen> {
   void appleLogin() {
     print('애플로그인');
   }
-///회원 로그인 구동 함수
-  void login() {
-    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
-  }
-///회원 가입 로그인 구동 함수
-  void signin() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => Signinscreen()));
-  }
+  /// 회원 로그인 구동 함수
+  void login() => context.go(RoutePaths.main);
+
+  /// 회원 가입 화면 이동
+  void signin() => context.push('${RoutePaths.login}/sign-in');
 }
 
 class _Top extends StatelessWidget {

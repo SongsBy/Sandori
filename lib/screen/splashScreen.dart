@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:handori/screen/SignInGateScreen.dart';
-import 'package:handori/screen/home_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:handori/core/router/route_paths.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -17,13 +16,8 @@ class _SplashscreenState extends State<Splashscreen> {
       _navigateToGate();
     });
   }
-  ///페이지 전환 함수
-  void _navigateToGate (){
-    Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(builder: (_) => SignInGateScreen())
-    );
-  }
+  /// 페이지 전환 함수
+  void _navigateToGate() => context.go(RoutePaths.gate);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

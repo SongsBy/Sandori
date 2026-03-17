@@ -16,7 +16,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         classCount: '24',
         trafficIcon: 'assets/img/green.png',
         classIcons: 'assets/img/tukorea_computer.png',
-        classList: ['E234', 'E303', 'E402', 'E220', 'E321', 'E502',],
+        classList: ['E234', 'E303', 'E402', 'E220', 'E321', 'E502','E234', 'E303', 'E402', 'E220', 'E321', 'E502',],
         latitude: 37.33968,
         longitude: 126.7348,
       ),
@@ -25,7 +25,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         classCount: '18',
         trafficIcon: 'assets/img/orange.png',
         classIcons: 'assets/img/tukorea_Energy.png',
-        classList: ['C234', 'C303', 'C402', 'C220', 'C321', 'C502'],
+        classList: ['C234', 'C303', 'C402', 'C220', 'C321', 'C502','C234', 'C303', 'C402', 'C220', 'C321', 'C502'],
         latitude: 37.34002,
         longitude:126.7339,
       ),
@@ -55,6 +55,15 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         classList: ['D234', 'D303', 'D402', 'D220', 'D321', 'D502'],
         latitude: 37.33968,
         longitude:126.7340
+      ),
+      EmptyClass(
+          className: 'A동 : ',
+          classCount: '10 ',
+          trafficIcon: 'assets/img/green.png',
+          classIcons: 'assets/img/tino6.png',
+          classList: ['A234', 'A303', 'A402', 'A220', 'A321', 'A502'],
+          latitude: 37.3404155,
+          longitude:126.7329410
       ),
     ];
   }

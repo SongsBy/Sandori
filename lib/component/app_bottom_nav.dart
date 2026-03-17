@@ -46,31 +46,26 @@ class AppBottomNav extends StatelessWidget {
           ),
           items: const [
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/home_filled.png')),
-              activeIcon: ImageIcon(AssetImage('assets/img/home_filled.png')),
-              label: '홈',
-            ),
-
-            BottomNavigationBarItem(
-              /// 버스시간표
               icon: ImageIcon(AssetImage('assets/img/bus_filled.png')),
               activeIcon: ImageIcon(AssetImage('assets/img/bus_filled.png')),
               label: '버스시간표',
             ),
             BottomNavigationBarItem(
-              /// 학식
               icon: ImageIcon(AssetImage('assets/img/meal_filled.png')),
               activeIcon: ImageIcon(AssetImage('assets/img/meal_filled.png')),
               label: '학식',
             ),
             BottomNavigationBarItem(
-              /// 공지사항
+              icon: ImageIcon(AssetImage('assets/img/home_filled.png')),
+              activeIcon: ImageIcon(AssetImage('assets/img/home_filled.png')),
+              label: '홈',
+            ),
+            BottomNavigationBarItem(
               icon: ImageIcon(AssetImage('assets/img/notice_filled.png')),
               activeIcon: ImageIcon(AssetImage('assets/img/notice_filled.png')),
               label: '공지사항',
             ),
             BottomNavigationBarItem(
-              /// 빈 강의실
               icon: ImageIcon(AssetImage('assets/img/emptyclass_filled.png')),
               activeIcon: ImageIcon(AssetImage('assets/img/emptyclass_filled.png')),
               label: '빈 강의실',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:handori/screen/LoginScreen.dart';
-import 'package:handori/screen/SigninScreen.dart';
-import 'package:handori/screen/home_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:handori/core/router/route_paths.dart';
 
 class SignInGateScreen extends StatelessWidget {
   const SignInGateScreen({super.key});
@@ -40,12 +39,8 @@ class SignInGateScreen extends StatelessWidget {
     );
   }
 
-  /// 벼튼 클릭시 동작 함수
-  void _navigateToLogin(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (BuildContext context) => Loginscreen()));
-  }
+  /// 버튼 클릭시 동작 함수
+  void _navigateToLogin(BuildContext context) => context.push(RoutePaths.login);
 
   /// 패딩 함수
   Widget paddingY(double value) => SizedBox(height: value);
@@ -59,7 +54,7 @@ class _Top extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment(1, 1),
-      child: Image.asset('assets/img/gatelogo.png'),
+      child: Image.asset('assets/img/logo1.png'),
     );
   }
 }

@@ -31,26 +31,54 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  get_it: ^8.2.0
-  google_maps_flutter: ^2.12.3
-  geolocator: ^14.0.2
-  sliding_up_panel: ^2.0.0+1
-  webview_flutter: ^4.13.0
+  # ── UI ──────────────────────────────────────────────────────────────────────
+  cupertino_icons: ^1.0.8          # iOS 스타일 아이콘
+
+  # ── 상태관리 (Riverpod) ──────────────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1         # Riverpod 코어
+  riverpod_annotation: ^2.3.5      # @riverpod 어노테이션
+
+  # ── 네트워크 ─────────────────────────────────────────────────────────────────
+  dio: ^5.9.2                      # HTTP 클라이언트
+  retrofit: ">=4.6.0 <4.9.0"      # @RestApi Retrofit 인터페이스 (DartMappable 이전 버전)
+
+  # ── 직렬화 ───────────────────────────────────────────────────────────────────
+  json_annotation: ^4.9.0          # @JsonSerializable 어노테이션
+  freezed_annotation: ^2.4.4       # @freezed 어노테이션
+
+  # ── 라우팅 ───────────────────────────────────────────────────────────────────
+  go_router: ^17.1.0               # GoRouter (context.go / context.push)
+
+  # ── 보안 ─────────────────────────────────────────────────────────────────────
+  flutter_secure_storage: ^10.0.0  # 토큰 안전 저장소 (SharedPreferences 대체)
+
+  # ── 로깅 ─────────────────────────────────────────────────────────────────────
+  logger: ^2.7.0                   # print() 대체 Logger
+
+  # ── 지도 / 위치 ───────────────────────────────────────────────────────────────
+  google_maps_flutter: ^2.15.0     # Google Maps
+  geolocator: ^14.0.2              # 위치 정보
+
+  # ── 기타 ─────────────────────────────────────────────────────────────────────
+  get_it: ^9.2.1                   # 의존성 주입 (DI)
+  sliding_up_panel: ^2.0.0+1       # 슬라이딩 패널 (유지보수 주의)
+  webview_flutter: ^4.13.1         # WebView
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  # ── 린트 ─────────────────────────────────────────────────────────────────────
+  flutter_lints: ^6.0.0            # Flutter 공식 린트
+  # riverpod_lint: ^3.1.3          # ⚠️ build_runner와 analyzer 버전 충돌로 보류
+
+  # ── 코드 생성 ─────────────────────────────────────────────────────────────────
+  build_runner: ^2.4.13            # flutter pub run build_runner build
+  riverpod_generator: ^2.4.3       # @riverpod → .g.dart 생성
+  retrofit_generator: ^9.0.0       # @RestApi → .g.dart 생성
+  json_serializable: ^6.9.4        # @JsonSerializable → .g.dart 생성
+  freezed: ^2.5.7                  # @freezed → .freezed.dart 생성
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -33,7 +33,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   void _handleBack() {
     final shell = MainShell.of(context);
     if (shell != null) {
-      shell.jumpTo(0);
+      shell.jumpTo(2);
     } else if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
@@ -160,7 +160,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
             return Center(child: Text('오류: ${snapshot.error}'));
           }
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9)));
           }
 
           final item  = _applySearch(snapshot.data!);
@@ -416,20 +416,86 @@ class _EmptyClassCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: item.classList
-                      .map((room) =>
-                      _Chip(text: room, icon: Icons.meeting_room_outlined))
-                      .toList(),
-                ),
+              const SizedBox(height: 8),
+                _FloorGroupedRooms(classList: item.classList),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 강의실 목록을 층별로 그룹화하여 세로 표시
+class _FloorGroupedRooms extends StatelessWidget {
+  final List<String> classList;
+
+  const _FloorGroupedRooms({required this.classList});
+
+  /// 강의실 코드에서 층 번호 추출 (첫 번째 숫자)
+  /// 예: "E234" → "2층", "TIP101" → "1층"
+  String _extractFloor(String room) {
+    final match = RegExp(r'\d').firstMatch(room);
+    return match != null ? '${match.group(0)}층' : '기타';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 층별 그룹화
+    final Map<String, List<String>> floorMap = {};
+    for (final room in classList) {
+      final floor = _extractFloor(room);
+      floorMap.putIfAbsent(floor, () => []).add(room);
+    }
+
+    // 층 이름 정렬 ('기타'는 마지막)
+    final sortedFloors = floorMap.keys.toList()
+      ..sort((a, b) {
+        if (a == '기타') return 1;
+        if (b == '기타') return -1;
+        return a.compareTo(b);
+      });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: sortedFloors.map((floor) {
+        final rooms = floorMap[floor]!;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.layers_rounded,
+                      size: 13, color: Color(0xFF4EA6AA)),
+                  const SizedBox(width: 4),
+                  Text(
+                    floor,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF4EA6AA),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 5,
+                runSpacing: 5,
+                children: rooms
+                    .map((room) => _Chip(
+                          text: room,
+                          icon: Icons.meeting_room_outlined,
+                        ))
+                    .toList(),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

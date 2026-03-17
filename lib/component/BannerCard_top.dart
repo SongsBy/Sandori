@@ -22,7 +22,6 @@ class _BannerTopState extends State<BannerTop> {
     super.initState();
     _controller = PageController(viewportFraction: 0.95);
 
-    // 3초마다 자동 슬라이드
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_controller.hasClients && widget.images.isNotEmpty) {
         final nextPage = (_controller.page?.round() ?? 0) + 1;

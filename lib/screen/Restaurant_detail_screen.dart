@@ -46,7 +46,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   void _backToHome() {
     final shell = MainShell.of(context);
     if (shell != null) {
-      shell.jumpTo(0);
+      shell.jumpTo(2);
     } else if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
@@ -66,7 +66,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       backgroundColor: const Color(0xFFFAFAFA),
       body: CustomScrollView(
         slivers: [
-
           SliverAppBar(
             pinned: true,
             backgroundColor: const Color(0xFFFAFAFA),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:handori/screen/LoginScreen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:handori/core/router/route_paths.dart';
 
 class Signinscreen extends StatefulWidget {
   const Signinscreen({super.key});
@@ -114,14 +115,8 @@ class _SigninscreenState extends State<Signinscreen> {
       ),
     );
   }
-  ///회원 가입 버튼 함수
-  void onSigninPressed(){
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) => Loginscreen(),
-      ),
-    );
-  }
+  /// 회원 가입 버튼 함수
+  void onSigninPressed() => context.go(RoutePaths.login);
 }
 ///상단위젯
 class _Top extends StatefulWidget {

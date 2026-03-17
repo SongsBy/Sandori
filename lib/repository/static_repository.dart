@@ -51,7 +51,7 @@ class StaticDataRepository {
   static List<MealsRaking> _createMealRakings(List<Meal> meals) {
     final List<MealsRaking> result = [];
 
-    final medals = ['assets/img/gold.png', 'assets/img/silver.png', 'assets/img/bronze.png'];
+    final medals = ['assets/img/saldol.png', 'assets/img/silver.png', 'assets/img/bronze.png'];
     final borderColors = [Color(0XFFFFD700), Color(0XFFBDBDBD), Color(0XFFCD7F32)];
 
     for(int i =0 ; i < 3; i++ ){

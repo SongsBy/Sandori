@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handori/component/app_bottom_nav.dart';
-import 'package:handori/screen/Notice_Screen.dart';
+import 'package:handori/features/notice/presentation/page/notice_page.dart';
 import 'package:handori/screen/home_screen.dart';
 import 'package:handori/screen/Empty_detail_screen.dart';
 import 'package:handori/screen/BusTime_detail_screen.dart';
@@ -17,15 +17,15 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _index = 0;
+  int _index = 2;
 
   void jumpTo(int i) => setState(() => _index = i);
 
   final _pages = const [
-    HomeScreen(),             // 0
-    BusTimeDetailScreen(),    // 1
-    RestaurantDetailScreen(), // 2
-    NoticeScreen(),           // 3
+    BusTimeDetailScreen(),    // 0
+    RestaurantDetailScreen(), // 1
+    HomeScreen(),             // 2 ← 중앙
+    NoticePage(),             // 3
     EmptyDetailScreen(),      // 4
   ];
 

@@ -1,37 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:handori/core/router/app_router.dart';
 import 'package:handori/repository/empty_class_repository.dart';
 import 'package:handori/repository/static_repository.dart';
-import 'package:handori/screen/maain_shell.dart';
-import 'package:handori/screen/splashScreen.dart';
 
 final getIt = GetIt.instance;
 
 void setupLocator() {
-  // Static 데이터 (meal / bus / banner)
   getIt.registerLazySingleton<StaticDataRepository>(() => StaticDataRepository());
-
-  // 빈 강의실 (Fake 구현)
   getIt.registerLazySingleton<EmptyClassRepository>(() => FakeEmptyClassRepository());
 }
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      home: const Splashscreen(),
-      routes: {
-        '/main': (_) => const MainShell()
-      },
+      routerConfig: appRouter,
       theme: ThemeData(
         fontFamily: 'Pretendard',
         textTheme: const TextTheme(

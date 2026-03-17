@@ -76,7 +76,7 @@ class _BusTimeDetailScreenState extends State<BusTimeDetailScreen> {
   void _handleBack() {
     final shell = MainShell.of(context);
     if (shell != null) {
-      shell.jumpTo(0);
+      shell.jumpTo(2);
     } else if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
