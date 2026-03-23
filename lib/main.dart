@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
@@ -19,6 +20,12 @@ void setupLocator() {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   setupLocator();
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -32,6 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
       theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFFFAFAFA),
         fontFamily: 'Pretendard',
         textTheme: const TextTheme(
           displayLarge: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),

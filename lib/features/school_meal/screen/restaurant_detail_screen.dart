@@ -1,10 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:handori/common/component/header_text.dart';
-import 'package:handori/features/school_meal/model/meals_ranking_model.dart';
 import 'package:handori/features/school_meal/model/meal_model.dart';
 import 'package:handori/common/repository/static_repository.dart';
 import 'package:handori/common/layout/root_tab.dart';
 
+// ── 색상 상수 ──────────────────────────────────────────────────
+const _kPrimary    = Color(0xFF00C4F9);
+const _kCardBorder = Color(0xFFE2EEF3);
+const _kCardBg     = Color(0xFFF2FBFE);
+const _kGreen      = Color(0xFF66BB6A);
+const _kOrange     = Color(0xFFFFB74D);
+const _kRed        = Color(0xFFE57373);
+
+enum _MealStatus { notOperated, preparing, operating, closed }
+
+/// 현재 시간 기준 운영 상태 판단
+_MealStatus _computeStatus(MealTimeSlot slot) {
+  if (slot.timeRange.isEmpty || slot.menus.isEmpty) return _MealStatus.notOperated;
+  final parts = slot.timeRange.split('~');
+  if (parts.length != 2) return _MealStatus.notOperated;
+  final s = parts[0].trim().split(':');
+  final e = parts[1].trim().split(':');
+  if (s.length != 2 || e.length != 2) return _MealStatus.notOperated;
+  final now    = TimeOfDay.now();
+  final start  = int.parse(s[0]) * 60 + int.parse(s[1]);
+  final end    = int.parse(e[0]) * 60 + int.parse(e[1]);
+  final nowMin = now.hour * 60 + now.minute;
+  if (nowMin < start) return _MealStatus.preparing;
+  if (nowMin <= end)  return _MealStatus.operating;
+  return _MealStatus.closed;
+}
+
+/// 가격 숫자 → "5,500" 형식
+String _formatPrice(int price) {
+  final s = price.toString();
+  final buf = StringBuffer();
+  for (int i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) buf.write(',');
+    buf.write(s[i]);
+  }
+  return buf.toString();
+}
+
+// ──────────────────────────────────────────────────────────────
 class RestaurantDetailScreen extends StatefulWidget {
   const RestaurantDetailScreen({super.key});
 
@@ -13,35 +50,9 @@ class RestaurantDetailScreen extends StatefulWidget {
 }
 
 class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
-  late final PageController _controller;
-
-
-  double _pageValue = 0.0;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = PageController(viewportFraction: 0.78);
-
-
-    _controller.addListener(() {
-      if (!mounted) return;
-      if (_controller.positions.length == 1) {
-        final p = _controller.page ?? _controller.initialPage.toDouble();
-        setState(() => _pageValue = p);
-      } else {
-
-        setState(() => _pageValue = _currentIndex.toDouble());
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  int _selectedTabIndex = 0;
+  // 확장된 시간대 인덱스 (0=조식, 1=중식, 2=석식)
+  final Set<int> _expandedSlots = {1, 2};
 
   void _backToHome() {
     final shell = RootTab.of(context);
@@ -55,17 +66,17 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final meals = StaticDataRepository.meals;
-    final raking = StaticDataRepository.mealRakings;
 
-    if (meals.isEmpty) {
-      return const Center(child: Text('데이터가 없습니다'));
-    }
-    final textTheme = Theme.of(context).textTheme;
+    if (meals.isEmpty) return const Center(child: Text('데이터가 없습니다'));
+
+    final textTheme    = Theme.of(context).textTheme;
+    final selectedMeal = meals[_selectedTabIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       body: CustomScrollView(
         slivers: [
+          // ── 상단 바 (기존 유지) ──────────────────────────────
           SliverAppBar(
             pinned: true,
             backgroundColor: const Color(0xFFFAFAFA),
@@ -87,8 +98,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                         borderRadius: BorderRadius.circular(12),
                         onTap: _backToHome,
                         child: const SizedBox(
-                          width: 44,
-                          height: 44,
+                          width: 44, height: 44,
                           child: Icon(Icons.arrow_back, color: Colors.black),
                         ),
                       ),
@@ -147,68 +157,65 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
             ),
           ),
 
-          // 본문
+          // ── 본문 ──────────────────────────────────────────────
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 20),
-                  // 타이틀(아이콘 제거)
-                  const HeaderText(title: '오늘 식당 리스트'),
-                  const SizedBox(height: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 14),
 
+                // 식당 선택 탭 바
+                _RestaurantTabBar(
+                  meals: meals,
+                  selectedIndex: _selectedTabIndex,
+                  onTabSelected: (i) => setState(() {
+                    _selectedTabIndex = i;
+                    _expandedSlots
+                      ..clear()
+                      ..addAll({1, 2});
+                  }),
+                ),
 
-                  SizedBox(
-                    height: 360,
-                    child: PageView.builder(
-                      controller: _controller,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: meals.length,
-                      padEnds: false,
-                      onPageChanged: (i) => setState(() => _currentIndex = i),
-                      itemBuilder: (context, index) {
+                const SizedBox(height: 14),
 
-                        final dist = (_pageValue - index).abs();
-                        final scale = 1 - (dist * 0.08).clamp(0.0, 0.08);
-                        final opacity = 1 - (dist * 0.3).clamp(0.0, 0.3);
-                        return Opacity(
-                          opacity: opacity,
-                          child: Transform.scale(
-                            scale: scale,
-                            child: _MealPrettyCard(meal: meals[index]),
+                // 선택된 식당 요약 헤더 카드
+                _RestaurantHeaderCard(meal: selectedMeal),
+
+                const SizedBox(height: 18),
+
+                // 식사 시간대 섹션
+                if (selectedMeal.timeSlots != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: selectedMeal.timeSlots!.asMap().entries.map((entry) {
+                        final idx      = entry.key;
+                        final slot     = entry.value;
+                        final status   = _computeStatus(slot);
+                        final expanded = _expandedSlots.contains(idx);
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _MealTimeCard(
+                            slot: slot,
+                            status: status,
+                            isExpanded: expanded,
+                            onToggle: status != _MealStatus.notOperated
+                                ? () => setState(() {
+                                      if (expanded) {
+                                        _expandedSlots.remove(idx);
+                                      } else {
+                                        _expandedSlots.add(idx);
+                                      }
+                                    })
+                                : null,
                           ),
                         );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-
-                  Center(
-                    child: _DotsIndicator(
-                      count: meals.length,
-                      current: _pageValue,
+                      }).toList(),
                     ),
                   ),
 
-                  const SizedBox(height: 28),
-                  const HeaderText(title: '오늘의 인기 학식'),
-                  const SizedBox(height: 12),
-
-                  // ====== 오늘의 인기 학식 ======
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: raking.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, i) => _RankingCard(item: raking[i]),
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
-              ),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ],
@@ -217,116 +224,189 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   }
 }
 
-/// 한 끼 카드(UI 개선)
-class _MealPrettyCard extends StatelessWidget {
-  final Meal meal;
-  const _MealPrettyCard({required this.meal});
+// ──────────────────────────────────────────────────────────────
+/// 식당 선택 수평 스크롤 탭 바
+class _RestaurantTabBar extends StatelessWidget {
+  final List<Meal> meals;
+  final int selectedIndex;
+  final void Function(int) onTabSelected;
+
+  const _RestaurantTabBar({
+    required this.meals,
+    required this.selectedIndex,
+    required this.onTabSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final largeText = Theme.of(context).textTheme.displayLarge;
-    final mediumText = Theme.of(context).textTheme.displayMedium;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFE9F8FF), Color(0xFFFFFFFF)],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF95E0F4).withOpacity(.22),
-            blurRadius: 22,
-            offset: const Offset(0, 10),
-          ),
-        ],
-        border: Border.all(color: const Color(0xFF95E0F4), width: 1.2),
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: meals.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final isSelected = i == selectedIndex;
+          return GestureDetector(
+            onTap: () => onTabSelected(i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? _kPrimary : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: _kPrimary, width: 1.2),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: _kPrimary.withValues(alpha: 0.30),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        )
+                      ]
+                    : [],
+              ),
+              child: Text(
+                meals[i].Name,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
+              ),
+            ),
+          );
+        },
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+/// 선택된 식당 요약 헤더 카드 (그라디언트)
+class _RestaurantHeaderCard extends StatelessWidget {
+  final Meal meal;
+  const _RestaurantHeaderCard({required this.meal});
+
+  @override
+  Widget build(BuildContext context) {
+    // 메뉴가 있는 시간대만 chips로 표시
+    final slots = meal.timeSlots
+            ?.where((s) => s.timeRange.isNotEmpty && s.menus.isNotEmpty)
+            .toList() ??
+        [];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF00C4F9), Color(0xFF0096C7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00C4F9).withValues(alpha: 0.38),
+              blurRadius: 20,
+              offset: const Offset(0, 9),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
+                // 식당 아이콘 컨테이너
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 52,
+                  height: 52,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFBFEAF6)),
+                    color: Colors.white.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  padding: const EdgeInsets.all(6),
-                  child: Image.asset('assets/img/logo1.png'),
+                  child: const Icon(
+                    Icons.restaurant_rounded,
+                    color: Colors.white,
+                    size: 27,
+                  ),
                 ),
                 const SizedBox(width: 14),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('점심  11:00 ~ 13:00'),
-                    SizedBox(height: 4),
-                    Text('저녁  17:00 ~ 18:00'),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        meal.Name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on_outlined,
+                            color: Colors.white70,
+                            size: 13,
+                          ),
+                          const SizedBox(width: 3),
+                          Expanded(
+                            child: Text(
+                              meal.location ?? '',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 14),
-
-
-            Text(
-              meal.Name,
-              style: largeText?.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
+            // 운영 시간대 chips
+            if (slots.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: slots.map((s) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      '${s.label}  ${s.timeRange}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            ),
-            const SizedBox(height: 10),
-
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF1E3),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: const Color(0xFFFFBB85)),
-              ),
-              child: Text(
-                meal.mainDish,
-                style: mediumText?.copyWith(
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFFEB6D00),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: meal.sideDishes
-                  .map((e) => _Chip(text: e, icon: Icons.restaurant_menu))
-                  .toList(),
-            ),
-
-            const Spacer(),
-
-
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              height: 1,
-              color: const Color(0xFFEAF7FB),
-            ),
+            ],
           ],
         ),
       ),
@@ -334,40 +414,170 @@ class _MealPrettyCard extends StatelessWidget {
   }
 }
 
-/// 작은 칩
-class _Chip extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _Chip({required this.text, required this.icon});
+// ──────────────────────────────────────────────────────────────
+/// 식사 시간대 확장/축소 카드 (조식 / 중식 / 석식)
+class _MealTimeCard extends StatelessWidget {
+  final MealTimeSlot slot;
+  final _MealStatus status;
+  final bool isExpanded;
+  final VoidCallback? onToggle;
+
+  const _MealTimeCard({
+    required this.slot,
+    required this.status,
+    required this.isExpanded,
+    this.onToggle,
+  });
+
+  Color get _statusColor {
+    switch (status) {
+      case _MealStatus.notOperated: return Colors.black38;
+      case _MealStatus.preparing:   return _kOrange;
+      case _MealStatus.operating:   return _kGreen;
+      case _MealStatus.closed:      return _kRed;
+    }
+  }
+
+  String get _statusText {
+    switch (status) {
+      case _MealStatus.notOperated: return '미운영';
+      case _MealStatus.preparing:   return '준비중  ${slot.timeRange}';
+      case _MealStatus.operating:   return '운영중  ${slot.timeRange}';
+      case _MealStatus.closed:      return '운영종료';
+    }
+  }
+
+  /// 시간대별 아이콘
+  IconData get _slotIcon {
+    switch (slot.label) {
+      case '조식': return Icons.wb_sunny_outlined;
+      case '중식': return Icons.wb_sunny;
+      case '석식': return Icons.brightness_3;
+      default:    return Icons.access_time_outlined;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: const Color(0xFFE6F2F7)),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _kCardBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.03),
-            blurRadius: 6,
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
         children: [
-          const Icon(Icons.restaurant_menu, size: 14, color: Color(0xFF6DB6D9)),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12.8,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF35576B),
+          // ── 헤더 ──
+          GestureDetector(
+            onTap: onToggle,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+              child: Row(
+                children: [
+                  // 시간대 아이콘
+                  Container(
+                    width: 36, height: 36,
+                    decoration: BoxDecoration(
+                      color: _kCardBg,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(_slotIcon, size: 18, color: _kPrimary),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    slot.label,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const Spacer(),
+                  // 상태 뱃지 (pill)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _statusColor.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 5, height: 5,
+                          decoration: BoxDecoration(
+                            color: _statusColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          _statusText,
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: _statusColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (onToggle != null) ...[
+                    const SizedBox(width: 6),
+                    // 화살표 회전 애니메이션
+                    AnimatedRotation(
+                      turns: isExpanded ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 250),
+                      child: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.black38,
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
+          ),
+
+          // ── 메뉴 내용 (부드러운 확장/축소 애니메이션) ──
+          AnimatedSize(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: slot.menus.isNotEmpty && isExpanded
+                ? Column(
+                    children: [
+                      const Divider(height: 1, color: _kCardBorder),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                        child: Column(
+                          children: slot.menus.asMap().entries.map((entry) {
+                            return Column(
+                              children: [
+                                if (entry.key > 0)
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    child: Divider(height: 1, color: _kCardBorder),
+                                  ),
+                                _MealSetSection(menuSet: entry.value),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),
@@ -375,105 +585,99 @@ class _Chip extends StatelessWidget {
   }
 }
 
-/// 안전한 도트 인디케이터(컨트롤러 직접 접근 X)
-class _DotsIndicator extends StatelessWidget {
-  final int count;
-  final double current; // 부드러운 실수 페이지 값
+// ──────────────────────────────────────────────────────────────
+/// 메뉴 세트 (가격 뱃지 + 아이템 목록)
+class _MealSetSection extends StatelessWidget {
+  final MealSet menuSet;
+  const _MealSetSection({required this.menuSet});
 
-  const _DotsIndicator({required this.count, required this.current});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: _kCardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _kCardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 가격 뱃지
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+            decoration: BoxDecoration(
+              color: _kPrimary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: _kPrimary.withValues(alpha: 0.25)),
+            ),
+            child: Text(
+              '${_formatPrice(menuSet.price)} 원',
+              style: const TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                color: _kPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ..._buildRows(menuSet.items),
+        ],
+      ),
+    );
+  }
+
+  /// 메뉴 항목 2열 Row 목록으로 변환
+  List<Widget> _buildRows(List<String> items) {
+    final rows = <Widget>[];
+    for (int i = 0; i < items.length; i += 2) {
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5),
+          child: Row(
+            children: [
+              Expanded(child: _MenuItem(text: items[i])),
+              Expanded(
+                child: i + 1 < items.length
+                    ? _MenuItem(text: items[i + 1])
+                    : const SizedBox(),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return rows;
+  }
+}
+
+/// 단일 메뉴 아이템 (도트 불릿 + 텍스트)
+class _MenuItem extends StatelessWidget {
+  final String text;
+  const _MenuItem({required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(count, (i) {
-        final isActive = (current - i).abs() < 0.5;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          height: 8,
-          width: isActive ? 18 : 8,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 4, height: 4,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF6DB6D9) : const Color(0xFFBFDDEB),
-            borderRadius: BorderRadius.circular(999),
+            color: _kPrimary.withValues(alpha: 0.45),
+            shape: BoxShape.circle,
           ),
-        );
-      }),
+        ),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 13.5, color: Colors.black87),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// 인기 학식 카드
-class _RankingCard extends StatelessWidget {
-  final MealsRaking item;
-  const _RankingCard({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    final mediumText = Theme.of(context).textTheme.displayMedium;
-    return Container(
-      height: 82,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: item.borderColor, width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: item.borderColor.withOpacity(.12),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Row(
-        children: [
-          // 메달 이미지
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: item.borderColor.withOpacity(.09),
-            ),
-            padding: const EdgeInsets.all(6),
-            child: Image.asset(item.medalImage, fit: BoxFit.contain),
-          ),
-          const SizedBox(width: 12),
-          // 텍스트들
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: mediumText?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFE9ECFA)),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    '[${item.menu}]',
-                    style: mediumText?.copyWith(
-                      fontSize: 13.2,
-                      color: const Color(0xFF4E56B9),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, color: Colors.black38),
-        ],
-      ),
-    );
-  }
-}

@@ -1,4 +1,5 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -20,25 +21,21 @@ class EmptyDetailScreen extends StatefulWidget {
 }
 
 class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
+  static const _primary = Color(0xFF5C6BC0);
+  static const _minPanelH = 120.0;
 
   late final Future<List<EmptyClass>> dataFuture;
-
-  Set<Marker> _markers ={};
+  List<EmptyClass>? _allData;
+  Set<Marker> _markers = {};
+  String? _selectedId;
+  final Map<String, ({BitmapDescriptor icon, Offset anchor})> _iconCache = {};
+  int _markerGen = 0;
 
   final PanelController _panelController = PanelController();
   final TextEditingController _searchCtrl = TextEditingController();
+  final ScrollController _listScroll = ScrollController();
   String _query = '';
   double _panelPos = 0.0;
-
-  void _handleBack() {
-    final shell = RootTab.of(context);
-    if (shell != null) {
-      shell.jumpTo(2);
-    } else if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
-  }
-
 
   late GoogleMapController _mapController;
   CameraPosition _initialCamera = const CameraPosition(
@@ -49,12 +46,15 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   @override
   void initState() {
     super.initState();
-
-
     dataFuture = GetIt.I<EmptyClassRepository>().fetchEmptyClassesStatically();
+    dataFuture.then((data) {
+      if (mounted) setState(() => _allData = data);
+      _refreshMarkers(data);
+    }).catchError((_) {});
 
     _searchCtrl.addListener(() {
       setState(() => _query = _searchCtrl.text.trim());
+      if (_allData != null) _refreshMarkers(_allData!);
     });
 
     _initCameraToMyLocation();
@@ -63,6 +63,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   @override
   void dispose() {
     _searchCtrl.dispose();
+    _listScroll.dispose();
     super.dispose();
   }
 
@@ -70,7 +71,6 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) return;
-
       var perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) {
         perm = await Geolocator.requestPermission();
@@ -79,77 +79,260 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
           perm != LocationPermission.whileInUse) {
         return;
       }
-
       final pos = await Geolocator.getCurrentPosition();
-      final cam = CameraPosition(
-        target: LatLng(pos.latitude, pos.longitude),
-        zoom: 18.5,
-      );
-
-
+      final cam =
+          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 18.5);
       _initialCamera = cam;
-
-
       if (mounted) {
         try {
-          _mapController.animateCamera(
-            CameraUpdate.newCameraPosition(cam),
-          );
-        } catch (_) {
-        }
+          _mapController.animateCamera(CameraUpdate.newCameraPosition(cam));
+        } catch (_) {}
       }
-    } catch (_) {
-
-    }
+    } catch (_) {}
   }
 
-  void _goToMyLocation() => _initCameraToMyLocation();
+  Future<void> _refreshMarkers(List<EmptyClass> allData) async {
+    _markerGen++;
+    final gen = _markerGen;
+    final filtered = _applySearch(allData);
+    final markers = <Marker>{};
 
+    for (final e in filtered) {
+      if (gen != _markerGen) return;
+      final name = e.className.replaceAll(':', '').trim();
+      final key = '$name:${e.classCount}';
+      final iconData =
+          _iconCache[key] ?? await _buildCustomMarkerIcon(name, e.classCount);
+      _iconCache[key] = iconData;
 
-  Set<Marker> _buildMarkers(List<EmptyClass> items) {
-    return items.map((e) {
-      return Marker(
+      markers.add(Marker(
         markerId: MarkerId(e.className),
         position: LatLng(e.latitude, e.longitude),
-        infoWindow: InfoWindow(
-          title: e.className.replaceAll(':', '').trim(),
-          snippet: '빈 강의실: ${e.classCount}개',
-        ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueAzure,
-        ),
-        onTap: () async{
+        icon: iconData.icon,
+        anchor: iconData.anchor,
+        onTap: () => _onMarkerTap(e, filtered),
+      ));
+    }
 
-          if (_panelController.isAttached) {
-            await Future.delayed(Duration(milliseconds: 820));
-            _panelController.open();
+    if (gen != _markerGen || !mounted) return;
+    setState(() => _markers = markers);
+  }
+
+  void _onMarkerTap(EmptyClass e, List<EmptyClass> filtered) {
+    setState(() => _selectedId = e.className);
+    if (_panelController.isAttached) {
+      _panelController.open();
+      final idx = filtered.indexOf(e);
+      if (idx >= 0) {
+        Future.delayed(const Duration(milliseconds: 450), () {
+          if (_listScroll.hasClients) {
+            _listScroll.animateTo(
+              idx * 180.0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
           }
-        },
-      );
-    }).toSet();
+        });
+      }
+    }
   }
 
   List<EmptyClass> _applySearch(List<EmptyClass> list) {
     if (_query.isEmpty) return list;
     final q = _query.toLowerCase();
-    return list.where((e) {
-      final nameHit = e.className.toLowerCase().contains(q);
-      final roomHit = e.classList.any((r) => r.toLowerCase().contains(q));
-      return nameHit || roomHit;
-    }).toList();
+    return list
+        .where((e) =>
+            e.className.toLowerCase().contains(q) ||
+            e.classList.any((r) => r.toLowerCase().contains(q)))
+        .toList();
+  }
+
+  void _handleBack() {
+    final shell = RootTab.of(context);
+    if (shell != null) {
+      shell.jumpTo(2);
+    } else if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  /// 건물명 + 빈 강의실 개수를 항상 표시하는 커스텀 마커 비트맵 생성
+  static Future<({BitmapDescriptor icon, Offset anchor})> _buildCustomMarkerIcon(
+    String name,
+    String count,
+  ) async {
+    const double scale = 3.0;
+    const double paddingH = 10.0;
+    const double paddingV = 7.0;
+    const double radius = 10.0;
+    const double gap = 6.0;
+    const double tipH = 9.0;
+    const double tipHalfW = 7.0;
+    const double shadowBlur = 2.5;
+    const double shadowOff = 1.5;
+    const double badgePadH = 6.0;
+    const double badgePadV = 3.0;
+    const Color primary = Color(0xFF5C6BC0);
+
+    final nameTp = TextPainter(
+      text: TextSpan(
+        text: name,
+        style: const TextStyle(
+          fontSize: 12.0,
+          fontWeight: FontWeight.w700,
+          color: Colors.black87,
+          letterSpacing: -0.2,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final countTp = TextPainter(
+      text: TextSpan(
+        text: '$count개',
+        style: const TextStyle(
+          fontSize: 9.5,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final double badgeW = countTp.width + badgePadH * 2;
+    final double badgeH = countTp.height + badgePadV * 2;
+    final double pillW = paddingH + nameTp.width + gap + badgeW + paddingH;
+    final double pillH =
+        math.max(nameTp.height + paddingV * 2, badgeH + paddingV * 2);
+
+    const double ox = shadowBlur;
+    const double oy = shadowBlur;
+    final double canvasW = pillW + shadowBlur * 2 + shadowOff;
+    final double canvasH = pillH + tipH + shadowBlur * 2 + shadowOff;
+
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(
+      recorder,
+      Rect.fromLTWH(0, 0, canvasW * scale, canvasH * scale),
+    );
+    canvas.scale(scale);
+
+    // Drop shadow (pill)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(ox + shadowOff, oy + shadowOff, pillW, pillH),
+        const Radius.circular(radius),
+      ),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.15)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, shadowBlur),
+    );
+
+    // Drop shadow (tip)
+    canvas.drawPath(
+      Path()
+        ..moveTo(
+            ox + shadowOff + pillW / 2 - tipHalfW, oy + shadowOff + pillH)
+        ..lineTo(
+            ox + shadowOff + pillW / 2 + tipHalfW, oy + shadowOff + pillH)
+        ..lineTo(ox + shadowOff + pillW / 2, oy + shadowOff + pillH + tipH)
+        ..close(),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.08)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, shadowBlur),
+    );
+
+    // White pill
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(ox, oy, pillW, pillH),
+        const Radius.circular(radius),
+      ),
+      Paint()..color = Colors.white,
+    );
+
+    // Left accent bar
+    canvas.drawRRect(
+      RRect.fromLTRBAndCorners(
+        ox, oy, ox + 3.5, oy + pillH,
+        topLeft: const Radius.circular(radius),
+        bottomLeft: const Radius.circular(radius),
+      ),
+      Paint()..color = primary,
+    );
+
+    // Border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(ox, oy, pillW, pillH),
+        const Radius.circular(radius),
+      ),
+      Paint()
+        ..color = const Color(0xFFD5D9F5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7,
+    );
+
+    // Arrow tip
+    final tipX = ox + pillW / 2;
+    final tipPath = Path()
+      ..moveTo(tipX - tipHalfW, oy + pillH)
+      ..lineTo(tipX + tipHalfW, oy + pillH)
+      ..lineTo(tipX, oy + pillH + tipH)
+      ..close();
+    canvas.drawPath(tipPath, Paint()..color = Colors.white);
+    canvas.drawPath(
+      tipPath,
+      Paint()
+        ..color = const Color(0xFFD5D9F5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.7,
+    );
+
+    // Count badge
+    final double badgeX = ox + paddingH + nameTp.width + gap;
+    final double badgeY = oy + (pillH - badgeH) / 2;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
+        const Radius.circular(999),
+      ),
+      Paint()..color = primary,
+    );
+
+    // Name text
+    nameTp.paint(canvas, Offset(ox + paddingH + 2, oy + (pillH - nameTp.height) / 2));
+
+    // Count text
+    countTp.paint(
+      canvas,
+      Offset(
+        badgeX + (badgeW - countTp.width) / 2,
+        badgeY + (badgeH - countTp.height) / 2,
+      ),
+    );
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(
+        (canvasW * scale).round(), (canvasH * scale).round());
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    final icon = BitmapDescriptor.bytes(
+      byteData!.buffer.asUint8List(),
+      imagePixelRatio: scale,
+    );
+
+    // 화살표 끝(지리 위치)에 앵커 설정
+    final double anchorX = (ox + pillW / 2) / canvasW;
+    final double anchorY = (oy + pillH + tipH) / canvasH;
+    return (icon: icon, anchor: Offset(anchorX, anchorY));
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    final double fabBottomStart = 210.0;
-    final double fabBottomEndExtra = 220.0;
-    final double fabBottom = lerpDouble(
-      fabBottomStart,
-      fabBottomStart + fabBottomEndExtra,
-      _panelPos.clamp(0.0, 0.5) / 0.5,
-    )!;
+    final maxPanelH = size.height * 0.8;
+    final fabBottom =
+        _minPanelH + (_panelPos * (maxPanelH - _minPanelH)) + 16;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -160,27 +343,31 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
             return Center(child: Text('오류: ${snapshot.error}'));
           }
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9)));
+            return const Center(
+                child: CircularProgressIndicator(color: _primary));
           }
 
-          final item  = _applySearch(snapshot.data!);
-          _markers = _buildMarkers(item);
-
-          final items = _applySearch(snapshot.data!);
-          final double panelMaxHeight = size.height * 0.8;
+          final allItems = snapshot.data!;
+          final items = _applySearch(allItems);
 
           return SlidingUpPanel(
             controller: _panelController,
-            color: const Color(0XFFFAFAFA),
-            maxHeight: panelMaxHeight,
-            minHeight: 80.0,
+            color: Colors.white,
+            maxHeight: maxPanelH,
+            minHeight: _minPanelH,
             panelSnapping: true,
-            snapPoint: 0.5,
+            snapPoint: 0.4,
             parallaxEnabled: true,
-            parallaxOffset: .18,
-
-            panel: _buildPanelContent(items),
-
+            parallaxOffset: .12,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, -4),
+              ),
+            ],
+            panel: _buildPanel(items, allItems),
             body: Stack(
               children: [
                 Positioned.fill(
@@ -193,141 +380,230 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                     mapType: MapType.normal,
                   ),
                 ),
-
                 SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-                    child: Row(
-                      children: [
-                        Material(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          elevation: 2,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap:_handleBack,
-                            child: const SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Icon(Icons.arrow_back, color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Material(
-                            elevation: 2,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Row(
-                                children: [
-                                   SizedBox(width: 12),
-                                   Icon(Icons.search, color: Colors.black54),
-                                   SizedBox(width: 8),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _searchCtrl,
-                                      textInputAction: TextInputAction.search,
-                                      decoration: const InputDecoration(
-                                        hintText: '건물명 또는 강의실 코드로 검색 (예: E동, E234)',
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_query.isNotEmpty)
-                                    IconButton(
-                                      icon: const Icon(Icons.close, size: 18),
-                                      color: Colors.black54,
-                                      onPressed: () {
-                                        _searchCtrl.clear();
-                                        FocusScope.of(context).unfocus();
-                                      },
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: _buildTopBar(),
                   ),
                 ),
-
-
                 AnimatedPositioned(
-                  duration:Duration(milliseconds: 120),
+                  duration: const Duration(milliseconds: 150),
                   curve: Curves.easeOut,
                   bottom: fabBottom,
                   right: 16,
-                  child: FloatingActionButton(
+                  child: FloatingActionButton.small(
                     backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    onPressed: _goToMyLocation,
-                    child: Icon(Icons.my_location),
+                    foregroundColor: Colors.black87,
+                    elevation: 4,
+                    onPressed: _initCameraToMyLocation,
+                    child: const Icon(Icons.my_location_rounded, size: 20),
                   ),
                 ),
               ],
             ),
-
-            onPanelSlide: (pos) {
-              setState(() => _panelPos = pos);
-            },
+            onPanelSlide: (pos) => setState(() => _panelPos = pos),
           );
         },
       ),
     );
   }
 
-  Widget _buildPanelContent(List<EmptyClass> items) {
-    final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Container(
-                width: 80,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade400,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+  Widget _buildTopBar() {
+    return Row(
+      children: [
+        Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          elevation: 3,
+          shadowColor: Colors.black.withValues(alpha: 0.18),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: _handleBack,
+            child: const SizedBox(
+              width: 44,
+              height: 44,
+              child: Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.black87, size: 20),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Material(
+            elevation: 3,
+            shadowColor: Colors.black.withValues(alpha: 0.18),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 14),
+                  const Icon(Icons.search_rounded,
+                      color: Colors.black38, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: _searchCtrl,
+                      textInputAction: TextInputAction.search,
+                      style: const TextStyle(
+                          fontSize: 14, color: Colors.black87),
+                      decoration: const InputDecoration(
+                        hintText: '건물명 또는 강의실 코드 (예: E동, E234)',
+                        hintStyle: TextStyle(
+                            color: Colors.black38, fontSize: 13.5),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+                  if (_query.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        _searchCtrl.clear();
+                        FocusScope.of(context).unfocus();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Icon(Icons.close_rounded,
+                            size: 18, color: Colors.black38),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
-          SizedBox(height: 12),
-          Text(
-            '빈 강의실 현황',
-            style: textTheme.titleMedium?.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 12),
+        ),
+      ],
+    );
+  }
 
-          Expanded(
-            child: items.isEmpty
-                ? Center(child: Text('조건에 맞는 빈 강의실이 없습니다.'))
-                : ListView.separated(
-              padding: EdgeInsets.zero,
-              itemCount: items.length,
-              separatorBuilder: (_, __) =>SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final e = items[index];
-                return _EmptyClassCard(item: e);
-              },
-            ),
+  Widget _buildPanel(List<EmptyClass> items, List<EmptyClass> allItems) {
+    final totalBuildings = allItems.length;
+    final totalRooms =
+        allItems.fold<int>(0, (s, e) => s + (int.tryParse(e.classCount) ?? 0));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 헤더 (패널 최소 높이에서도 항상 보임)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: _primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    child: const Icon(Icons.meeting_room_outlined,
+                        color: _primary, size: 20),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    '빈 강의실 현황',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const Spacer(),
+                  _StatChip(label: '$totalBuildings동', color: _primary),
+                  const SizedBox(width: 6),
+                  _StatChip(
+                      label: '총 $totalRooms개',
+                      color: const Color(0xFF26C6DA)),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
+        const SizedBox(height: 12),
+        const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F8)),
+        const SizedBox(height: 4),
+        // 리스트
+        Expanded(
+          child: items.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off_rounded,
+                          size: 52, color: Colors.grey.shade300),
+                      const SizedBox(height: 12),
+                      const Text(
+                        '조건에 맞는 빈 강의실이 없습니다.',
+                        style:
+                            TextStyle(color: Colors.black38, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  controller: _listScroll,
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (_, idx) => _EmptyClassCard(
+                    item: items[idx],
+                    isSelected: items[idx].className == _selectedId,
+                    onTap: () {
+                      setState(() => _selectedId = items[idx].className);
+                      try {
+                        _mapController.animateCamera(
+                          CameraUpdate.newLatLng(
+                            LatLng(items[idx].latitude,
+                                items[idx].longitude),
+                          ),
+                        );
+                      } catch (_) {}
+                    },
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final String label;
+  final Color color;
+  const _StatChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+            fontSize: 12, fontWeight: FontWeight.w700, color: color),
       ),
     );
   }
@@ -335,93 +611,146 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
 
 class _EmptyClassCard extends StatelessWidget {
   final EmptyClass item;
-  const _EmptyClassCard({required this.item});
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  const _EmptyClassCard(
+      {required this.item, this.isSelected = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).textTheme;
+    const primary = Color(0xFF5C6BC0);
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF7F5FF), Color(0xFFFDFDFF)],
-        ),
+        gradient: isSelected
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFEEF0FF), Color(0xFFF5F6FF)],
+              )
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFF7F5FF), Color(0xFFFDFDFF)],
+              ),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isSelected
+              ? primary.withValues(alpha: 0.4)
+              : const Color(0xFFE8E6F8),
+          width: isSelected ? 1.5 : 1.0,
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6D7AC9).withOpacity(0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            color: isSelected
+                ? primary.withValues(alpha: 0.12)
+                : const Color(0xFF6D7AC9).withValues(alpha: 0.06),
+            blurRadius: isSelected ? 16 : 10,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
-            alignment: Alignment.center,
-            child: Image.asset(
-              item.classIcons,
-              width: 40,
-              height:40,
-              fit: BoxFit.contain,
-            ),
-          ),
-         SizedBox(width: 14),
-
-          Expanded(
-            child: Column(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.className,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.titleMedium?.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color:Colors.black,
-                        ),
+                // 건물 아이콘
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    border: Border.all(
+                        color: const Color(0xFFEAE8FF), width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primary.withValues(alpha: 0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      item.classIcons,
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.business_rounded,
+                        size: 28,
+                        color: primary,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color:  Color(0xFFE5E7FB)),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        '총 ${item.classCount}개',
-                        style:  TextStyle(
-                          fontSize: 12.5,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              const SizedBox(height: 8),
-                _FloorGroupedRooms(classList: item.classList),
+                const SizedBox(width: 12),
+                // 내용
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.className,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: isSelected
+                                    ? primary
+                                    : Colors.black87,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: isSelected ? primary : Colors.white,
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.transparent
+                                    : const Color(0xFFE5E7FB),
+                              ),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '총 ${item.classCount}개',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.black87,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _FloorGroupedRooms(classList: item.classList),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -430,11 +759,8 @@ class _EmptyClassCard extends StatelessWidget {
 /// 강의실 목록을 층별로 그룹화하여 세로 표시
 class _FloorGroupedRooms extends StatelessWidget {
   final List<String> classList;
-
   const _FloorGroupedRooms({required this.classList});
 
-  /// 강의실 코드에서 층 번호 추출 (첫 번째 숫자)
-  /// 예: "E234" → "2층", "TIP101" → "1층"
   String _extractFloor(String room) {
     final match = RegExp(r'\d').firstMatch(room);
     return match != null ? '${match.group(0)}층' : '기타';
@@ -442,14 +768,11 @@ class _FloorGroupedRooms extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 층별 그룹화
     final Map<String, List<String>> floorMap = {};
     for (final room in classList) {
-      final floor = _extractFloor(room);
-      floorMap.putIfAbsent(floor, () => []).add(room);
+      floorMap.putIfAbsent(_extractFloor(room), () => []).add(room);
     }
 
-    // 층 이름 정렬 ('기타'는 마지막)
     final sortedFloors = floorMap.keys.toList()
       ..sort((a, b) {
         if (a == '기타') return 1;
@@ -462,35 +785,31 @@ class _FloorGroupedRooms extends StatelessWidget {
       children: sortedFloors.map((floor) {
         final rooms = floorMap[floor]!;
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   const Icon(Icons.layers_rounded,
-                      size: 13, color: Color(0xFF4EA6AA)),
+                      size: 12, color: Color(0xFF26C6DA)),
                   const SizedBox(width: 4),
                   Text(
                     floor,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF4EA6AA),
+                      color: Color(0xFF26C6DA),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Wrap(
-                spacing: 5,
-                runSpacing: 5,
-                children: rooms
-                    .map((room) => _Chip(
-                          text: room,
-                          icon: Icons.meeting_room_outlined,
-                        ))
-                    .toList(),
+                spacing: 4,
+                runSpacing: 4,
+                children:
+                    rooms.map((room) => _RoomChip(text: room)).toList(),
               ),
             ],
           ),
@@ -500,15 +819,14 @@ class _FloorGroupedRooms extends StatelessWidget {
   }
 }
 
-class _Chip extends StatelessWidget {
+class _RoomChip extends StatelessWidget {
   final String text;
-  final IconData icon;
-  const _Chip({required this.text, required this.icon});
+  const _RoomChip({required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: const Color(0xFFE5E7FB)),
@@ -517,13 +835,14 @@ class _Chip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFF4EA6AA)),
-          SizedBox(width: 4),
+          const Icon(Icons.meeting_room_outlined,
+              size: 12, color: Color(0xFF26C6DA)),
+          const SizedBox(width: 3),
           Text(
             text,
-            style: TextStyle(
-              fontSize: 12.5,
-              color: Colors.black,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black87,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -107,25 +107,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 30.0,
-              vertical: 10.0,
-            ),
-            child: Column(
-              children: [
-                /// 상단 바
-                TopBar(
-                  headerText: '산돌이',
-                  onBellPressed: () {},
-                  onUserPressed: () {},
-                ),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFAFAFA),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        titleSpacing: 30,
+        title: TopBar(
+          headerText: '산돌이',
+          onBellPressed: () {},
+          onUserPressed: () {},
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 30.0,
+            vertical: 10.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                     padding,
 
                     /// 상단 배너
@@ -189,10 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                     const SizedBox(height: 20),
-                  ],
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
