@@ -1,7 +1,7 @@
 # Sandori (산돌이)
 
 **한국공학대학교 학생들을 위한 캠퍼스 생활 정보 앱**
-
+ 
 ---
 
 ## 🛠️ 개발 아키텍처
@@ -218,6 +218,41 @@ lib/
 | `/organization` | `OrganizationTreePage` ✨ |
 | `/organization/search` | `OrganizationSearchPage` ✨ |
 
+## 📂 주요 디렉토리 구조 
+```
+lib/
+├─ screen/                      # 각 페이지
+│  ├─ Splash_screen.dart
+│  ├─ Signin_gate_screen.dart
+│  ├─ Login_screen.dart
+│  ├─ Sign_screen.dart
+│  ├─ Home_screen.dart
+│  ├─ Restaurant_detail_screen.dart
+│  ├─ Empty_detail_screen.dart   # 지도+마커, SlidingUpPanel
+│  ├─ BusTime_detail_screen.dart
+│  └─ Notice_screen.dart         # WebView 래핑
+│
+├─ component/                   # 재사용 위젯
+│  ├─ BannerCard_top.dart       # 상단 배너 (오토슬라이드)
+│  ├─ MealCard.dart             # 학식 카드
+│  ├─ EmptyclassCard.dart       # 빈 강의실 카드
+│  ├─ BusTimeCardScreen.dart    # 버스 카드
+│  ├─ TopBar.dart               # 상단바(날짜/인사/알림/유저)
+│  └─ HeaderText.dart           # 섹션 헤더(+더보기)
+│
+├─ const/                       # 공용 색/상수 (랭킹 등 → 추후 확장)
+│
+├─ model/                       # 데이터 모델 (더미 중심)
+│  ├─ banner_model.dart         # 배너 들의 데이터를 구조화 
+│  ├─ class_model.dart          # 빈 강의실 리스트를 구조화
+│  ├─ meal_model.dart           # 오늘의 식단 리스트를 구조화
+│  ├─ meals_ranking_model.dart  # 오늘으 식단 랭킹을 구조화 
+│  └─ bus_model.dart            # 버스 모댈들을 구조화 
+│
+└─ repository/
+   ├─ static_repository.dart    # 더미데이터
+   └─ empty_class_repository.dart
+```
 ---
 
 ## 🌐 Static-Info API 연동
@@ -245,6 +280,14 @@ lib/
 | `GET /organization/{path}/children` | 하위 조직 목록 |
 
 ---
+---
+<p float="left">
+  <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/f41eefbe-e751-4aa5-a910-e11ab299c929" alt="Restaurant Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/e3263019-af65-4c39-ba8f-681d5b203b6f" alt="Notice Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/099bcb99-c0f4-4fb4-bd38-64860ca82277" alt="BusTime Screenshot" />
+</p>
 
 ## 🎨 색상 팔레트
 
