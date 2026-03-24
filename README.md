@@ -58,7 +58,7 @@ lib/
 │   │   └── api_constants.dart         # baseUrl, staticInfoBaseUrl 등 API 상수
 │   ├── network/
 │   │   ├── dio_provider.dart          # 메인 API Dio 싱글톤 프로바이더
-│   │   └── static_info_dio_provider.dart  # Static-Info API 전용 Dio 프로바이더 ✨
+│   │   └── static_info_dio_provider.dart  # Static-Info API 전용 Dio 프로바이더 
 │   ├── router/
 │   │   ├── app_router.dart            # GoRouter 설정
 │   │   └── route_paths.dart           # 경로 상수
@@ -85,13 +85,13 @@ lib/
 │   │   ├── model/
 │   │   │   └── banner_model.dart
 │   │   └── screen/
-│   │       ├── home_screen.dart       # 홈 (학식·빈강의실·버스 요약 + 조직도 진입 ✨)
+│   │       ├── home_screen.dart       # 홈 (학식·빈강의실·버스 요약 + 조직도 진입 )
 │   │       └── splash_screen.dart     # 스플래시 (2초 후 gate 이동)
 │   │
 │   ├── bus/                           # 버스 시간표
 │   │   ├── component/
-│   │   │   └── bus_time_card.dart     # 홈용 버스 정보 카드 (ConsumerWidget, 동적 이미지 ✨)
-│   │   ├── data/                      # ✨ Static-Info API 연동
+│   │   │   └── bus_time_card.dart     # 홈용 버스 정보 카드 (ConsumerWidget, 동적 이미지 )
+│   │   ├── data/                      #  Static-Info API 연동
 │   │   │   ├── data_source/
 │   │   │   │   └── bus_image_api.dart         # @RestApi BusImageApi
 │   │   │   ├── dto/
@@ -158,7 +158,7 @@ lib/
 │   │           ├── notice_card.dart
 │   │           └── shuttle_card.dart
 │   │
-│   ├── organization/                  # 학과·부서 조직도 ✨ 신규
+│   ├── organization/                  # 학과·부서 조직도
 │   │   ├── data/
 │   │   │   ├── data_source/
 │   │   │   │   └── organization_api.dart      # @RestApi OrganizationApi
@@ -215,8 +215,8 @@ lib/
 | `/login/sign-in` | `Signinscreen` |
 | `/main` | `RootTab` |
 | `/notice-detail` | `NoticeDetailPage` |
-| `/organization` | `OrganizationTreePage` ✨ |
-| `/organization/search` | `OrganizationSearchPage` ✨ |
+| `/organization` | `OrganizationTreePage`  |
+| `/organization/search` | `OrganizationSearchPage`  |
 
 ## 📂 주요 디렉토리 구조 
 ```
