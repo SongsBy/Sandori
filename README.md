@@ -58,7 +58,7 @@ lib/
 │   │   └── api_constants.dart         # baseUrl, staticInfoBaseUrl 등 API 상수
 │   ├── network/
 │   │   ├── dio_provider.dart          # 메인 API Dio 싱글톤 프로바이더
-│   │   └── static_info_dio_provider.dart  # Static-Info API 전용 Dio 프로바이더 ✨
+│   │   └── static_info_dio_provider.dart  # Static-Info API 전용 Dio 프로바이더
 │   ├── router/
 │   │   ├── app_router.dart            # GoRouter 설정
 │   │   └── route_paths.dart           # 경로 상수
@@ -85,13 +85,13 @@ lib/
 │   │   ├── model/
 │   │   │   └── banner_model.dart
 │   │   └── screen/
-│   │       ├── home_screen.dart       # 홈 (학식·빈강의실·버스 요약 + 조직도 진입 ✨)
+│   │       ├── home_screen.dart       # 홈 (학식·빈강의실·버스 요약 + 조직도 진입 )
 │   │       └── splash_screen.dart     # 스플래시 (2초 후 gate 이동)
 │   │
 │   ├── bus/                           # 버스 시간표
 │   │   ├── component/
-│   │   │   └── bus_time_card.dart     # 홈용 버스 정보 카드 (ConsumerWidget, 동적 이미지 ✨)
-│   │   ├── data/                      # ✨ Static-Info API 연동
+│   │   │   └── bus_time_card.dart     # 홈용 버스 정보 카드 (ConsumerWidget, 동적 이미지 )
+│   │   ├── data/                      #  Static-Info API 연동
 │   │   │   ├── data_source/
 │   │   │   │   └── bus_image_api.dart         # @RestApi BusImageApi
 │   │   │   ├── dto/
@@ -106,9 +106,9 @@ lib/
 │   │   │   └── bus_model.dart
 │   │   ├── presentation/
 │   │   │   └── provider/
-│   │   │       └── bus_image_provider.dart    # busImagesProvider (@riverpod) ✨
+│   │   │       └── bus_image_provider.dart    # busImagesProvider (@riverpod) 
 │   │   └── screen/
-│   │       └── bus_time_detail_screen.dart    # 버스 상세 + 구글맵 (ConsumerStatefulWidget ✨)
+│   │       └── bus_time_detail_screen.dart    # 버스 상세 + 구글맵 (ConsumerStatefulWidget )
 │   │
 │   ├── school_meal/                   # 학식·식당
 │   │   ├── component/
@@ -158,7 +158,7 @@ lib/
 │   │           ├── notice_card.dart
 │   │           └── shuttle_card.dart
 │   │
-│   ├── organization/                  # 학과·부서 조직도 ✨ 신규
+│   ├── organization/                  # 학과·부서 조직도
 │   │   ├── data/
 │   │   │   ├── data_source/
 │   │   │   │   └── organization_api.dart      # @RestApi OrganizationApi
@@ -215,8 +215,8 @@ lib/
 | `/login/sign-in` | `Signinscreen` |
 | `/main` | `RootTab` |
 | `/notice-detail` | `NoticeDetailPage` |
-| `/organization` | `OrganizationTreePage` ✨ |
-| `/organization/search` | `OrganizationSearchPage` ✨ |
+| `/organization` | `OrganizationTreePage`  |
+| `/organization/search` | `OrganizationSearchPage`  |
 
 ---
 
@@ -317,3 +317,19 @@ flutter run -d android
 - 실시간 API 연동 (학식 메뉴, 버스 시간표)
 - `home/`, `school_meal/`, `empty_class/` → `notice`처럼 data/domain/presentation 3-Layer로 점진적 전환
 - 푸시 알림 (공지사항, 셔틀 출발 알림)
+
+## 📱 스크린샷
+
+<div align="center">
+
+| | | |
+|:---:|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/d5000513-8555-4d19-b0c2-0aeeb3f40d04" width="250" /> | <img src="https://github.com/user-attachments/assets/95948b68-7078-4993-a2db-ba4c4c97c402" width="250" /> | <img src="https://github.com/user-attachments/assets/a4f66589-6229-4750-ae4e-4223f56af355" width="250" /> |
+| 홈 화면 | 메뉴 | 상세 화면 |
+| <img src="https://github.com/user-attachments/assets/0a566d60-c150-4fd3-9060-e4318e583ad0" width="250" /> | <img src="https://github.com/user-attachments/assets/c0ba05be-342b-4eaf-9c8d-3c14001d109c" width="250" /> | <img src="https://github.com/user-attachments/assets/baf7e0bb-6963-4035-9a45-3ebe0845f9cf" width="250" /> |
+| 화면 4 | 화면 5 | 화면 6 |
+| <img src="https://github.com/user-attachments/assets/6fb9b22d-d6df-4a7d-a946-8c22afa8a368" width="250" /> | | |
+| 화면 7 | | |
+
+</div>
+
