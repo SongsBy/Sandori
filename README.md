@@ -106,9 +106,9 @@ lib/
 │   │   │   └── bus_model.dart
 │   │   ├── presentation/
 │   │   │   └── provider/
-│   │   │       └── bus_image_provider.dart    # busImagesProvider (@riverpod) ✨
+│   │   │       └── bus_image_provider.dart    # busImagesProvider (@riverpod) 
 │   │   └── screen/
-│   │       └── bus_time_detail_screen.dart    # 버스 상세 + 구글맵 (ConsumerStatefulWidget ✨)
+│   │       └── bus_time_detail_screen.dart    # 버스 상세 + 구글맵 (ConsumerStatefulWidget )
 │   │
 │   ├── school_meal/                   # 학식·식당
 │   │   ├── component/
