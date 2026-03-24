@@ -324,12 +324,13 @@ flutter run -d android
 
 | | | |
 |:---:|:---:|:---:|
-| <img src="https://github.com/user-attachments/assets/d5000513-8555-4d19-b0c2-0aeeb3f40d04" width="250" /> | <img src="https://github.com/user-attachments/assets/95948b68-7078-4993-a2db-ba4c4c97c402" width="250" /> | <img src="https://github.com/user-attachments/assets/a4f66589-6229-4750-ae4e-4223f56af355" width="250" /> |
 | 홈1 | 홈2 | 학식상세 |
-| <img src="https://github.com/user-attachments/assets/0a566d60-c150-4fd3-9060-e4318e583ad0" width="250" /> | <img src="https://github.com/user-attachments/assets/c0ba05be-342b-4eaf-9c8d-3c14001d109c" width="250" /> | <img src="https://github.com/user-attachments/assets/baf7e0bb-6963-4035-9a45-3ebe0845f9cf" width="250" /> |
+| <img src="https://github.com/user-attachments/assets/d5000513-8555-4d19-b0c2-0aeeb3f40d04" width="250" /> | <img src="https://github.com/user-attachments/assets/95948b68-7078-4993-a2db-ba4c4c97c402" width="250" /> | <img src="https://github.com/user-attachments/assets/a4f66589-6229-4750-ae4e-4223f56af355" width="250" /> |
 | 빈강의실 | 빈강의실 상세 | 공지사항 |
-| <img src="https://github.com/user-attachments/assets/6fb9b22d-d6df-4a7d-a946-8c22afa8a368" width="250" /> | | |
+| <img src="https://github.com/user-attachments/assets/0a566d60-c150-4fd3-9060-e4318e583ad0" width="250" /> | <img src="https://github.com/user-attachments/assets/c0ba05be-342b-4eaf-9c8d-3c14001d109c" width="250" /> | <img src="https://github.com/user-attachments/assets/baf7e0bb-6963-4035-9a45-3ebe0845f9cf" width="250" /> |
 | 조직도 | | |
+| <img src="https://github.com/user-attachments/assets/6fb9b22d-d6df-4a7d-a946-8c22afa8a368" width="250" /> | | |
 
 </div>
+
 
