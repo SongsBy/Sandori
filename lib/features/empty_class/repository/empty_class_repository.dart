@@ -12,7 +12,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
   Future<List<EmptyClass>> fetchEmptyClassesStatically() async {
     return [
       EmptyClass(
-        className: 'E동 : ',
+        className: 'E동',
         classCount: '24',
         trafficIcon: 'assets/img/green.png',
         classIcons: 'assets/img/tukorea_computer.png',
@@ -21,7 +21,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         longitude: 126.7348,
       ),
       EmptyClass(
-        className: 'C동 : ',
+        className: 'C동',
         classCount: '18',
         trafficIcon: 'assets/img/orange.png',
         classIcons: 'assets/img/tukorea_Energy.png',
@@ -30,7 +30,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         longitude:126.7339,
       ),
       EmptyClass(
-        className: 'B동 : ',
+        className: 'B동',
         classCount: '10',
         trafficIcon: 'assets/img/red.png',
         classIcons: 'assets/img/tukorea_Materials.png',
@@ -39,7 +39,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         longitude: 126.7335,
       ),
       EmptyClass(
-        className: 'G동 : ',
+        className: 'G동',
         classCount: '13',
         trafficIcon: 'assets/img/orange.png',
         classIcons: 'assets/img/tukorea_Mechanical.png',
@@ -48,7 +48,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         longitude:126.7347,
       ),
       EmptyClass(
-        className: 'D동 : ',
+        className: 'D동',
         classCount: '20',
         trafficIcon: 'assets/img/green.png',
         classIcons: 'assets/img/tukorea_Electronic.png',
@@ -57,7 +57,7 @@ class FakeEmptyClassRepository implements EmptyClassRepository {
         longitude:126.7340
       ),
       EmptyClass(
-          className: 'A동 : ',
+          className: 'A동',
           classCount: '10 ',
           trafficIcon: 'assets/img/green.png',
           classIcons: 'assets/img/tino6.png',

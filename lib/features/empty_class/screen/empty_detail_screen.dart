@@ -40,7 +40,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   late GoogleMapController _mapController;
   CameraPosition _initialCamera = const CameraPosition(
     target: LatLng(37.34019, 126.7336),
-    zoom: 17,
+    zoom: 17.6,
   );
 
   @override
@@ -81,7 +81,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
       }
       final pos = await Geolocator.getCurrentPosition();
       final cam =
-          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 18.5);
+          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 20.7);
       _initialCamera = cam;
       if (mounted) {
         try {
@@ -336,6 +336,8 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       body: FutureBuilder<List<EmptyClass>>(
         future: dataFuture,
         builder: (context, snapshot) {
@@ -357,8 +359,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
             minHeight: _minPanelH,
             panelSnapping: true,
             snapPoint: 0.4,
-            parallaxEnabled: true,
-            parallaxOffset: .12,
+            parallaxEnabled: false,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
@@ -378,6 +379,10 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                     onMapCreated: (c) => _mapController = c,
                     markers: _markers,
                     mapType: MapType.normal,
+                    padding: EdgeInsets.only(
+                      bottom: _minPanelH,
+                      top: MediaQuery.of(context).padding.top,
+                    ),
                   ),
                 ),
                 SafeArea(
@@ -508,17 +513,6 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
               ),
               Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: _primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    child: const Icon(Icons.meeting_room_outlined,
-                        color: _primary, size: 20),
-                  ),
-                  const SizedBox(width: 10),
                   const Text(
                     '빈 강의실 현황',
                     style: TextStyle(
@@ -663,38 +657,7 @@ class _EmptyClassCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 건물 아이콘
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    border: Border.all(
-                        color: const Color(0xFFEAE8FF), width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primary.withValues(alpha: 0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      item.classIcons,
-                      width: 36,
-                      height: 36,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Icon(
-                        Icons.business_rounded,
-                        size: 28,
-                        color: primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
+
                 // 내용
                 Expanded(
                   child: Column(

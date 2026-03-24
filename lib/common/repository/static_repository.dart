@@ -17,16 +17,14 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:00~13:00',
           menus: [
-            MealSet(price: 5500, items: ['소불고기덮밥', '미역국', '배추김치', '오이무침', '잡곡밥']),
-            MealSet(price: 4000, items: ['제육볶음', '국물떡볶이', '단무지']),
+            MealSet(price: 6500, items: ['소불고기덮밥', '미역국', '배추김치', '오이무침', '잡곡밥']),
           ],
         ),
         MealTimeSlot(
           label: '석식',
           timeRange: '17:00~18:30',
           menus: [
-            MealSet(price: 5500, items: ['뼈없는감자탕', '두부계란전', '치커리사과무침', '도시락김', '알타리김치']),
-            MealSet(price: 4000, items: ['스팸김치덮밥', '두부계란전', '단무지']),
+            MealSet(price: 6500, items: ['뼈없는감자탕', '두부계란전', '치커리사과무침', '도시락김', '알타리김치']),
           ],
         ),
       ],
@@ -42,14 +40,14 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:30~13:30',
           menus: [
-            MealSet(price: 6000, items: ['크림파스타', '마늘빵', '양상추샐러드', '피클']),
+            MealSet(price: 6500, items: ['크림파스타', '마늘빵', '양상추샐러드', '피클']),
           ],
         ),
         MealTimeSlot(
           label: '석식',
           timeRange: '17:30~19:00',
           menus: [
-            MealSet(price: 6000, items: ['치킨스테이크', '감자수프', '시저샐러드']),
+            MealSet(price: 6500, items: ['치킨스테이크', '감자수프', '시저샐러드']),
           ],
         ),
       ],
@@ -65,7 +63,7 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:00~14:00',
           menus: [
-            MealSet(price: 7000, items: ['치즈돈까스', '우동국물', '단무지', '양배추샐러드']),
+            MealSet(price: 6500, items: ['치즈돈까스', '우동국물', '단무지', '양배추샐러드']),
           ],
         ),
         MealTimeSlot(label: '석식', timeRange: '', menus: []),
@@ -82,15 +80,14 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:00~13:30',
           menus: [
-            MealSet(price: 5000, items: ['해물순두부찌개', '잡곡밥', '김치', '계란찜']),
-            MealSet(price: 4500, items: ['비빔밥', '된장국', '깍두기']),
+            MealSet(price: 6500, items: ['해물순두부찌개', '잡곡밥', '김치', '계란찜', '비빔밥']),
           ],
         ),
         MealTimeSlot(
           label: '석식',
           timeRange: '17:00~19:00',
           menus: [
-            MealSet(price: 5000, items: ['김치찌개', '잡곡밥', '계란말이', '무나물']),
+            MealSet(price: 6500, items: ['김치찌개', '잡곡밥', '계란말이', '무나물']),
           ],
         ),
       ],
@@ -106,7 +103,7 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:00~13:00',
           menus: [
-            MealSet(price: 5000, items: ['참치마요덮밥', '된장국', '단무지', '시금치무침']),
+            MealSet(price: 6500, items: ['참치마요덮밥', '된장국', '단무지', '시금치무침']),
           ],
         ),
         MealTimeSlot(label: '석식', timeRange: '', menus: []),

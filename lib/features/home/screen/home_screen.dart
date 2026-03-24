@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:handori/common/component/header_text.dart';
 import 'package:handori/common/component/top_bar.dart';
 import 'package:handori/common/layout/root_tab.dart';
 import 'package:handori/core/router/route_paths.dart';
@@ -20,6 +19,24 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        color: Colors.black87,
+      ),
+    );
+  }
 }
 
 class _OrganizationCard extends StatelessWidget {
@@ -128,27 +145,29 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                    padding,
-
-                    /// 상단 배너
-                    BannerTop(images: banner),
-
-                    padding,
-
-                    /// 학식/식당
-                    const HeaderText(title: '학식/식당'),
-                    const SizedBox(height: 8),
-
-                    Todaymeal(
+                    HomeMealSection(
                       meals: meals,
                       onTap: () => RootTab.of(context)?.jumpTo(1),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    /// 빈 강의실
-                    const HeaderText(title: '빈 강의실'),
-                    const SizedBox(height: 8),
+                    _SectionHeader(
+                      title: '셔틀버스',
+                    ),
+                    const SizedBox(height: 10),
+
+                    Bustimescreen(
+                      onTap: () => RootTab.of(context)?.jumpTo(0),
+                      showHeader: false,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    _SectionHeader(
+                      title: '빈 강의실',
+                    ),
+                    const SizedBox(height: 10),
 
                     FutureBuilder<List<EmptyClass>>(
                       future: emptyClassesFuture,
@@ -167,28 +186,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           items: data,
                           maxItems: 5,
                           onTap: () => RootTab.of(context)?.jumpTo(4),
+                          showHeader: false,
                         );
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    /// 버스
-                    const HeaderText(title: '버스'),
-                    const SizedBox(height: 8),
-
-                    /// 셔틀/버스 카드 섹션
-                    Bustimescreen(onTap: () => RootTab.of(context)?.jumpTo(0)),
-
-                    const SizedBox(height: 16),
-
-                    /// 조직도
-                    const HeaderText(title: '학과/부서 조직도'),
-                    const SizedBox(height: 8),
+                    _SectionHeader(title: '학과/부서 조직도'),
+                    const SizedBox(height: 10),
 
                     _OrganizationCard(
                       onTap: () => context.push(RoutePaths.organization),
                     ),
+
+                    padding,
+
+                    BannerTop(images: banner),
 
                     const SizedBox(height: 20),
             ],
