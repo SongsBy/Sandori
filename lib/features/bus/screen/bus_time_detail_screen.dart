@@ -40,10 +40,7 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
     Marker(
       markerId: const MarkerId('shuttle'),
       position: const LatLng(37.33991, 126.7323),
-      infoWindow: const InfoWindow(
-        title: '셔틀버스 탑승장',
-        snippet: '바로 앞 첫 버스에 탑승',
-      ),
+      infoWindow: const InfoWindow(title: '셔틀버스 탑승장', snippet: '바로 앞 첫 버스에 탑승'),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
     ),
   };
@@ -84,15 +81,15 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
   }
 
   void _onBellPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('알림 버튼')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('알림 버튼')));
   }
 
   void _onUserPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('유저 버튼')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('유저 버튼')));
   }
 
   Future<void> _focusTo(LatLng target, {double zoom = 18}) async {
@@ -147,8 +144,9 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
         width: 24,
         height: 24,
         fit: BoxFit.contain,
-        errorBuilder: (_, _, _) =>
-            Image.asset('assets/img/bus.png', width: 24, height: 24),
+        errorBuilder:
+            (_, _, _) =>
+                Image.asset('assets/img/bus.png', width: 24, height: 24),
       );
     }
     return Image.asset('assets/img/bus.png', width: 24, height: 24);
@@ -165,8 +163,7 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
       future: checkPermession(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
-          return const Scaffold(
-              body: Center(child: Text('위치 권한을 허용해 주세요')));
+          return const Scaffold(body: Center(child: Text('위치 권한을 허용해 주세요')));
         }
         return Scaffold(
           backgroundColor: const Color(0xFFFAFAFA),
@@ -199,15 +196,17 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                             children: [
                               SelectableIconButton(
                                 isSelected: selectedButtonIndex == 0,
-                                onPressed: () =>
-                                    setState(() => selectedButtonIndex = 0),
+                                onPressed:
+                                    () =>
+                                        setState(() => selectedButtonIndex = 0),
                                 imagePath: 'assets/img/bank.png',
                               ),
                               const SizedBox(width: 20),
                               SelectableIconButton(
                                 isSelected: selectedButtonIndex == 1,
-                                onPressed: () =>
-                                    setState(() => selectedButtonIndex = 1),
+                                onPressed:
+                                    () =>
+                                        setState(() => selectedButtonIndex = 1),
                                 imagePath: 'assets/img/train.png',
                               ),
                             ],
@@ -216,13 +215,19 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                           Row(
                             children: [
                               const SizedBox(width: 7),
-                              Text('정왕역',
-                                  style: mediumText?.copyWith(
-                                      fontWeight: FontWeight.w700)),
+                              Text(
+                                '정왕역',
+                                style: mediumText?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                               const SizedBox(width: 50),
-                              Text('학교',
-                                  style: mediumText?.copyWith(
-                                      fontWeight: FontWeight.w700)),
+                              Text(
+                                '학교',
+                                style: mediumText?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ],
                           ),
                           padding,
@@ -235,42 +240,47 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                             children: [
                               Text('정왕역(셔틀)행', style: mediumText),
                               busTextPadding,
-                              Text('13분 후 출발',
-                                  style: mediumText?.copyWith(
-                                      color: Colors.red)),
+                              Text(
+                                '13분 후 출발',
+                                style: mediumText?.copyWith(color: Colors.red),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 40),
                           const HeaderText(title: '정문 버스 정류장'),
                           padding,
                           Column(
-                            children: bus
-                                .asMap()
-                                .entries
-                                .map(
-                                  (entry) => Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Row(
-                                      children: [
-                                        _busIconWidget(
-                                          entry.key < busImageUrls.length
-                                              ? busImageUrls[entry.key]
-                                              : null,
+                            children:
+                                bus
+                                    .asMap()
+                                    .entries
+                                    .map(
+                                      (entry) => Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Row(
+                                          children: [
+                                            _busIconWidget(
+                                              entry.key < busImageUrls.length
+                                                  ? busImageUrls[entry.key]
+                                                  : null,
+                                            ),
+                                            busTextPadding,
+                                            Text(
+                                              entry.value.busNumber,
+                                              style: mediumText,
+                                            ),
+                                            busTextPadding,
+                                            Text(
+                                              entry.value.busTime,
+                                              style: mediumText?.copyWith(
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        busTextPadding,
-                                        Text(entry.value.busNumber,
-                                            style: mediumText),
-                                        busTextPadding,
-                                        Text(
-                                          entry.value.busTime,
-                                          style: mediumText?.copyWith(
-                                              color: Colors.red),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                                      ),
+                                    )
+                                    .toList(),
                           ),
                           padding,
                         ],
@@ -290,8 +300,7 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border:
-                                Border.all(color: const Color(0xFFDDE8EE)),
+                            border: Border.all(color: const Color(0xFFDDE8EE)),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.04),
@@ -310,13 +319,15 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                                     width: 36,
                                     height: 36,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF89DAF0)
-                                          .withValues(alpha: .25),
+                                      color: const Color(
+                                        0xFF89DAF0,
+                                      ).withValues(alpha: .25),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
-                                        Icons.directions_bus,
-                                        size: 20),
+                                      Icons.directions_bus,
+                                      size: 20,
+                                    ),
                                   ),
                                   const SizedBox(width: 10),
                                   const Text(
@@ -333,14 +344,16 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                                 children: [
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed: () => _scrollToMapAndFocus(
-                                        const LatLng(37.33896, 126.7335),
-                                      ),
+                                      onPressed:
+                                          () => _scrollToMapAndFocus(
+                                            const LatLng(37.33896, 126.7335),
+                                          ),
                                       icon: const Icon(Icons.place, size: 18),
                                       label: const Text('정문 보기'),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
+                                          vertical: 12,
+                                        ),
                                         foregroundColor: Colors.black87,
                                       ),
                                     ),
@@ -348,15 +361,19 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed: () => _scrollToMapAndFocus(
-                                        const LatLng(37.33991, 126.7323),
+                                      onPressed:
+                                          () => _scrollToMapAndFocus(
+                                            const LatLng(37.33991, 126.7323),
+                                          ),
+                                      icon: const Icon(
+                                        Icons.directions,
+                                        size: 18,
                                       ),
-                                      icon: const Icon(Icons.directions,
-                                          size: 18),
                                       label: const Text('셔틀 보기'),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
+                                          vertical: 12,
+                                        ),
                                         foregroundColor: Colors.black87,
                                       ),
                                     ),
@@ -367,12 +384,13 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
                               Center(
                                 child: OutlinedButton.icon(
                                   onPressed: _goToMyLocation,
-                                  icon: const Icon(Icons.my_location,
-                                      size: 18),
+                                  icon: const Icon(Icons.my_location, size: 18),
                                   label: const Text('내 위치 보기'),
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 12),
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
                                     foregroundColor: Colors.black87,
                                   ),
                                 ),
@@ -480,8 +498,10 @@ class _ToolbarCard extends StatelessWidget {
                       IconButton(
                         tooltip: '내 정보',
                         onPressed: onUser,
-                        icon: const Icon(Icons.account_circle_outlined,
-                            size: 22),
+                        icon: const Icon(
+                          Icons.account_circle_outlined,
+                          size: 22,
+                        ),
                         color: Colors.black54,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
