@@ -1,0 +1,137 @@
+name: handori
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── UI ──────────────────────────────────────────────────────────────────────
+  cupertino_icons: ^1.0.8          # iOS 스타일 아이콘
+
+  # ── 상태관리 (Riverpod) ──────────────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1         # Riverpod 코어
+  riverpod_annotation: ^2.3.5      # @riverpod 어노테이션
+
+  # ── 네트워크 ─────────────────────────────────────────────────────────────────
+  dio: ^5.9.2                      # HTTP 클라이언트
+  retrofit: ">=4.6.0 <4.9.0"      # @RestApi Retrofit 인터페이스 (DartMappable 이전 버전)
+
+  # ── 직렬화 ───────────────────────────────────────────────────────────────────
+  json_annotation: ^4.9.0          # @JsonSerializable 어노테이션
+  freezed_annotation: ^2.4.4       # @freezed 어노테이션
+
+  # ── 라우팅 ───────────────────────────────────────────────────────────────────
+  go_router: ^17.1.0               # GoRouter (context.go / context.push)
+
+  # ── 보안 ─────────────────────────────────────────────────────────────────────
+  flutter_secure_storage: ^10.0.0  # 토큰 안전 저장소 (SharedPreferences 대체)
+
+  # ── 로깅 ─────────────────────────────────────────────────────────────────────
+  logger: ^2.7.0                   # print() 대체 Logger
+
+  # ── 지도 / 위치 ───────────────────────────────────────────────────────────────
+  google_maps_flutter: ^2.15.0     # Google Maps
+  geolocator: ^14.0.2              # 위치 정보
+
+  # ── 기타 ─────────────────────────────────────────────────────────────────────
+  get_it: ^9.2.1                   # 의존성 주입 (DI)
+  sliding_up_panel: ^2.0.0+1       # 슬라이딩 패널 (유지보수 주의)
+  webview_flutter: ^4.13.1         # WebView
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # ── 린트 ─────────────────────────────────────────────────────────────────────
+  flutter_lints: ^6.0.0            # Flutter 공식 린트
+  # riverpod_lint: ^3.1.3          # ⚠️ build_runner와 analyzer 버전 충돌로 보류
+
+  # ── 코드 생성 ─────────────────────────────────────────────────────────────────
+  build_runner: ^2.4.13            # flutter pub run build_runner build
+  riverpod_generator: ^2.4.3       # @riverpod → .g.dart 생성
+  retrofit_generator: ^9.0.0       # @RestApi → .g.dart 생성
+  json_serializable: ^6.9.4        # @JsonSerializable → .g.dart 생성
+  freezed: ^2.5.7                  # @freezed → .freezed.dart 생성
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/img/
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Light.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Medium.otf
+          weight: 300
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 500
+        - asset: assets/fonts/Pretendard-Black.otf
+          weight: 700
+
+    - family: Krub
+      fonts:
+        - asset: assets/fonts/Krub-Bold.ttf
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # An image assets can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
