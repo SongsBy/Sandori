@@ -218,42 +218,6 @@ lib/
 | `/organization` | `OrganizationTreePage` ✨ |
 | `/organization/search` | `OrganizationSearchPage` ✨ |
 
-## 📂 주요 디렉토리 구조 
-```
-lib/
-├─ screen/                      # 각 페이지
-│  ├─ Splash_screen.dart
-│  ├─ Signin_gate_screen.dart
-│  ├─ Login_screen.dart
-│  ├─ Sign_screen.dart
-│  ├─ Home_screen.dart
-│  ├─ Restaurant_detail_screen.dart
-│  ├─ Empty_detail_screen.dart   # 지도+마커, SlidingUpPanel
-│  ├─ BusTime_detail_screen.dart
-│  └─ Notice_screen.dart         # WebView 래핑
-│
-├─ component/                   # 재사용 위젯
-│  ├─ BannerCard_top.dart       # 상단 배너 (오토슬라이드)
-│  ├─ MealCard.dart             # 학식 카드
-│  ├─ EmptyclassCard.dart       # 빈 강의실 카드
-│  ├─ BusTimeCardScreen.dart    # 버스 카드
-│  ├─ TopBar.dart               # 상단바(날짜/인사/알림/유저)
-│  └─ HeaderText.dart           # 섹션 헤더(+더보기)
-│
-├─ const/                       # 공용 색/상수 (랭킹 등 → 추후 확장)
-│
-├─ model/                       # 데이터 모델 (더미 중심)
-│  ├─ banner_model.dart         # 배너 들의 데이터를 구조화 
-│  ├─ class_model.dart          # 빈 강의실 리스트를 구조화
-│  ├─ meal_model.dart           # 오늘의 식단 리스트를 구조화
-│  ├─ meals_ranking_model.dart  # 오늘으 식단 랭킹을 구조화 
-│  └─ bus_model.dart            # 버스 모댈들을 구조화 
-│
-└─ repository/
-   ├─ static_repository.dart    # 더미데이터
-   └─ empty_class_repository.dart
-```
----
 
 ## 🌐 Static-Info API 연동
 
