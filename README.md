@@ -46,7 +46,7 @@ dart run build_runner build --delete-conflicting-outputs
 
 ## 📂 디렉토리 구조
 
-```text
+```
 lib/
 ├── main.dart                          # 앱 진입점, GetIt DI 설정, ProviderScope
 │
@@ -245,39 +245,13 @@ lib/
 
 ---
 ---
-
-## 📱 스크린샷
-
-<table>
-  <tr>
-    <td align="center">
-      <img width="200" alt="cap1" src="https://github.com/user-attachments/assets/327e34b3-6381-4919-861b-00472fd7aa2d" />
-      <br>123456
-    </td>
-    <td align="center">
-      <img width="200" alt="cap2" src="https://github.com/user-attachments/assets/15c97fcd-110d-49b3-9a4c-5b18b666928c" />
-      <br>123456
-    </td>
-    <td align="center">
-      <img width="200" alt="cap3" src="https://github.com/user-attachments/assets/13a95504-c35f-4ce2-92b7-fa8903e97c7c" />
-      <br>123456
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img width="200" alt="cap4" src="https://github.com/user-attachments/assets/58ffafe2-6a20-4caa-a1b3-157502838d73" />
-      <br>123456
-    </td>
-    <td align="center">
-      <img width="200" alt="cap5" src="https://github.com/user-attachments/assets/d194db90-9a40-44c6-b47c-d4d95d50e32c" />
-      <br>123456
-    </td>
-    <td align="center">
-      <img width="200" alt="cap6" src="https://github.com/user-attachments/assets/a7af295b-74a1-4b80-a8aa-ba11aa650125" />
-      <br>123456
-    </td>
-  </tr>
-</table>
+<p float="left">
+  <img width="320" src="https://github.com/user-attachments/assets/d02a3f29-5d6a-460d-a865-94323685b99d" alt="Detail Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/811955ee-a714-4e6c-a9fd-3f43f2074cb9" alt="Home Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/f41eefbe-e751-4aa5-a910-e11ab299c929" alt="Restaurant Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/e3263019-af65-4c39-ba8f-681d5b203b6f" alt="Notice Screenshot" />
+  <img width="320" src="https://github.com/user-attachments/assets/099bcb99-c0f4-4fb4-bd38-64860ca82277" alt="BusTime Screenshot" />
+</p>
 
 ## 🎨 색상 팔레트
 
