@@ -66,7 +66,7 @@ class _SigninscreenState extends State<Signinscreen> {
               width: double.infinity,
               child: Align(
                 alignment: const Alignment(0, 1),
-                child: Column(
+                child: Column(w
                   children: [
                     /// 상단
                     const _Top(),
