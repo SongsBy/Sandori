@@ -5,7 +5,7 @@ import 'package:handori/features/school_meal/model/meal_model.dart';
 import 'package:handori/features/bus/model/bus_model.dart';
 
 class StaticDataRepository {
- static final List<Meal> meals = [
+  static final List<Meal> meals = [
     Meal(
       Name: 'E동 학생식당',
       mainDish: '소불고기 덮밥',
@@ -17,14 +17,20 @@ class StaticDataRepository {
           label: '중식',
           timeRange: '11:00~13:00',
           menus: [
-            MealSet(price: 6500, items: ['소불고기덮밥', '미역국', '배추김치', '오이무침', '잡곡밥']),
+            MealSet(
+              price: 6500,
+              items: ['소불고기덮밥', '미역국', '배추김치', '오이무침', '잡곡밥'],
+            ),
           ],
         ),
         MealTimeSlot(
           label: '석식',
           timeRange: '17:00~18:30',
           menus: [
-            MealSet(price: 6500, items: ['뼈없는감자탕', '두부계란전', '치커리사과무침', '도시락김', '알타리김치']),
+            MealSet(
+              price: 6500,
+              items: ['뼈없는감자탕', '두부계란전', '치커리사과무침', '도시락김', '알타리김치'],
+            ),
           ],
         ),
       ],
@@ -111,44 +117,44 @@ class StaticDataRepository {
     ),
   ];
 
-
-
   final List<Banners> banners = [
     Banners(ImagePath: 'assets/img/banner1.png'),
     Banners(ImagePath: 'assets/img/banner2.png'),
     Banners(ImagePath: 'assets/img/banner3.png'),
   ];
 
-
-
-
   static final List<MealsRaking> mealRakings = _createMealRakings(meals);
 
   static List<MealsRaking> _createMealRakings(List<Meal> meals) {
     final List<MealsRaking> result = [];
 
-    final medals = ['assets/img/saldol.png', 'assets/img/silver.png', 'assets/img/bronze.png'];
-    final borderColors = [Color(0XFFFFD700), Color(0XFFBDBDBD), Color(0XFFCD7F32)];
+    final medals = [
+      'assets/img/saldol.png',
+      'assets/img/silver.png',
+      'assets/img/bronze.png',
+    ];
+    final borderColors = [
+      Color(0XFFFFD700),
+      Color(0XFFBDBDBD),
+      Color(0XFFCD7F32),
+    ];
 
-    for(int i =0 ; i < 3; i++ ){
+    for (int i = 0; i < 3; i++) {
       final meal = meals[i];
       final ranking = MealsRaking(
-          medalImage: medals[i],
-          name: meal.Name,
-          menu: meal.mainDish,
-          borderColor: borderColors[i]
+        medalImage: medals[i],
+        name: meal.Name,
+        menu: meal.mainDish,
+        borderColor: borderColors[i],
       );
       result.add(ranking);
     }
     return result;
   }
 
-  static final List<Bus> bus =[
+  static final List<Bus> bus = [
     Bus(busIcon: 'assets/img/bus.png', busNumber: '33', busTime: '2분'),
     Bus(busIcon: 'assets/img/bus.png', busNumber: '20-1', busTime: '7분'),
     Bus(busIcon: 'assets/img/bus.png', busNumber: '26-1', busTime: '3분'),
-
   ];
-
-
 }
