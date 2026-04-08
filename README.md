@@ -269,7 +269,7 @@ lib/
     </td>
     <td align="center">
       <img width="200" alt="cap5" src="./cap5.png" />
-      <br>123456
+      <br>버스 시간표
     </td>
     <td align="center">
       <img width="200" alt="cap6" src="./cap6.png" />

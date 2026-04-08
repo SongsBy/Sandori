@@ -40,7 +40,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   late GoogleMapController _mapController;
   CameraPosition _initialCamera = const CameraPosition(
     target: LatLng(37.34019, 126.7336),
-    zoom: 17.6,
+    zoom: 17.0,
   );
 
   @override
@@ -81,7 +81,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
       }
       final pos = await Geolocator.getCurrentPosition();
       final cam =
-          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 20.7);
+          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 17.0);
       _initialCamera = cam;
       if (mounted) {
         try {
@@ -332,7 +332,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
     final size = MediaQuery.of(context).size;
     final maxPanelH = size.height * 0.8;
     final fabBottom =
-        _minPanelH + (_panelPos * (maxPanelH - _minPanelH)) + 16;
+        _minPanelH + (_panelPos * (maxPanelH - _minPanelH)) + 12;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -352,61 +352,73 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
           final allItems = snapshot.data!;
           final items = _applySearch(allItems);
 
-          return SlidingUpPanel(
-            controller: _panelController,
-            color: Colors.white,
-            maxHeight: maxPanelH,
-            minHeight: _minPanelH,
-            panelSnapping: true,
-            snapPoint: 0.4,
-            parallaxEnabled: false,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 20,
-                offset: const Offset(0, -4),
+          return Stack(
+            children: [
+              SlidingUpPanel(
+                controller: _panelController,
+                color: Colors.white,
+                maxHeight: maxPanelH,
+                minHeight: _minPanelH,
+                panelSnapping: true,
+                snapPoint: 0.4,
+                parallaxEnabled: false,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+                panel: _buildPanel(items, allItems),
+                body: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: GoogleMap(
+                        initialCameraPosition: _initialCamera,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: false,
+                        onMapCreated: (c) => _mapController = c,
+                        markers: _markers,
+                        mapType: MapType.normal,
+                        padding: EdgeInsets.only(
+                          bottom: _minPanelH,
+                          top: MediaQuery.of(context).padding.top,
+                        ),
+                      ),
+                    ),
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                        child: _buildTopBar(),
+                      ),
+                    ),
+                  ],
+                ),
+                onPanelSlide: (pos) => setState(() => _panelPos = pos),
               ),
-            ],
-            panel: _buildPanel(items, allItems),
-            body: Stack(
-              children: [
-                Positioned.fill(
-                  child: GoogleMap(
-                    initialCameraPosition: _initialCamera,
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: false,
-                    onMapCreated: (c) => _mapController = c,
-                    markers: _markers,
-                    mapType: MapType.normal,
-                    padding: EdgeInsets.only(
-                      bottom: _minPanelH,
-                      top: MediaQuery.of(context).padding.top,
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 50),
+                curve: Curves.linear,
+                bottom: fabBottom,
+                right: 12,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _panelPos > 0.7 ? 0.0 : 1.0,
+                  child: IgnorePointer(
+                    ignoring: _panelPos > 0.7,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      elevation: 4,
+                      onPressed: _initCameraToMyLocation,
+                      child: const Icon(Icons.my_location_rounded, size: 24),
                     ),
                   ),
                 ),
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-                    child: _buildTopBar(),
-                  ),
-                ),
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 150),
-                  curve: Curves.easeOut,
-                  bottom: fabBottom,
-                  right: 16,
-                  child: FloatingActionButton.small(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black87,
-                    elevation: 4,
-                    onPressed: _initCameraToMyLocation,
-                    child: const Icon(Icons.my_location_rounded, size: 20),
-                  ),
-                ),
-              ],
-            ),
-            onPanelSlide: (pos) => setState(() => _panelPos = pos),
+              ),
+            ],
           );
         },
       ),
