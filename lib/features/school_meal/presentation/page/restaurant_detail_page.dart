@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:handori/common/component/coming_soon_snackbar.dart';
 import 'package:handori/common/component/restaurant_location_label.dart';
 import 'package:handori/core/constants/app_colors.dart';
 import 'package:handori/common/layout/root_tab.dart';
@@ -166,7 +167,7 @@ class _RestaurantDetailPageState extends ConsumerState<RestaurantDetailPage> {
                         ),
                         IconButton(
                           tooltip: '알림',
-                          onPressed: () {},
+                          onPressed: () => showComingSoonSnackBar(context),
                           icon: const Icon(Icons.notifications_none, size: 20),
                           color: Colors.black54,
                           padding: EdgeInsets.zero,
@@ -175,7 +176,7 @@ class _RestaurantDetailPageState extends ConsumerState<RestaurantDetailPage> {
                         const SizedBox(width: 6),
                         IconButton(
                           tooltip: '내 정보',
-                          onPressed: () {},
+                          onPressed: () => showComingSoonSnackBar(context),
                           icon: const Icon(Icons.account_circle_outlined,
                               size: 22),
                           color: Colors.black54,

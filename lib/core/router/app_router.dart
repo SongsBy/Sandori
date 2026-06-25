@@ -6,6 +6,7 @@ import 'package:handori/features/auth/screen/login_screen.dart';
 import 'package:handori/features/auth/screen/sign_in_gate_screen.dart';
 import 'package:handori/features/auth/screen/signin_screen.dart';
 import 'package:handori/common/layout/root_tab.dart';
+import 'package:handori/features/bus/screen/shuttle_timetable_screen.dart';
 import 'package:handori/features/home/screen/splash_screen.dart';
 import 'package:handori/features/organization/presentation/page/organization_tree_page.dart';
 import 'package:handori/features/organization/presentation/page/organization_search_page.dart';
@@ -34,6 +35,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.main,
       builder: (_, _) => const RootTab(),
+    ),
+    GoRoute(
+      path: RoutePaths.shuttleTimetable,
+      builder: (_, state) {
+        final initial = state.extra as int? ?? 0;
+        return ShuttleTimetableScreen(initialDestination: initial);
+      },
     ),
     GoRoute(
       path: RoutePaths.noticeDetail,

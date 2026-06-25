@@ -2,22 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get_it/get_it.dart';
 
 import 'package:handori/core/router/app_router.dart';
-import 'package:handori/features/empty_class/repository/empty_class_repository.dart';
-import 'package:handori/common/repository/static_repository.dart';
-
-final getIt = GetIt.instance;
-
-void setupLocator() {
-  getIt.registerLazySingleton<StaticDataRepository>(
-    () => StaticDataRepository(),
-  );
-  getIt.registerLazySingleton<EmptyClassRepository>(
-    () => FakeEmptyClassRepository(),
-  );
-}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +14,6 @@ Future<void> main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  setupLocator();
   runApp(const ProviderScope(child: MyApp()));
 }
 

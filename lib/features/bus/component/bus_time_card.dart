@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
 import 'package:handori/features/bus/presentation/provider/bus_image_provider.dart';
+import 'package:handori/features/bus/presentation/provider/next_shuttle_provider.dart';
 
 const _primary = AppColors.primary;
 const _subtleBg = AppColors.subtleBg;
@@ -19,6 +21,16 @@ class Bustimescreen extends ConsumerStatefulWidget {
 class _BustimescreenState extends ConsumerState<Bustimescreen> {
   bool _isReverse = false; // false: 학교→정왕역 / true: 정왕역→학교
 
+  /// 상세 화면과 동일한 [nextShuttleProvider] 결과를 홈 카드용 한 줄 텍스트로 변환.
+  String _arrivalText(NextShuttle next) {
+    final remain = next.remainMinutes;
+    if (next.showsMinutes && remain != null && remain > 0) {
+      return '$remain분 후 출발';
+    }
+    if (next.status == ShuttleStatus.upcoming) return '곧 도착';
+    return next.statusLabel ?? '운행 정보 없음';
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
@@ -32,6 +44,17 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
     final String to = _isReverse ? '학교' : '정왕역';
     final String stopName = _isReverse ? '정왕역 버스정류장' : '정문 버스정류장';
     final String destination = _isReverse ? '학교 방면' : '정왕역 방면';
+
+    // 상세 화면과 동일한 방향 매핑 → 동일한 다음 셔틀 결과.
+    final direction = _isReverse
+        ? ShuttleDirection.jeongwangToSchool
+        : ShuttleDirection.schoolToJeongwang;
+    final nextShuttle = ref.watch(
+      nextShuttleProvider(
+        route: ShuttleRoute.route1,
+        direction: direction,
+      ),
+    );
 
     final List<Map<String, dynamic>> nextBus = [
       {
@@ -156,7 +179,7 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                   const Icon(Icons.schedule, size: 18, color: Colors.red),
                   const SizedBox(width: 6),
                   Text(
-                    '15분 후 출발',
+                    _arrivalText(nextShuttle),
                     style: mediumText?.copyWith(
                       color: Colors.red,
                       fontWeight: FontWeight.w700,

@@ -2,25 +2,25 @@ import 'dart:ui' as ui;
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:handori/features/empty_class/model/class_model.dart';
-import 'package:handori/features/empty_class/repository/empty_class_repository.dart';
+import 'package:handori/features/empty_class/presentation/provider/empty_class_provider.dart';
 
 import 'package:handori/common/layout/root_tab.dart';
 
-class EmptyDetailScreen extends StatefulWidget {
+class EmptyDetailScreen extends ConsumerStatefulWidget {
   const EmptyDetailScreen({super.key});
 
   @override
-  State<EmptyDetailScreen> createState() => _EmptyDetailScreenState();
+  ConsumerState<EmptyDetailScreen> createState() => _EmptyDetailScreenState();
 }
 
-class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
+class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
   static const _primary = Color(0xFF5C6BC0);
   static const _minPanelH = 120.0;
 
@@ -33,7 +33,9 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
 
   final PanelController _panelController = PanelController();
   final TextEditingController _searchCtrl = TextEditingController();
-  final ScrollController _listScroll = ScrollController();
+  // SlidingUpPanel이 panelBuilder로 넘겨주는 컨트롤러. 리스트 최상단에서
+  // 아래로 드래그하면 패널이 따라 내려가도록 스크롤/드래그를 연동한다.
+  ScrollController? _panelScroll;
   String _query = '';
   double _panelPos = 0.0;
 
@@ -46,7 +48,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
   @override
   void initState() {
     super.initState();
-    dataFuture = GetIt.I<EmptyClassRepository>().fetchEmptyClassesStatically();
+    dataFuture = ref.read(emptyClassesProvider.future);
     dataFuture.then((data) {
       if (mounted) setState(() => _allData = data);
       _refreshMarkers(data);
@@ -56,14 +58,11 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
       setState(() => _query = _searchCtrl.text.trim());
       if (_allData != null) _refreshMarkers(_allData!);
     });
-
-    _initCameraToMyLocation();
   }
 
   @override
   void dispose() {
     _searchCtrl.dispose();
-    _listScroll.dispose();
     super.dispose();
   }
 
@@ -125,8 +124,9 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
       final idx = filtered.indexOf(e);
       if (idx >= 0) {
         Future.delayed(const Duration(milliseconds: 450), () {
-          if (_listScroll.hasClients) {
-            _listScroll.animateTo(
+          final sc = _panelScroll;
+          if (sc != null && sc.hasClients) {
+            sc.animateTo(
               idx * 180.0,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
@@ -371,7 +371,10 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                     offset: const Offset(0, -4),
                   ),
                 ],
-                panel: _buildPanel(items, allItems),
+                panelBuilder: (sc) {
+                  _panelScroll = sc;
+                  return _buildPanel(items, allItems, sc);
+                },
                 body: Stack(
                   children: [
                     Positioned.fill(
@@ -499,7 +502,8 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
     );
   }
 
-  Widget _buildPanel(List<EmptyClass> items, List<EmptyClass> allItems) {
+  Widget _buildPanel(
+      List<EmptyClass> items, List<EmptyClass> allItems, ScrollController sc) {
     final totalBuildings = allItems.length;
     final totalRooms =
         allItems.fold<int>(0, (s, e) => s + (int.tryParse(e.classCount) ?? 0));
@@ -566,7 +570,7 @@ class _EmptyDetailScreenState extends State<EmptyDetailScreen> {
                   ),
                 )
               : ListView.separated(
-                  controller: _listScroll,
+                  controller: sc,
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
                   itemCount: items.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 10),

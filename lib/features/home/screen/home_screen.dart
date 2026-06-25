@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:handori/common/component/coming_soon_snackbar.dart';
 import 'package:handori/common/component/top_bar.dart';
 import 'package:handori/common/layout/root_tab.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/home/model/banner_model.dart';
 import 'package:handori/features/empty_class/model/class_model.dart';
-import 'package:handori/features/empty_class/repository/empty_class_repository.dart';
-import 'package:handori/common/repository/static_repository.dart';
+import 'package:handori/features/empty_class/presentation/provider/empty_class_provider.dart';
+import 'package:handori/features/home/presentation/provider/home_static_provider.dart';
 import 'package:handori/features/home/component/banner_card_top.dart';
 import 'package:handori/features/bus/component/bus_time_card.dart';
 import 'package:handori/features/empty_class/component/empty_class_card.dart';
@@ -115,12 +115,10 @@ class _OrganizationCard extends StatelessWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final dataRepository = GetIt.I<StaticDataRepository>();
-    final List<Banners> banner = dataRepository.banners;
-
+    final List<Banners> banner = ref.watch(bannersProvider);
 
     final Future<List<EmptyClass>> emptyClassesFuture =
-        GetIt.I<EmptyClassRepository>().fetchEmptyClassesStatically();
+        ref.watch(emptyClassesProvider.future);
 
     const padding = SizedBox(height: 20);
 
@@ -134,8 +132,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         titleSpacing: 20,
         title: TopBar(
           headerText: '산돌이',
-          onBellPressed: () {},
-          onUserPressed: () {},
+          onBellPressed: () => showComingSoonSnackBar(context),
+          onUserPressed: () => showComingSoonSnackBar(context),
         ),
       ),
       body: SingleChildScrollView(

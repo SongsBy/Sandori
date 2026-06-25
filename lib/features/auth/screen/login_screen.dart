@@ -64,15 +64,15 @@ class _LoginscreenState extends State<Loginscreen> {
   }
 ///카카오 로그인 구동 함수
   void kakaoLogin() {
-    print('카카오로그인');
+    debugPrint('카카오로그인');
   }
 ///구글 로그인 구동 함수
   void googleLogin() {
-    print('구글로그인');
+    debugPrint('구글로그인');
   }
 ///애플 로그인 구동 함수
   void appleLogin() {
-    print('애플로그인');
+    debugPrint('애플로그인');
   }
   /// 회원 로그인 구동 함수
   void login() => context.go(RoutePaths.main);
@@ -82,12 +82,11 @@ class _LoginscreenState extends State<Loginscreen> {
 }
 
 class _Top extends StatelessWidget {
-  const _Top({super.key});
+  const _Top();
 
   @override
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
-    final largeText = Theme.of(context).textTheme.displayLarge;
     final titleLarge = Theme.of(context).textTheme.titleLarge;
     final padding = SizedBox(height: 10);
     return Column(
@@ -114,7 +113,6 @@ class _Middle extends StatelessWidget {
     required this.onGooglePressed,
     required this.onApplePressed,
     required this.onKakaoPressed,
-    super.key,
   });
 
   @override
@@ -197,7 +195,6 @@ class _Bottom extends StatelessWidget {
     required this.controllers,
     required this.onLoginPressed,
     required this.onSigninPressed,
-    super.key,
   });
 
   @override
@@ -258,8 +255,7 @@ class _Bottom extends StatelessWidget {
                   ),
                 ),
               ),
-            )
-            .toList(),
+            ),
         SizedBox(height: 20),
         ElevatedButton(
           style: ElevatedButton.styleFrom(

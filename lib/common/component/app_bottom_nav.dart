@@ -13,6 +13,23 @@ class AppBottomNav extends StatelessWidget {
   static const _active = Color(0xFF3CB7BE);
   static const _inactive = Color(0xFFB0B6BF);
 
+  // 아이콘을 라벨 쪽으로 살짝 내리는 상단 여백
+  static const _iconTopPadding = 6.0;
+
+  BottomNavigationBarItem _item(IconData icon, IconData activeIcon, String label) {
+    return BottomNavigationBarItem(
+      icon: Padding(
+        padding: const EdgeInsets.only(top: _iconTopPadding),
+        child: Icon(icon),
+      ),
+      activeIcon: Padding(
+        padding: const EdgeInsets.only(top: _iconTopPadding),
+        child: Icon(activeIcon),
+      ),
+      label: label,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,33 +56,23 @@ class AppBottomNav extends StatelessWidget {
           showUnselectedLabels: true,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-          items: const [
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/bus_filled.png')),
-              activeIcon: ImageIcon(AssetImage('assets/img/bus_filled.png')),
-              label: '버스시간표',
+          items: [
+            _item(
+              Icons.directions_bus_outlined,
+              Icons.directions_bus_rounded,
+              '버스시간표',
             ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/meal_filled.png')),
-              activeIcon: ImageIcon(AssetImage('assets/img/meal_filled.png')),
-              label: '학식',
+            _item(Icons.restaurant_outlined, Icons.restaurant_rounded, '학식'),
+            _item(Icons.home_outlined, Icons.home_rounded, '홈'),
+            _item(
+              Icons.notifications_none_rounded,
+              Icons.notifications_rounded,
+              '공지사항',
             ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/home_filled.png')),
-              activeIcon: ImageIcon(AssetImage('assets/img/home_filled.png')),
-              label: '홈',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/notice_filled.png')),
-              activeIcon: ImageIcon(AssetImage('assets/img/notice_filled.png')),
-              label: '공지사항',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage('assets/img/emptyclass_filled.png')),
-              activeIcon: ImageIcon(
-                AssetImage('assets/img/emptyclass_filled.png'),
-              ),
-              label: '빈 강의실',
+            _item(
+              Icons.meeting_room_outlined,
+              Icons.meeting_room_rounded,
+              '빈 강의실',
             ),
           ],
         ),
