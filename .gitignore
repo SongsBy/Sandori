@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets (절대 커밋 금지 — 템플릿은 .env.example 참고)
+.env
+ios/Flutter/Secrets.xcconfig
