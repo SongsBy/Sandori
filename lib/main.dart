@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:handori/core/router/app_router.dart';
 
 Future<void> main() async {
@@ -26,13 +27,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFFAFAFA),
+        scaffoldBackgroundColor: AppColors.background,
         fontFamily: 'Pretendard',
         textTheme: const TextTheme(
           displayLarge: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
           displayMedium: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          // w300은 이제 실제 Light로 렌더되어 본문에는 너무 얇다.
+          // 디자인 시스템의 본문 굵기(Regular 400)에 맞춘다.
           bodySmall: TextStyle(
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w400,
             color: Colors.black,
             fontSize: 16,
           ),

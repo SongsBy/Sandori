@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 
 class HeaderText extends StatelessWidget {
   final String title;
@@ -13,7 +14,6 @@ class HeaderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediumText = Theme.of(context).textTheme.displayMedium;
     return Row(
       children: [
         if(titleImagePath != null)
@@ -21,17 +21,16 @@ class HeaderText extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: mediumText?.copyWith(
-              fontSize: 25,
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTextStyles.title01.copyWith(color: Colors.black87),
           ),
         ),
           if(onTextButtonPressed != null)
           TextButton(
             onPressed: onTextButtonPressed,
-            child: Text('더보기', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              '더보기',
+              style: AppTextStyles.caption02.copyWith(color: Colors.grey),
+            ),
           ),
       ],
     );

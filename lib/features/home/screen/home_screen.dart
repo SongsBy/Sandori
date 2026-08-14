@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:handori/common/component/coming_soon_snackbar.dart';
-import 'package:handori/common/component/top_bar.dart';
-import 'package:handori/common/layout/root_tab.dart';
+import 'package:handori/common/component/app_top_bar.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/home/model/banner_model.dart';
 import 'package:handori/features/empty_class/model/class_model.dart';
@@ -33,11 +34,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w800,
-        color: Colors.black87,
-      ),
+      style: AppTextStyles.title02.copyWith(color: Colors.black87),
     );
   }
 }
@@ -48,9 +45,9 @@ class _OrganizationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primary = Color(0xFF0088CC);
-    const subtleBg = Color(0xFFF7FBFD);
-    const border = Color(0xFFE2EEF3);
+    const primary = AppColors.primary;
+    const subtleBg = AppColors.subtleBg;
+    const border = AppColors.cardBorder;
 
     return GestureDetector(
       onTap: onTap,
@@ -86,20 +83,16 @@ class _OrganizationCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     '학과/부서 조회',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                    ),
+                    style: AppTextStyles.title03,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '전체 조직도와 연락처를 확인하세요',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF6B7A89),
-                          fontSize: 13,
-                        ),
+                    style: AppTextStyles.caption03.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -123,18 +116,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const padding = SizedBox(height: 20);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFAFAFA),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        titleSpacing: 20,
-        title: TopBar(
-          headerText: '산돌이',
-          onBellPressed: () => showComingSoonSnackBar(context),
-          onUserPressed: () => showComingSoonSnackBar(context),
-        ),
+      backgroundColor: AppColors.background,
+      appBar: AppTopBar(
+        title: '산돌이',
+        onBell: () => showComingSoonSnackBar(context),
+        onUser: () => showComingSoonSnackBar(context),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -155,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 10),
 
                     Bustimescreen(
-                      onTap: () => RootTab.of(context)?.jumpTo(0),
+                      onTap: () => StatefulNavigationShell.of(context).goBranch(0),
                       showHeader: false,
                     ),
 
@@ -172,7 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                            child: CircularProgressIndicator(color: Color(0xFF00C4F9)),
+                            child: CircularProgressIndicator(color: AppColors.primary),
                           );
                         }
                         if (snapshot.hasError) {
@@ -182,7 +168,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return ClassStateCard(
                           items: data,
                           maxItems: 5,
-                          onTap: () => RootTab.of(context)?.jumpTo(4),
+                          onTap: () => StatefulNavigationShell.of(context).goBranch(4),
                           showHeader: false,
                         );
                       },
@@ -218,7 +204,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return const SizedBox(
         height: 120,
         child:
-            Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9))),
+            Center(child: CircularProgressIndicator(color: AppColors.primary)),
       );
     }
     if (restaurantsAsync.hasError || mealsAsync.hasError) {
@@ -233,18 +219,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final restaurants = restaurantsAsync.value ?? const [];
     final meals = mealsAsync.value ?? const [];
     if (restaurants.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Text(
           '등록된 식당이 없습니다',
-          style: TextStyle(color: Colors.black45, fontSize: 13),
+          style: AppTextStyles.caption03.copyWith(color: Colors.black45),
         ),
       );
     }
 
     return HomeMealSection(
       menus: buildRestaurantMenus(restaurants, meals),
-      onTap: () => RootTab.of(context)?.jumpTo(1),
+      onTap: () => StatefulNavigationShell.of(context).goBranch(1),
     );
   }
 }
@@ -262,16 +248,16 @@ class _MealErrorView extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline, color: Colors.grey, size: 20),
           const SizedBox(width: 8),
-          const Expanded(
+          Expanded(
             child: Text(
               '학식 정보를 불러올 수 없습니다.',
-              style: TextStyle(color: Colors.black54, fontSize: 13),
+              style: AppTextStyles.caption03.copyWith(color: Colors.black54),
             ),
           ),
           TextButton(
             onPressed: onRetry,
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF00C4F9),
+              foregroundColor: AppColors.primary,
             ),
             child: const Text('다시 시도'),
           ),

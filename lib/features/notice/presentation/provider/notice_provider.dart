@@ -52,6 +52,7 @@ class NoticeListNotifier extends _$NoticeListNotifier {
       items: result.items,
       currentPage: page,
       hasMore: result.items.length >= _pageSize,
+      totalCount: result.total,
     );
   }
 
@@ -68,6 +69,7 @@ class NoticeListNotifier extends _$NoticeListNotifier {
           currentPage: current.currentPage + 1,
           hasMore: result.items.length >= _pageSize,
           isLoadingMore: false,
+          totalCount: result.total,
         ),
       );
     } catch (_) {

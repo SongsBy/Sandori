@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:handori/features/notice/domain/model/notice.dart';
@@ -35,7 +36,7 @@ class _NoticeDetailPageState extends State<NoticeDetailPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(72),
         child: SafeArea(
@@ -109,7 +110,7 @@ class _NoticeDetailPageState extends State<NoticeDetailPage> {
         children: [
           WebViewWidget(controller: _controller),
           if (_isLoading)
-            const Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9))),
+            const Center(child: CircularProgressIndicator(color: AppColors.primary)),
         ],
       ),
     );

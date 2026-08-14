@@ -75,7 +75,7 @@ class _LoginscreenState extends State<Loginscreen> {
     debugPrint('애플로그인');
   }
   /// 회원 로그인 구동 함수
-  void login() => context.go(RoutePaths.main);
+  void login() => context.go(RoutePaths.home);
 
   /// 회원 가입 화면 이동
   void signin() => context.push('${RoutePaths.login}/sign-in');

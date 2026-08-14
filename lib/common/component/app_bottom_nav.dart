@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -10,8 +12,8 @@ class AppBottomNav extends StatelessWidget {
   });
 
   // 컬러 톤 (원하는 색으로 조정)
-  static const _active = Color(0xFF3CB7BE);
-  static const _inactive = Color(0xFFB0B6BF);
+  static const _active = AppColors.primary;
+  static const _inactive = AppColors.textMuted;
 
   // 아이콘을 라벨 쪽으로 살짝 내리는 상단 여백
   static const _iconTopPadding = 6.0;
@@ -54,8 +56,14 @@ class AppBottomNav extends StatelessWidget {
           selectedItemColor: _active,
           unselectedItemColor: _inactive,
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+          // 5탭 한글 라벨('버스시간표')이 좁은 화면에서 잘리지 않도록
+          // 선택/비선택 크기를 caption04(12)로 통일하고 굵기로만 구분한다.
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          selectedLabelStyle: AppTextStyles.caption04.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+          unselectedLabelStyle: AppTextStyles.caption04,
           items: [
             _item(
               Icons.directions_bus_outlined,

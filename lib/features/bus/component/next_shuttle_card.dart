@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
 
 // ─── Color tokens ──────────────────────────────────────────────────────────
-const Color _kPrimary = Color(0xFF00C4F9);
-const Color _kBgBase = Colors.white;
-const Color _kBorderSoft = Color(0xFFF0F0F8);
-const Color _kTextPrimary = Color(0xFF1A1A1A);
-const Color _kTextMuted = Color(0xFF8A8F98);
+const Color _kPrimary = AppColors.primary;
+const Color _kBgBase = AppColors.surface;
+const Color _kBorderSoft = AppColors.divider;
+const Color _kTextPrimary = AppColors.textPrimary;
+const Color _kTextMuted = AppColors.textMuted;
 
-const TextStyle _kBusSubLabel = TextStyle(
-  fontSize: 12.5,
-  fontWeight: FontWeight.w500,
+final TextStyle _kBusSubLabel = AppTextStyles.caption04.copyWith(
   color: _kTextMuted,
   letterSpacing: -0.1,
 );
@@ -22,9 +22,6 @@ const TextStyle _kBusSubLabel = TextStyle(
 /// 홈 화면·버스 상세 화면이 동일한 [nextShuttleProvider] 데이터로 이 카드를
 /// 재사용해 표시 시간이 항상 일치하도록 한다.
 class NextShuttleCard extends StatelessWidget {
-  /// 임박 강조 기준(분).
-  static const int _imminentThreshold = 15;
-
   /// 노선/방면 라벨(예: '정왕역(셔틀)행').
   final String route;
 
@@ -36,8 +33,8 @@ class NextShuttleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final remain = next.remainMinutes;
-    final showsMinutes = next.showsMinutes && remain != null && remain > 0;
-    final isImminent = showsMinutes && remain <= _imminentThreshold;
+    // 카운트다운이 보이는 구간(15분 이내)이 곧 임박 구간이다.
+    final isImminent = next.showsMinutes && remain != null && remain > 0;
     final subText = next.subText;
 
     return Container(
@@ -90,11 +87,9 @@ class NextShuttleCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       '다음 셔틀',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                      style: AppTextStyles.caption04.copyWith(
                         color: _kTextMuted,
                         letterSpacing: 0.2,
                       ),
@@ -102,9 +97,7 @@ class NextShuttleCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       route,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
+                      style: AppTextStyles.caption01.copyWith(
                         color: _kTextPrimary,
                         letterSpacing: -0.3,
                       ),
@@ -118,9 +111,8 @@ class NextShuttleCard extends StatelessWidget {
           // 메인 표시 — 분 카운트다운 또는 상태 라벨.
           _HeroValue(
             next: next,
-            showsMinutes: showsMinutes,
+            showsMinutes: isImminent,
             remain: remain,
-            isImminent: isImminent,
           ),
           if (subText != null && subText.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -141,62 +133,57 @@ class _HeroValue extends StatelessWidget {
   final NextShuttle next;
   final bool showsMinutes;
   final int? remain;
-  final bool isImminent;
 
   const _HeroValue({
     required this.next,
     required this.showsMinutes,
     required this.remain,
-    required this.isImminent,
   });
 
   @override
   Widget build(BuildContext context) {
     if (showsMinutes && remain != null) {
-      final color = isImminent ? _kPrimary : _kTextPrimary;
       return Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
         children: [
           Text(
             '$remain',
-            style: TextStyle(
-              fontSize: 44,
-              fontWeight: FontWeight.w800,
-              color: color,
+            style: AppTextStyles.display01.copyWith(
+              color: _kPrimary,
               letterSpacing: -1.5,
               height: 1.0,
             ),
           ),
           const SizedBox(width: 4),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 6),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
             child: Text(
               '분 후 출발',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: _kTextMuted,
-              ),
+              style: AppTextStyles.caption01.copyWith(color: _kTextMuted),
             ),
           ),
         ],
       );
     }
 
-    // 정각 출발 직전 → "곧 도착", 그 외는 상태 라벨.
-    final label = (next.status == ShuttleStatus.upcoming)
-        ? '곧 도착'
-        : (next.statusLabel ?? '-');
-    final emphasize = next.status == ShuttleStatus.upcoming ||
-        next.status == ShuttleStatus.flexible ||
-        next.status == ShuttleStatus.arrivalBoarding;
+    // 15분보다 멀면 분 숫자를 신뢰할 수 없어 안내하지 않는다.
+    // 그 외에는 정각 출발 직전이면 "곧 도착", 나머지는 상태 라벨.
+    final label = next.isBeyondCountdown
+        ? '도착정보없음'
+        : (next.status == ShuttleStatus.upcoming)
+            ? '곧 도착'
+            : (next.statusLabel ?? '-');
+
+    // 도착정보없음은 알릴 내용이 없는 상태라 강조하지 않는다.
+    final emphasize = !next.isBeyondCountdown &&
+        (next.status == ShuttleStatus.upcoming ||
+            next.status == ShuttleStatus.flexible ||
+            next.status == ShuttleStatus.arrivalBoarding);
 
     return Text(
       label,
-      style: TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w800,
+      style: AppTextStyles.display02.copyWith(
         color: emphasize ? _kPrimary : _kTextMuted,
         letterSpacing: -0.6,
         height: 1.1,

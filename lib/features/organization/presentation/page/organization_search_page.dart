@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:handori/features/organization/presentation/provider/organization_provider.dart';
@@ -16,14 +18,14 @@ class OrganizationSearchPage extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0.5,
         title: Text(
           '"$query" 검색 결과',
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+          style: AppTextStyles.title03,
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -32,20 +34,26 @@ class OrganizationSearchPage extends ConsumerWidget {
       ),
       body: searchAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0088CC)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (e, _) => Center(child: Text('검색 실패: $e')),
         data: (results) {
           if (results.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.search_off, size: 48, color: Color(0xFFBDBDBD)),
-                  SizedBox(height: 12),
+                  const Icon(
+                    Icons.search_off,
+                    size: 48,
+                    color: Color(0xFFBDBDBD),
+                  ),
+                  const SizedBox(height: 12),
                   Text(
                     '검색 결과가 없습니다.',
-                    style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 15),
+                    style: AppTextStyles.body.copyWith(
+                      color: const Color(0xFF9E9E9E),
+                    ),
                   ),
                 ],
               ),
@@ -55,7 +63,7 @@ class OrganizationSearchPage extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             itemCount: results.length,
             separatorBuilder: (_, _) =>
-                const Divider(height: 1, color: Color(0xFFE2EEF3)),
+                const Divider(height: 1, color: AppColors.cardBorder),
             itemBuilder: (_, i) => OrganizationNodeCard(node: results[i]),
           );
         },

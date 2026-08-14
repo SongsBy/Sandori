@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 
 /// 식당 위치 정보를 아이콘 + 텍스트로 표시하는 공통 위젯.
 ///
@@ -38,7 +39,10 @@ class RestaurantLocationLabel extends StatelessWidget {
         Flexible(
           child: Text(
             location,
-            style: TextStyle(fontSize: fontSize, color: _kTextColor),
+            style: AppTextStyles.caption04.copyWith(
+              fontSize: fontSize,
+              color: _kTextColor,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

@@ -9,5 +9,6 @@ class PaginationState<T> with _$PaginationState<T> {
     @Default(1) int currentPage,
     @Default(true) bool hasMore,
     @Default(false) bool isLoadingMore,
+    @Default(0) int totalCount,
   }) = _PaginationState;
 }

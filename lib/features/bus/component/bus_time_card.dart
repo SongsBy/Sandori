@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
 import 'package:handori/features/bus/presentation/provider/bus_image_provider.dart';
 import 'package:handori/features/bus/presentation/provider/next_shuttle_provider.dart';
@@ -27,13 +28,14 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
     if (next.showsMinutes && remain != null && remain > 0) {
       return '$remain분 후 출발';
     }
+    // 15분보다 멀면 분 숫자를 신뢰할 수 없어 안내하지 않는다.
+    if (next.isBeyondCountdown) return '도착정보없음';
     if (next.status == ShuttleStatus.upcoming) return '곧 도착';
     return next.statusLabel ?? '운행 정보 없음';
   }
 
   @override
   Widget build(BuildContext context) {
-    final mediumText = Theme.of(context).textTheme.displayMedium;
     final busImagesAsync = ref.watch(busImagesProvider);
     final List<String?> imageUrls = busImagesAsync.valueOrNull ?? [];
 
@@ -107,10 +109,7 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                     Expanded(
                       child: Text(
                         '셔틀버스',
-                        style: mediumText?.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: AppTextStyles.title03,
                       ),
                     ),
                     _Badge(
@@ -149,19 +148,17 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: _border),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.swap_horiz_rounded,
                             size: 16,
                             color: _primary,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             '반대 방면',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            style: AppTextStyles.caption04.copyWith(
                               color: _primary,
                             ),
                           ),
@@ -180,10 +177,7 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                   const SizedBox(width: 6),
                   Text(
                     _arrivalText(nextShuttle),
-                    style: mediumText?.copyWith(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.caption01.copyWith(color: Colors.red),
                   ),
                 ],
               ),
@@ -196,10 +190,7 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                   const SizedBox(width: 6),
                   Text(
                     stopName,
-                    style: mediumText?.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.caption01,
                   ),
                 ],
               ),
@@ -234,9 +225,8 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                     Expanded(
                       child: Text(
                         '도착 시간은 교통 상황에 따라 달라질 수 있어요.',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: AppTextStyles.caption04.copyWith(
                           color: const Color(0xFF5A6B7A),
-                          fontSize: 11.5,
                         ),
                       ),
                     ),
@@ -266,9 +256,7 @@ class _DirectionChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
+        style: AppTextStyles.caption02.copyWith(
           color: isOrigin ? Colors.white : Colors.black87,
         ),
       ),
@@ -300,11 +288,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          color: fg,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w700,
-        ),
+        style: AppTextStyles.caption04.copyWith(color: fg),
       ),
     );
   }
@@ -325,17 +309,15 @@ class _BusTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediumText = Theme.of(context).textTheme.displayMedium;
-
     return Row(
       children: [
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFFE6F9FF),
+            color: AppColors.primaryLight,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFBDE8F6)),
+            border: Border.all(color: AppColors.primaryBorder),
           ),
           padding: const EdgeInsets.all(6),
           child:
@@ -364,10 +346,8 @@ class _BusTile extends StatelessWidget {
                 ),
                 child: Text(
                   number,
-                  style: mediumText?.copyWith(
-                    fontSize: 14,
-                    color: const Color(0xFF2F8C3B),
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.caption02.copyWith(
+                    color: AppColors.success,
                   ),
                 ),
               ),
@@ -377,8 +357,7 @@ class _BusTile extends StatelessWidget {
                   destination,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: mediumText?.copyWith(
-                    fontSize: 14,
+                  style: AppTextStyles.caption03.copyWith(
                     color: const Color(0xFF6B7A89),
                   ),
                 ),
@@ -396,10 +375,8 @@ class _BusTile extends StatelessWidget {
           ),
           child: Text(
             etaText,
-            style: mediumText?.copyWith(
-              fontSize: 13.5,
-              color: const Color(0xFFD63B3B),
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.caption02.copyWith(
+              color: AppColors.danger,
             ),
           ),
         ),

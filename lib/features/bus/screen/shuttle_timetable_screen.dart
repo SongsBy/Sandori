@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 
 import 'package:handori/features/bus/component/shuttle_direction_toggle.dart';
 import 'package:handori/features/bus/data/data_source/shuttle_schedule_data.dart';
 import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
 
 // ─── Color tokens ──────────────────────────────────────────────────────────
-const Color _kPrimary = Color(0xFF00C4F9);
-const Color _kBgBase = Colors.white;
-const Color _kBgSoft = Color(0xFFFAFAFA);
-const Color _kBorderSoft = Color(0xFFF0F0F8);
-const Color _kTextPrimary = Color(0xFF1A1A1A);
-const Color _kTextMuted = Color(0xFF8A8F98);
+const Color _kPrimary = AppColors.primary;
+const Color _kBgBase = AppColors.surface;
+const Color _kBgSoft = AppColors.background;
+const Color _kBorderSoft = AppColors.divider;
+const Color _kTextPrimary = AppColors.textPrimary;
+const Color _kTextMuted = AppColors.textMuted;
 
 const double _kCardRadius = 16.0;
 const double _kHourColWidth = 60.0;
@@ -190,9 +192,7 @@ class _Header extends StatelessWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.title03.copyWith(
                 color: _kTextPrimary,
                 letterSpacing: -0.3,
               ),
@@ -227,9 +227,7 @@ class _RouteCaption extends StatelessWidget {
             origin,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
+            style: AppTextStyles.caption01.copyWith(
               color: _kTextPrimary,
               letterSpacing: -0.3,
             ),
@@ -244,9 +242,7 @@ class _RouteCaption extends StatelessWidget {
             destination,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
+            style: AppTextStyles.caption01.copyWith(
               color: _kTextPrimary,
               letterSpacing: -0.3,
             ),
@@ -255,9 +251,7 @@ class _RouteCaption extends StatelessWidget {
         const Spacer(),
         Text(
           summary,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+          style: AppTextStyles.caption04.copyWith(
             color: _kTextMuted,
             letterSpacing: -0.1,
           ),
@@ -310,9 +304,7 @@ class _TableHeaderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w700,
+    final style = AppTextStyles.caption04.copyWith(
       color: _kTextMuted,
       letterSpacing: 0.4,
     );
@@ -329,10 +321,10 @@ class _TableHeaderRow extends StatelessWidget {
               decoration: const BoxDecoration(
                 border: Border(right: BorderSide(color: _kBorderSoft)),
               ),
-              child: const Text('시', style: style),
+              child: Text('시', style: style),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text('분', style: style),
             ),
           ],
@@ -367,9 +359,7 @@ class _HourRowTile extends StatelessWidget {
             ),
             child: Text(
               row.hour.toString().padLeft(2, '0'),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.caption01.copyWith(
                 color: _kPrimary,
                 letterSpacing: -0.3,
               ),
@@ -381,9 +371,7 @@ class _HourRowTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Text(
                 minutesText,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.caption01.copyWith(
                   color: _kTextPrimary,
                   letterSpacing: 0.2,
                   height: 1.5,
@@ -432,9 +420,7 @@ class _SegmentRowTile extends StatelessWidget {
                   children: [
                     Text(
                       timeRange,
-                      style: const TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
+                      style: AppTextStyles.caption02.copyWith(
                         color: _kTextPrimary,
                         letterSpacing: -0.2,
                       ),
@@ -451,9 +437,7 @@ class _SegmentRowTile extends StatelessWidget {
                       ),
                       child: Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                        style: AppTextStyles.caption04.copyWith(
                           color: _kPrimary,
                           letterSpacing: -0.1,
                         ),
@@ -465,9 +449,7 @@ class _SegmentRowTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     entry.boardingNote!,
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w500,
+                    style: AppTextStyles.caption04.copyWith(
                       color: _kTextMuted,
                       height: 1.4,
                       letterSpacing: -0.1,
@@ -498,18 +480,16 @@ class _PlatformNotice extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: _kBorderSoft),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline_rounded, size: 16, color: _kTextMuted),
-          SizedBox(width: 8),
+          const Icon(Icons.info_outline_rounded, size: 16, color: _kTextMuted),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               '평일 기준 시간표예요. 토·일·공휴일은 운행하지 않습니다.\n'
               '도로 사정에 따라 출발 시각이 달라질 수 있어요.',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              style: AppTextStyles.caption04.copyWith(
                 color: _kTextMuted,
                 height: 1.5,
                 letterSpacing: -0.1,
@@ -535,15 +515,13 @@ class _EmptyNotice extends StatelessWidget {
         borderRadius: BorderRadius.circular(_kCardRadius),
         border: Border.all(color: _kBorderSoft),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.event_busy_rounded, size: 28, color: _kTextMuted),
-          SizedBox(height: 12),
+          const Icon(Icons.event_busy_rounded, size: 28, color: _kTextMuted),
+          const SizedBox(height: 12),
           Text(
             '시간표 정보가 없어요',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.caption02.copyWith(
               color: _kTextPrimary,
               letterSpacing: -0.3,
             ),

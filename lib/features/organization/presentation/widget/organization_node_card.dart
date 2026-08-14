@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/organization/domain/model/organization_node.dart';
 
 class OrganizationNodeCard extends StatelessWidget {
@@ -28,14 +30,9 @@ class OrganizationNodeCard extends StatelessWidget {
 
 TextStyle _getDepthTextStyle(int depth) {
   if (depth == 0) {
-    return const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      color: Colors.black87,
-    );
+    return AppTextStyles.caption01.copyWith(color: Colors.black87);
   } else {
-    return TextStyle(
-      fontSize: 14,
+    return AppTextStyles.caption02.copyWith(
       fontWeight: FontWeight.w500,
       color: Colors.grey[600],
     );
@@ -70,11 +67,11 @@ class _GroupTile extends StatelessWidget {
             top: 0,
             bottom: 0,
           ),
-          iconColor: const Color(0xFF00C4F9),
-          collapsedIconColor: const Color(0xFF00C4F9),
+          iconColor: AppColors.primary,
+          collapsedIconColor: AppColors.primary,
           leading: Icon(
             Icons.folder_outlined,
-            color: depth == 0 ? const Color(0xFF00C4F9) : Colors.grey[500],
+            color: depth == 0 ? AppColors.primary : Colors.grey[500],
             size: 20,
           ),
           title: Text(
@@ -121,7 +118,7 @@ class _UnitTile extends StatelessWidget {
         ),
         leading: Icon(
           Icons.person_outline,
-          color: depth == 0 ? const Color(0xFF00C4F9) : Colors.grey[500],
+          color: depth == 0 ? AppColors.primary : Colors.grey[500],
           size: 20,
         ),
         title: Text(
@@ -144,8 +141,7 @@ class _UnitTile extends StatelessWidget {
                         Expanded(
                           child: Text(
                             node.phone!,
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: AppTextStyles.caption04.copyWith(
                               color: Colors.grey[600],
                             ),
                           ),
@@ -166,8 +162,7 @@ class _UnitTile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               node.url!,
-                              style: TextStyle(
-                                fontSize: 12,
+                              style: AppTextStyles.caption04.copyWith(
                                 color: Colors.grey[600],
                               ),
                               maxLines: 1,

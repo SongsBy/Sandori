@@ -59,7 +59,7 @@ final recentShuttleProvider = AutoDisposeFutureProvider<ShuttleRecent>.internal(
 // ignore: unused_element
 typedef RecentShuttleRef = AutoDisposeFutureProviderRef<ShuttleRecent>;
 String _$noticeListNotifierHash() =>
-    r'cb12eb705440ec9416d3e64465a3ab15687274a5';
+    r'a0797a89ed29db4815199ba5c9f53dafa0f86458';
 
 /// Copied from Dart SDK
 class _SystemHash {

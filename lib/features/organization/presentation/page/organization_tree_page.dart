@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:handori/core/router/route_paths.dart';
@@ -28,14 +30,14 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
     final treeAsync = ref.watch(organizationTreeNotifierProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0.5,
         title: const Text(
           '학과/부서 조직도',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          style: AppTextStyles.title03,
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -51,7 +53,7 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
               controller: _searchCtrl,
               decoration: InputDecoration(
                 hintText: '학과 또는 부서 이름 검색',
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF0088CC)),
+                prefixIcon: const Icon(Icons.search, color: AppColors.primary),
                 suffixIcon: _query.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear, size: 18),
@@ -66,15 +68,15 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFFE2EEF3)),
+                  borderSide: const BorderSide(color: AppColors.cardBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFFE2EEF3)),
+                  borderSide: const BorderSide(color: AppColors.cardBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF0088CC)),
+                  borderSide: const BorderSide(color: AppColors.primary),
                 ),
               ),
               textInputAction: TextInputAction.search,
@@ -92,7 +94,7 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
           Expanded(
             child: treeAsync.when(
               loading: () => const Center(
-                child: CircularProgressIndicator(color: Color(0xFF0088CC)),
+                child: CircularProgressIndicator(color: AppColors.primary),
               ),
               error: (e, _) => Center(
                 child: Column(
@@ -112,7 +114,7 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
                 ),
               ),
               data: (root) => RefreshIndicator(
-                color: const Color(0xFF0088CC),
+                color: AppColors.primary,
                 onRefresh: () =>
                     ref.read(organizationTreeNotifierProvider.notifier).refresh(),
                 child: ListView(

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/empty_class/model/class_model.dart';
 
 ({Color fg, Color bg, Color border, String label}) _trafficStyle(String path) {
   if (path.contains('green')) {
     return (
-      fg: const Color(0xFF2F8C3B),
+      fg: AppColors.success,
       bg: const Color(0xFFEFF9F0),
       border: const Color(0xFFCFEAD2),
       label: '여유',
@@ -20,7 +21,7 @@ import 'package:handori/features/empty_class/model/class_model.dart';
     );
   }
   return (
-    fg: const Color(0xFFD63B3B),
+    fg: AppColors.danger,
     bg: const Color(0xFFFFF0F0),
     border: const Color(0xFFFFD1D1),
     label: '혼잡',
@@ -55,10 +56,7 @@ class ClassStateCard extends StatelessWidget {
             if (showHeader) ...[
               Text(
                 '빈 강의실 현황',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: AppTextStyles.title02,
               ),
               const SizedBox(height: 8),
             ],
@@ -115,11 +113,7 @@ class _ClassLine extends StatelessWidget {
               ),
               child: Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
-                ),
+                style: AppTextStyles.caption01.copyWith(color: Colors.black87),
               ),
             ),
             const SizedBox(width: 10),
@@ -133,11 +127,7 @@ class _ClassLine extends StatelessWidget {
               ),
               child: Text(
                 style.label,
-                style: TextStyle(
-                  fontSize: 11.5,
-                  color: style.fg,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: AppTextStyles.caption04.copyWith(color: style.fg),
               ),
             ),
             const SizedBox(width: 8),
@@ -150,11 +140,7 @@ class _ClassLine extends StatelessWidget {
               ),
               child: Text(
                 '총 $classCount개',
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.caption04.copyWith(color: Colors.black87),
               ),
             ),
           ],

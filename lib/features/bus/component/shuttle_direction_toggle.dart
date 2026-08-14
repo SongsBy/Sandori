@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 
 // ─── Color tokens ──────────────────────────────────────────────────────────
-const Color _kPrimary = Color(0xFF00C4F9);
-const Color _kBgBase = Colors.white;
-const Color _kBorderSoft = Color(0xFFF0F0F8);
-const Color _kTextMuted = Color(0xFF8A8F98);
+const Color _kPrimary = AppColors.primary;
+const Color _kBgBase = AppColors.surface;
+const Color _kBorderSoft = AppColors.divider;
+const Color _kTextMuted = AppColors.textMuted;
 
 /// 정왕역 방면(0) / 학교 방면(1) 토글.
 ///
@@ -64,9 +66,8 @@ class ShuttleDirectionToggle extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+            style: AppTextStyles.caption02.copyWith(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               color: isSelected ? Colors.white : _kTextMuted,
               letterSpacing: -0.2,
             ),

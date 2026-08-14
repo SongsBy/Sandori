@@ -1,86 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:handori/core/constants/app_colors.dart';
-import 'package:handori/features/school_meal/domain/model/meal_type.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/school_meal/presentation/model/restaurant_menu.dart';
 import 'package:handori/features/school_meal/presentation/provider/selected_restaurant_id_notifier.dart';
 
 const _kPrimary = AppColors.primary;
-
-/// 현재 시각이 어느 식사 시간대에 속하는지 기준으로 노출 우선순위를 정한다.
-///
-/// 식당 운영시간(timeRange)이 등록돼 있지 않은 경우의 폴백 기준이다.
-/// 핵심 요구사항: 18시가 지나면 저녁 메뉴를 우선 노출한다.
-List<MealType> _preferredMealOrderAt(int nowMinutes) {
-  const breakfastEnd = 10 * 60 + 30; // 10:30
-  const dinnerStart = 18 * 60; // 18:00
-  if (nowMinutes < breakfastEnd) {
-    return const [
-      MealType.breakfast,
-      MealType.brunch,
-      MealType.lunch,
-      MealType.dinner,
-    ];
-  }
-  if (nowMinutes < dinnerStart) {
-    return const [
-      MealType.lunch,
-      MealType.brunch,
-      MealType.breakfast,
-      MealType.dinner,
-    ];
-  }
-  return const [
-    MealType.dinner,
-    MealType.lunch,
-    MealType.brunch,
-    MealType.breakfast,
-  ];
-}
-
-/// 현재 시간 기준 운영 중이거나 다음 운영 예정인 시간대를 찾는다.
-///
-/// 메뉴가 등록돼 있으면 운영시간(timeRange) 미등록 식당(예: 가가식당)도 노출한다.
-/// 운영시간이 있는 슬롯은 현재/다음 시간대 우선순위로 고르고, 시간대를 판정할 수
-/// 없으면(운영시간 미등록) 현재 시각이 속한 식사 시간대를 우선 노출한다.
-/// 예: 18시 이후엔 저녁 메뉴가 있으면 저녁을 보여준다.
-MenuSlot? _findCurrentOrNextSlot(List<MenuSlot> slots) {
-  final withMenu = slots.where((s) => s.menu.isNotEmpty).toList();
-  if (withMenu.isEmpty) return null;
-
-  final now = DateTime.now();
-  final nowMinutes = now.hour * 60 + now.minute;
-
-  MenuSlot? nextSlot;
-  for (final slot in withMenu) {
-    final parts = slot.timeRange.split('~');
-    if (parts.length != 2) continue;
-
-    final startParts = parts[0].trim().split(':');
-    final endParts = parts[1].trim().split(':');
-    if (startParts.length != 2 || endParts.length != 2) continue;
-
-    final startMinutes = (int.tryParse(startParts[0]) ?? 0) * 60 +
-        (int.tryParse(startParts[1]) ?? 0);
-    final endMinutes = (int.tryParse(endParts[0]) ?? 0) * 60 +
-        (int.tryParse(endParts[1]) ?? 0);
-
-    // 지금 운영 중인 시간대를 최우선 노출한다.
-    if (nowMinutes >= startMinutes && nowMinutes < endMinutes) return slot;
-    if (nowMinutes < startMinutes) nextSlot ??= slot;
-  }
-
-  // 곧 시작하는(다음) 운영 시간대가 있으면 그것을 노출한다.
-  if (nextSlot != null) return nextSlot;
-
-  // 운영시간으로 특정하지 못하면 현재 시각이 속한 식사 시간대를 우선 노출한다.
-  for (final type in _preferredMealOrderAt(nowMinutes)) {
-    for (final slot in withMenu) {
-      if (slot.mealType == type) return slot;
-    }
-  }
-  return withMenu.first;
-}
 
 class HomeMealSection extends ConsumerWidget {
   final List<RestaurantMenu> menus;
@@ -99,7 +24,7 @@ class HomeMealSection extends ConsumerWidget {
     if (selected < 0) selected = 0;
 
     final menu = menus[selected];
-    final slot = _findCurrentOrNextSlot(menu.slots);
+    final slot = findCurrentOrNextSlot(menu.slots);
     final price = slot?.price;
 
     return Column(
@@ -141,9 +66,7 @@ class HomeMealSection extends ConsumerWidget {
                   ),
                   child: Text(
                     menus[i].name,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                    style: AppTextStyles.caption02.copyWith(
                       color: isSelected ? Colors.white : Colors.black87,
                     ),
                   ),
@@ -189,9 +112,7 @@ class HomeMealSection extends ConsumerWidget {
                   children: [
                     Text(
                       menu.name,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                      style: AppTextStyles.caption01.copyWith(
                         color: Colors.black87,
                       ),
                     ),
@@ -199,10 +120,8 @@ class HomeMealSection extends ConsumerWidget {
                     if (price != null)
                       Text(
                         '${price ~/ 1000},${(price % 1000).toString().padLeft(3, '0')}원',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0088CC),
+                        style: AppTextStyles.number02.copyWith(
+                          color: _kPrimary,
                         ),
                       ),
                   ],
@@ -225,9 +144,7 @@ class HomeMealSection extends ConsumerWidget {
                         ),
                         child: Text(
                           item,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          style: AppTextStyles.caption04.copyWith(
                             color: Colors.black87,
                           ),
                         ),
@@ -235,9 +152,11 @@ class HomeMealSection extends ConsumerWidget {
                     }).toList(),
                   )
                 else
-                  const Text(
+                  Text(
                     '오늘은 운영하지 않아요',
-                    style: TextStyle(fontSize: 13, color: Colors.black45),
+                    style: AppTextStyles.caption03.copyWith(
+                      color: Colors.black45,
+                    ),
                   ),
               ],
             ),

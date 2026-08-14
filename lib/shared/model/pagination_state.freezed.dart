@@ -21,6 +21,7 @@ mixin _$PaginationState<T> {
   int get currentPage => throw _privateConstructorUsedError;
   bool get hasMore => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
+  int get totalCount => throw _privateConstructorUsedError;
 
   /// Create a copy of PaginationState
   /// with the given fields replaced by the non-null parameter values.
@@ -36,7 +37,13 @@ abstract class $PaginationStateCopyWith<T, $Res> {
     $Res Function(PaginationState<T>) then,
   ) = _$PaginationStateCopyWithImpl<T, $Res, PaginationState<T>>;
   @useResult
-  $Res call({List<T> items, int currentPage, bool hasMore, bool isLoadingMore});
+  $Res call({
+    List<T> items,
+    int currentPage,
+    bool hasMore,
+    bool isLoadingMore,
+    int totalCount,
+  });
 }
 
 /// @nodoc
@@ -58,6 +65,7 @@ class _$PaginationStateCopyWithImpl<T, $Res, $Val extends PaginationState<T>>
     Object? currentPage = null,
     Object? hasMore = null,
     Object? isLoadingMore = null,
+    Object? totalCount = null,
   }) {
     return _then(
       _value.copyWith(
@@ -81,6 +89,11 @@ class _$PaginationStateCopyWithImpl<T, $Res, $Val extends PaginationState<T>>
                     ? _value.isLoadingMore
                     : isLoadingMore // ignore: cast_nullable_to_non_nullable
                         as bool,
+            totalCount:
+                null == totalCount
+                    ? _value.totalCount
+                    : totalCount // ignore: cast_nullable_to_non_nullable
+                        as int,
           )
           as $Val,
     );
@@ -96,7 +109,13 @@ abstract class _$$PaginationStateImplCopyWith<T, $Res>
   ) = __$$PaginationStateImplCopyWithImpl<T, $Res>;
   @override
   @useResult
-  $Res call({List<T> items, int currentPage, bool hasMore, bool isLoadingMore});
+  $Res call({
+    List<T> items,
+    int currentPage,
+    bool hasMore,
+    bool isLoadingMore,
+    int totalCount,
+  });
 }
 
 /// @nodoc
@@ -117,6 +136,7 @@ class __$$PaginationStateImplCopyWithImpl<T, $Res>
     Object? currentPage = null,
     Object? hasMore = null,
     Object? isLoadingMore = null,
+    Object? totalCount = null,
   }) {
     return _then(
       _$PaginationStateImpl<T>(
@@ -140,6 +160,11 @@ class __$$PaginationStateImplCopyWithImpl<T, $Res>
                 ? _value.isLoadingMore
                 : isLoadingMore // ignore: cast_nullable_to_non_nullable
                     as bool,
+        totalCount:
+            null == totalCount
+                ? _value.totalCount
+                : totalCount // ignore: cast_nullable_to_non_nullable
+                    as int,
       ),
     );
   }
@@ -153,6 +178,7 @@ class _$PaginationStateImpl<T> implements _PaginationState<T> {
     this.currentPage = 1,
     this.hasMore = true,
     this.isLoadingMore = false,
+    this.totalCount = 0,
   }) : _items = items;
 
   final List<T> _items;
@@ -173,10 +199,13 @@ class _$PaginationStateImpl<T> implements _PaginationState<T> {
   @override
   @JsonKey()
   final bool isLoadingMore;
+  @override
+  @JsonKey()
+  final int totalCount;
 
   @override
   String toString() {
-    return 'PaginationState<$T>(items: $items, currentPage: $currentPage, hasMore: $hasMore, isLoadingMore: $isLoadingMore)';
+    return 'PaginationState<$T>(items: $items, currentPage: $currentPage, hasMore: $hasMore, isLoadingMore: $isLoadingMore, totalCount: $totalCount)';
   }
 
   @override
@@ -189,7 +218,9 @@ class _$PaginationStateImpl<T> implements _PaginationState<T> {
                 other.currentPage == currentPage) &&
             (identical(other.hasMore, hasMore) || other.hasMore == hasMore) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
-                other.isLoadingMore == isLoadingMore));
+                other.isLoadingMore == isLoadingMore) &&
+            (identical(other.totalCount, totalCount) ||
+                other.totalCount == totalCount));
   }
 
   @override
@@ -199,6 +230,7 @@ class _$PaginationStateImpl<T> implements _PaginationState<T> {
     currentPage,
     hasMore,
     isLoadingMore,
+    totalCount,
   );
 
   /// Create a copy of PaginationState
@@ -219,6 +251,7 @@ abstract class _PaginationState<T> implements PaginationState<T> {
     final int currentPage,
     final bool hasMore,
     final bool isLoadingMore,
+    final int totalCount,
   }) = _$PaginationStateImpl<T>;
 
   @override
@@ -229,6 +262,8 @@ abstract class _PaginationState<T> implements PaginationState<T> {
   bool get hasMore;
   @override
   bool get isLoadingMore;
+  @override
+  int get totalCount;
 
   /// Create a copy of PaginationState
   /// with the given fields replaced by the non-null parameter values.

@@ -1,7 +1,9 @@
 import 'dart:ui' as ui;
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -11,7 +13,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:handori/features/empty_class/model/class_model.dart';
 import 'package:handori/features/empty_class/presentation/provider/empty_class_provider.dart';
 
-import 'package:handori/common/layout/root_tab.dart';
+import 'package:go_router/go_router.dart';
+import 'package:handori/common/layout/root_shell.dart';
 
 class EmptyDetailScreen extends ConsumerStatefulWidget {
   const EmptyDetailScreen({super.key});
@@ -21,7 +24,7 @@ class EmptyDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
-  static const _primary = Color(0xFF5C6BC0);
+  static const _primary = AppColors.primary;
   static const _minPanelH = 120.0;
 
   late final Future<List<EmptyClass>> dataFuture;
@@ -148,12 +151,7 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
   }
 
   void _handleBack() {
-    final shell = RootTab.of(context);
-    if (shell != null) {
-      shell.jumpTo(2);
-    } else if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
+    StatefulNavigationShell.of(context).goBranch(RootShell.homeBranch);
   }
 
   /// 건물명 + 빈 강의실 개수를 항상 표시하는 커스텀 마커 비트맵 생성
@@ -172,7 +170,7 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
     const double shadowOff = 1.5;
     const double badgePadH = 6.0;
     const double badgePadV = 3.0;
-    const Color primary = Color(0xFF5C6BC0);
+    const Color primary = AppColors.primary;
 
     final nameTp = TextPainter(
       text: TextSpan(
@@ -469,12 +467,12 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
                     child: TextField(
                       controller: _searchCtrl,
                       textInputAction: TextInputAction.search,
-                      style: const TextStyle(
-                          fontSize: 14, color: Colors.black87),
-                      decoration: const InputDecoration(
+                      style: AppTextStyles.caption03
+                          .copyWith(color: Colors.black87),
+                      decoration: InputDecoration(
                         hintText: '건물명 또는 강의실 코드 (예: E동, E234)',
-                        hintStyle: TextStyle(
-                            color: Colors.black38, fontSize: 13.5),
+                        hintStyle: AppTextStyles.caption03
+                            .copyWith(color: Colors.black38),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
                         isDense: true,
@@ -529,11 +527,9 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
               ),
               Row(
                 children: [
-                  const Text(
+                  Text(
                     '빈 강의실 현황',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.title02.copyWith(
                       color: Colors.black87,
                     ),
                   ),
@@ -542,14 +538,14 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
                   const SizedBox(width: 6),
                   _StatChip(
                       label: '총 $totalRooms개',
-                      color: const Color(0xFF26C6DA)),
+                      color: AppColors.primary),
                 ],
               ),
             ],
           ),
         ),
         const SizedBox(height: 12),
-        const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F8)),
+        const Divider(height: 1, thickness: 1, color: AppColors.divider),
         const SizedBox(height: 4),
         // 리스트
         Expanded(
@@ -561,10 +557,11 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
                       Icon(Icons.search_off_rounded,
                           size: 52, color: Colors.grey.shade300),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         '조건에 맞는 빈 강의실이 없습니다.',
-                        style:
-                            TextStyle(color: Colors.black38, fontSize: 14),
+                        style: AppTextStyles.caption03.copyWith(
+                          color: Colors.black38,
+                        ),
                       ),
                     ],
                   ),
@@ -612,8 +609,7 @@ class _StatChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-            fontSize: 12, fontWeight: FontWeight.w700, color: color),
+        style: AppTextStyles.caption04.copyWith(color: color),
       ),
     );
   }
@@ -629,7 +625,7 @@ class _EmptyClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primary = Color(0xFF5C6BC0);
+    const primary = AppColors.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -686,12 +682,8 @@ class _EmptyClassCard extends StatelessWidget {
                               item.className,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: isSelected
-                                    ? primary
-                                    : Colors.black87,
+                              style: AppTextStyles.caption01.copyWith(
+                                color: isSelected ? primary : Colors.black87,
                               ),
                             ),
                           ),
@@ -710,12 +702,9 @@ class _EmptyClassCard extends StatelessWidget {
                             ),
                             child: Text(
                               '총 ${item.classCount}개',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isSelected
-                                    ? Colors.white
-                                    : Colors.black87,
-                                fontWeight: FontWeight.w700,
+                              style: AppTextStyles.caption04.copyWith(
+                                color:
+                                    isSelected ? Colors.white : Colors.black87,
                               ),
                             ),
                           ),
@@ -771,14 +760,12 @@ class _FloorGroupedRooms extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.layers_rounded,
-                      size: 12, color: Color(0xFF26C6DA)),
+                      size: 12, color: AppColors.primary),
                   const SizedBox(width: 4),
                   Text(
                     floor,
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF26C6DA),
+                    style: AppTextStyles.caption04.copyWith(
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -815,15 +802,11 @@ class _RoomChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.meeting_room_outlined,
-              size: 12, color: Color(0xFF26C6DA)),
+              size: 12, color: AppColors.primary),
           const SizedBox(width: 3),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTextStyles.caption04.copyWith(color: Colors.black87),
           ),
         ],
       ),

@@ -165,7 +165,23 @@ class NextShuttle {
     this.subText,
   });
 
+  /// 카운트다운을 시작하는 상한(분).
+  ///
+  /// 이보다 먼 출발은 도로 사정에 따라 오차가 커서 분 숫자를 신뢰하기 어렵다.
+  /// 15분 이내로 좁혀졌을 때만 숫자를 보여주고, 그 전에는 '도착정보없음'으로
+  /// 안내한다.
+  static const int countdownLimitMinutes = 15;
+
   /// 분 숫자(굵은 강조)로 표기할 수 있는 상태인지.
   bool get showsMinutes =>
-      status == ShuttleStatus.upcoming && remainMinutes != null;
+      status == ShuttleStatus.upcoming &&
+      remainMinutes != null &&
+      remainMinutes! <= countdownLimitMinutes;
+
+  /// 다음 출발은 있지만 아직 [countdownLimitMinutes]보다 멀어 분 표기를
+  /// 하지 않는 상태. UI는 '도착정보없음'으로 표시한다.
+  bool get isBeyondCountdown =>
+      status == ShuttleStatus.upcoming &&
+      remainMinutes != null &&
+      remainMinutes! > countdownLimitMinutes;
 }

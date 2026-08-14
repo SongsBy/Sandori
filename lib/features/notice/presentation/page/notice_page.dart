@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:handori/common/component/app_top_bar.dart';
+import 'package:handori/common/component/coming_soon_snackbar.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/notice/domain/model/notice.dart';
 import 'package:handori/features/notice/domain/model/shuttle.dart';
@@ -35,16 +39,16 @@ class _NoticePageState extends ConsumerState<NoticePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('공지사항', style: TextStyle(color: Colors.black)),
+      backgroundColor: AppColors.background,
+      appBar: AppTopBar(
+        title: '공지사항',
+        onBell: () => showComingSoonSnackBar(context),
+        onUser: () => showComingSoonSnackBar(context),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: const Color(0xFF00C4F9),
+          labelColor: AppColors.primary,
           unselectedLabelColor: Colors.grey,
-          indicatorColor: const Color(0xFF00C4F9),
+          indicatorColor: AppColors.primary,
           tabs: const [
             Tab(text: '일반 공지'),
             Tab(text: '기숙사'),
@@ -109,7 +113,7 @@ class _NoticeListTabState extends ConsumerState<_NoticeListTab> {
 
     return state.when(
       data: (data) => _buildList(data),
-      loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9))),
+      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
       error: (e, _) => _ErrorView(
         message: '공지사항을 불러올 수 없습니다.',
         onRetry: () => ref
@@ -120,32 +124,96 @@ class _NoticeListTabState extends ConsumerState<_NoticeListTab> {
 
   Widget _buildList(PaginationState<Notice> data) {
     return RefreshIndicator(
-      color: const Color(0xFF00C4F9),
+      color: AppColors.primary,
       onRefresh: () => ref
           .read(noticeListNotifierProvider(isDormitory: widget.isDormitory)
               .notifier)
           .refresh(),
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: data.items.length + (data.isLoadingMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == data.items.length) {
-            return const Padding(
-              padding: EdgeInsets.all(16),
-              child: Center(
-                child: CircularProgressIndicator(color: Color(0xFF00C4F9)),
-              ),
-            );
-          }
-          return NoticeCard(
-            notice: data.items[index],
-            onTap: () => context.push(
-              RoutePaths.noticeDetail,
-              extra: data.items[index],
+      child: data.items.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                const SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    '공지사항이 없습니다.',
+                    style: AppTextStyles.caption03.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                  sliver: SliverToBoxAdapter(
+                    child: Text.rich(
+                      TextSpan(
+                        style: AppTextStyles.caption03.copyWith(
+                          height: 20 / 14,
+                          color: AppColors.textSecondary,
+                        ),
+                        children: [
+                          const TextSpan(text: '총 '),
+                          TextSpan(
+                            text: '${data.totalCount}',
+                            style:
+                                const TextStyle(color: AppColors.primary),
+                          ),
+                          const TextSpan(text: '건'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  sliver: DecoratedSliver(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFFE9ECEF)),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x0D000000),
+                          blurRadius: 2,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    sliver: SliverList.builder(
+                      itemCount:
+                          data.items.length + (data.isLoadingMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == data.items.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          );
+                        }
+                        return NoticeCard(
+                          notice: data.items[index],
+                          showDivider: index < data.items.length - 1 ||
+                              data.isLoadingMore,
+                          onTap: () => context.push(
+                            RoutePaths.noticeDetail,
+                            extra: data.items[index],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
     );
   }
 }
@@ -188,7 +256,7 @@ class _ShuttleListTabState extends ConsumerState<_ShuttleListTab> {
 
     return state.when(
       data: (data) => _buildList(data),
-      loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF00C4F9))),
+      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
       error: (e, _) => _ErrorView(
         message: '셔틀 정보를 불러올 수 없습니다.',
         onRetry: () => ref.invalidate(shuttleListNotifierProvider),
@@ -198,7 +266,7 @@ class _ShuttleListTabState extends ConsumerState<_ShuttleListTab> {
 
   Widget _buildList(PaginationState<Shuttle> data) {
     return RefreshIndicator(
-      color: const Color(0xFF00C4F9),
+      color: AppColors.primary,
       onRefresh: () =>
           ref.read(shuttleListNotifierProvider.notifier).refresh(),
       child: ListView.builder(
@@ -209,7 +277,7 @@ class _ShuttleListTabState extends ConsumerState<_ShuttleListTab> {
             return const Padding(
               padding: EdgeInsets.all(16),
               child: Center(
-                child: CircularProgressIndicator(color: Color(0xFF00C4F9)),
+                child: CircularProgressIndicator(color: AppColors.primary),
               ),
             );
           }
@@ -240,7 +308,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00C4F9),
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
             ),
             onPressed: onRetry,

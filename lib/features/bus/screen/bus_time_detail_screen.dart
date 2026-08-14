@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:handori/common/component/app_top_bar.dart';
+import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/common/component/coming_soon_snackbar.dart';
-import 'package:handori/common/layout/root_tab.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/bus/component/next_shuttle_card.dart';
 import 'package:handori/features/bus/component/shuttle_direction_toggle.dart';
@@ -11,20 +13,19 @@ import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
 import 'package:handori/features/bus/presentation/provider/next_shuttle_provider.dart';
 
 // ─── Color tokens ──────────────────────────────────────────────────────────
-const Color _kPrimary = Color(0xFF00C4F9); // 핀포인트 전용
-const Color _kBgBase = Colors.white;
-const Color _kBgSoft = Color(0xFFFAFAFA);
-const Color _kBorderSoft = Color(0xFFF0F0F8);
-const Color _kTextPrimary = Color(0xFF1A1A1A);
-const Color _kTextMuted = Color(0xFF8A8F98);
+const Color _kPrimary = AppColors.primary;
+const Color _kBgBase = AppColors.surface;
+const Color _kBgSoft = AppColors.background;
+const Color _kBorderSoft = AppColors.divider;
+const Color _kTextPrimary = AppColors.textPrimary;
+const Color _kTextMuted = AppColors.textMuted;
 
 // ─── Layout tokens ─────────────────────────────────────────────────────────
 const double _kCardRadius = 12.0;
 
 // ─── Text styles ───────────────────────────────────────────────────────────
-const TextStyle _kSectionTitle = TextStyle(
-  fontSize: 13,
-  fontWeight: FontWeight.w700,
+/// 섹션 위 eyebrow 라벨. 홈의 섹션 헤더(title02)와 달리 본문 위 작은 안내다.
+final TextStyle _kSectionTitle = AppTextStyles.caption04.copyWith(
   color: _kTextMuted,
   letterSpacing: 0.4,
 );
@@ -43,15 +44,6 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
   void _onDestinationChanged(int index) {
     if (_selectedDestination == index) return;
     setState(() => _selectedDestination = index);
-  }
-
-  void _handleBack() {
-    final shell = RootTab.of(context);
-    if (shell != null) {
-      shell.jumpTo(2);
-    } else if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
   }
 
   void _onBellPressed() => showComingSoonSnackBar(context);
@@ -91,16 +83,15 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
 
     return Scaffold(
       backgroundColor: _kBgSoft,
+      appBar: AppTopBar(
+        title: '버스조회',
+        onBell: _onBellPressed,
+        onUser: _onUserPressed,
+      ),
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            _Header(
-              title: '버스조회',
-              onBack: _handleBack,
-              onBell: _onBellPressed,
-              onUser: _onUserPressed,
-            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
               child: ShuttleDirectionToggle(
@@ -142,93 +133,6 @@ class _BusTimeDetailScreenState extends ConsumerState<BusTimeDetailScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ───────────────────────────────────────────────────────────────────────────
-// Header
-// ───────────────────────────────────────────────────────────────────────────
-
-class _Header extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
-  final VoidCallback onBell;
-  final VoidCallback onUser;
-
-  const _Header({
-    required this.title,
-    required this.onBack,
-    required this.onBell,
-    required this.onUser,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
-      child: Row(
-        children: [
-          _IconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
-            iconSize: 18,
-            onTap: onBack,
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: _kTextPrimary,
-                letterSpacing: -0.3,
-              ),
-            ),
-          ),
-          _IconButton(
-            icon: Icons.notifications_none_rounded,
-            iconSize: 22,
-            onTap: onBell,
-          ),
-          _IconButton(
-            icon: Icons.account_circle_outlined,
-            iconSize: 24,
-            onTap: onUser,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _IconButton extends StatelessWidget {
-  final IconData icon;
-  final double iconSize;
-  final VoidCallback onTap;
-
-  const _IconButton({
-    required this.icon,
-    required this.iconSize,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      shape: const CircleBorder(),
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onTap,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, size: iconSize, color: _kTextPrimary),
         ),
       ),
     );
@@ -286,9 +190,7 @@ class _RouteSummary extends StatelessWidget {
         children: [
           Text(
             isOrigin ? '출발' : '도착',
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.caption04.copyWith(
               color: _kTextMuted,
               letterSpacing: 0.3,
             ),
@@ -299,9 +201,7 @@ class _RouteSummary extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: isOrigin ? TextAlign.start : TextAlign.end,
-            style: const TextStyle(
-              fontSize: 15.5,
-              fontWeight: FontWeight.w800,
+            style: AppTextStyles.caption01.copyWith(
               color: _kTextPrimary,
               letterSpacing: -0.3,
             ),
@@ -343,12 +243,10 @@ class _FullTimetableButton extends StatelessWidget {
                 color: _kPrimary.withValues(alpha: 0.9),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
                   '전체 시간표 보기',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.caption02.copyWith(
                     color: _kTextPrimary,
                     letterSpacing: -0.3,
                   ),
@@ -426,22 +324,18 @@ class _ComingSoonCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             '준비 중이에요',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
+            style: AppTextStyles.title03.copyWith(
               color: _kTextPrimary,
               letterSpacing: -0.3,
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             '실시간 시내버스 도착 정보는\n곧 만나보실 수 있어요',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+            style: AppTextStyles.caption03.copyWith(
               color: _kTextMuted,
               height: 1.5,
               letterSpacing: -0.1,

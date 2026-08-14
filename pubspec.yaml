@@ -93,16 +93,22 @@ flutter:
     - .env
 
   fonts:
+    # weight 값은 반드시 실제 폰트 굵기와 일치해야 한다. 어긋나면 Flutter가
+    # 가장 가까운 등록 굵기로 대체해 위계가 통째로 뭉개진다.
     - family: Pretendard
       fonts:
         - asset: assets/fonts/Pretendard-Light.otf
-          weight: 200
-        - asset: assets/fonts/Pretendard-Medium.otf
           weight: 300
-        - asset: assets/fonts/Pretendard-SemiBold.otf
+        - asset: assets/fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Medium.otf
           weight: 500
-        - asset: assets/fonts/Pretendard-Black.otf
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Bold.otf
           weight: 700
+        - asset: assets/fonts/Pretendard-Black.otf
+          weight: 900
 
     - family: Krub
       fonts:

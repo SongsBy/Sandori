@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:handori/core/constants/app_colors.dart';
 import 'package:handori/core/utils/date_formatter.dart';
 import 'package:handori/features/notice/domain/model/shuttle.dart';
 import 'package:handori/shared/widget/full_screen_image_viewer.dart';
@@ -23,12 +24,12 @@ class ShuttleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00C4F9).withOpacity(0.08),
+            color: AppColors.primary.withOpacity(0.08),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
         ],
-        border: Border.all(color: const Color(0xFFBDE8F6)),
+        border: Border.all(color: AppColors.primaryBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +60,7 @@ class ShuttleCard extends StatelessWidget {
             child: Row(
               children: [
                 const Icon(Icons.directions_bus_rounded,
-                    size: 16, color: Color(0xFF00C4F9)),
+                    size: 16, color: AppColors.primary),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
