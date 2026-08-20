@@ -1,6 +1,5 @@
 import UIKit
 import Flutter
-import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,11 +7,7 @@ import GoogleMaps
       _ application: UIApplication,
       didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // 키는 ios/Flutter/Secrets.xcconfig(gitignore 대상) → Info.plist 로 주입된다.
-    if let mapsApiKey = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String,
-       !mapsApiKey.isEmpty {
-      GMSServices.provideAPIKey(mapsApiKey)
-    }
+    // 네이버 지도 Client ID 는 Dart 쪽(main.dart)에서 .env 로 주입된다.
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

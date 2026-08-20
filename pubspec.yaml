@@ -59,7 +59,7 @@ dependencies:
   logger: ^2.7.0                   # print() 대체 Logger
 
   # ── 지도 / 위치 ───────────────────────────────────────────────────────────────
-  google_maps_flutter: ^2.15.0     # Google Maps
+  flutter_naver_map: ^1.4.4        # 네이버 지도 (NCP Maps Dynamic Map)
   geolocator: ^14.0.2              # 위치 정보
 
   # ── 기타 ─────────────────────────────────────────────────────────────────────

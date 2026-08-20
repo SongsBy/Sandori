@@ -5,19 +5,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// 프로젝트 루트 .env 에서 비밀값을 읽는다 (.env 는 gitignore 대상).
-val dotenv: Map<String, String> = rootProject.file("../.env")
-    .takeIf { it.exists() }
-    ?.readLines()
-    ?.mapNotNull { line ->
-        val trimmed = line.trim()
-        if (trimmed.isEmpty() || trimmed.startsWith("#") || "=" !in trimmed) return@mapNotNull null
-        val (key, value) = trimmed.split("=", limit = 2)
-        key.trim() to value.trim()
-    }
-    ?.toMap()
-    ?: emptyMap()
-
 android {
     namespace = "com.example.handori"
     compileSdk = flutter.compileSdkVersion
@@ -39,13 +26,11 @@ android {
         applicationId = "com.example.handori"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // flutter_naver_map 이 minSdk 23 을 요구한다.
+        minSdk = maxOf(23, flutter.minSdkVersion)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        // AndroidManifest.xml 의 ${MAPS_API_KEY} 자리에 주입된다.
-        manifestPlaceholders["MAPS_API_KEY"] = dotenv["MAPS_API_KEY"] ?: ""
     }
 
     buildTypes {

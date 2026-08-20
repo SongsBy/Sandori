@@ -7,7 +7,7 @@ import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:handori/features/empty_class/model/class_model.dart';
@@ -29,9 +29,10 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
 
   late final Future<List<EmptyClass>> dataFuture;
   List<EmptyClass>? _allData;
-  Set<Marker> _markers = {};
+  Set<NMarker> _markers = {};
   String? _selectedId;
-  final Map<String, ({BitmapDescriptor icon, Offset anchor})> _iconCache = {};
+  final Map<String, ({NOverlayImage icon, NPoint anchor, Size size})>
+      _iconCache = {};
   int _markerGen = 0;
 
   final PanelController _panelController = PanelController();
@@ -42,9 +43,9 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
   String _query = '';
   double _panelPos = 0.0;
 
-  late GoogleMapController _mapController;
-  CameraPosition _initialCamera = const CameraPosition(
-    target: LatLng(37.34019, 126.7336),
+  NaverMapController? _mapController;
+  NCameraPosition _initialCamera = const NCameraPosition(
+    target: NLatLng(37.34019, 126.7336),
     zoom: 17.0,
   );
 
@@ -82,12 +83,20 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
         return;
       }
       final pos = await Geolocator.getCurrentPosition();
-      final cam =
-          CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 17.0);
+      final cam = NCameraPosition(
+          target: NLatLng(pos.latitude, pos.longitude), zoom: 17.0);
       _initialCamera = cam;
       if (mounted) {
         try {
-          _mapController.animateCamera(CameraUpdate.newCameraPosition(cam));
+          // 권한이 확보된 시점이므로 내 위치 오버레이(파란 점)도 켠다.
+          _mapController?.setLocationTrackingMode(NLocationTrackingMode.noFollow);
+          _mapController?.updateCamera(
+            NCameraUpdate.scrollAndZoomTo(target: cam.target, zoom: cam.zoom)
+              ..setAnimation(
+                animation: NCameraAnimation.easing,
+                duration: const Duration(milliseconds: 500),
+              ),
+          );
         } catch (_) {}
       }
     } catch (_) {}
@@ -97,31 +106,60 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
     _markerGen++;
     final gen = _markerGen;
     final filtered = _applySearch(allData);
-    final markers = <Marker>{};
+    final markers = <NMarker>{};
 
     for (final e in filtered) {
       if (gen != _markerGen) return;
       final name = e.className.replaceAll(':', '').trim();
-      final key = '$name:${e.classCount}';
-      final iconData =
-          _iconCache[key] ?? await _buildCustomMarkerIcon(name, e.classCount);
+      final selected = e.className == _selectedId;
+      final key = '$name:${e.classCount}:${selected ? 1 : 0}';
+      final iconData = _iconCache[key] ??
+          await _buildCustomMarkerIcon(name, e.classCount,
+              selected: selected);
       _iconCache[key] = iconData;
 
-      markers.add(Marker(
-        markerId: MarkerId(e.className),
-        position: LatLng(e.latitude, e.longitude),
+      final marker = NMarker(
+        id: e.className,
+        position: NLatLng(e.latitude, e.longitude),
         icon: iconData.icon,
         anchor: iconData.anchor,
-        onTap: () => _onMarkerTap(e, filtered),
-      ));
+        size: iconData.size,
+      );
+      // 선택된 마커가 다른 마커에 가려지지 않게 위로 올린다.
+      marker.setGlobalZIndex(selected ? 400000 : 200000);
+      marker.setOnTapListener((_) => _onMarkerTap(e, filtered));
+      markers.add(marker);
     }
 
     if (gen != _markerGen || !mounted) return;
     setState(() => _markers = markers);
+    _applyMarkersToMap();
+  }
+
+  /// 네이버 지도는 마커를 위젯 속성이 아닌 컨트롤러로 관리하므로
+  /// 마커 셋이 바뀔 때마다 지도에 다시 반영한다.
+  Future<void> _applyMarkersToMap() async {
+    final controller = _mapController;
+    if (controller == null) return;
+    try {
+      await controller.clearOverlays(type: NOverlayType.marker);
+      await controller.addOverlayAll(_markers);
+    } catch (_) {}
   }
 
   void _onMarkerTap(EmptyClass e, List<EmptyClass> filtered) {
     setState(() => _selectedId = e.className);
+    if (_allData != null) _refreshMarkers(_allData!);
+    try {
+      _mapController?.updateCamera(
+        NCameraUpdate.scrollAndZoomTo(
+          target: NLatLng(e.latitude, e.longitude),
+        )..setAnimation(
+            animation: NCameraAnimation.easing,
+            duration: const Duration(milliseconds: 300),
+          ),
+      );
+    } catch (_) {}
     if (_panelController.isAttached) {
       _panelController.open();
       final idx = filtered.indexOf(e);
@@ -154,59 +192,94 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
     StatefulNavigationShell.of(context).goBranch(RootShell.homeBranch);
   }
 
-  /// 건물명 + 빈 강의실 개수를 항상 표시하는 커스텀 마커 비트맵 생성
-  static Future<({BitmapDescriptor icon, Offset anchor})> _buildCustomMarkerIcon(
+  /// 건물명 + 빈 강의실 개수를 표시하는 커스텀 마커 비트맵.
+  /// 앱 컬러 토큰만 사용한다: 잔여 있음 = primary, 없음 = muted 회색,
+  /// 선택된 건물은 primary 반전 + 헤일로로 지도 위에서 바로 구분된다.
+  static Future<({NOverlayImage icon, NPoint anchor, Size size})>
+      _buildCustomMarkerIcon(
     String name,
-    String count,
-  ) async {
+    String count, {
+    required bool selected,
+  }) async {
     const double scale = 3.0;
-    const double paddingH = 10.0;
-    const double paddingV = 7.0;
-    const double radius = 10.0;
-    const double gap = 6.0;
-    const double tipH = 9.0;
-    const double tipHalfW = 7.0;
-    const double shadowBlur = 2.5;
-    const double shadowOff = 1.5;
+    const double padH = 11.0;
+    const double padV = 7.0;
+    const double gap = 7.0;
+    const double chipD = 22.0; // 아이콘 칩 한 변
+    const double tipH = 8.0;
+    const double tipHalfW = 6.0;
+    const double shadowBlur = 6.0;
     const double badgePadH = 6.0;
     const double badgePadV = 3.0;
+    const double haloW = 2.5;
     const Color primary = AppColors.primary;
+
+    final int roomCount = int.tryParse(count) ?? 0;
+    final bool hasRooms = roomCount > 0;
+
+    // 잔여 있음 = primary, 없음 = muted. 그라데이션 단도 같은 색에서만 파생.
+    final Color accent = hasRooms ? primary : AppColors.textMuted;
+    final Color accentTop = Color.lerp(accent, Colors.white, 0.22)!;
+
+    final Color nameColor = selected ? Colors.white : AppColors.textPrimary;
+    final Color badgeBg = selected ? Colors.white : accent;
+    final Color badgeFg = selected ? primary : Colors.white;
 
     final nameTp = TextPainter(
       text: TextSpan(
         text: name,
-        style: const TextStyle(
-          fontSize: 12.0,
+        style: TextStyle(
+          fontSize: 12.5,
           fontWeight: FontWeight.w700,
-          color: Colors.black87,
+          color: nameColor,
           letterSpacing: -0.2,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
 
+    // 숫자만 크게 — "개"는 리스트 패널이 이미 말해주므로 지도에선 수치가 핵심.
     final countTp = TextPainter(
       text: TextSpan(
-        text: '$count개',
-        style: const TextStyle(
-          fontSize: 9.5,
-          fontWeight: FontWeight.w700,
+        text: '$roomCount',
+        style: TextStyle(
+          fontSize: 11.0,
+          fontWeight: FontWeight.w800,
+          color: badgeFg,
+          height: 1.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final iconTp = TextPainter(
+      text: TextSpan(
+        text: String.fromCharCode(Icons.meeting_room_rounded.codePoint),
+        style: TextStyle(
+          fontSize: 13.0,
+          fontFamily: Icons.meeting_room_rounded.fontFamily,
           color: Colors.white,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
 
-    final double badgeW = countTp.width + badgePadH * 2;
+    // 한 자리 수는 정원, 두 자리 이상은 알약형으로 늘어나는 배지
     final double badgeH = countTp.height + badgePadV * 2;
-    final double pillW = paddingH + nameTp.width + gap + badgeW + paddingH;
-    final double pillH =
-        math.max(nameTp.height + paddingV * 2, badgeH + paddingV * 2);
+    final double badgeW = math.max(countTp.width + badgePadH * 2, badgeH);
+    final double contentH =
+        math.max(chipD, math.max(nameTp.height, badgeH));
+    final double pillH = contentH + padV * 2;
+    final double radius = pillH / 2; // 캡슐형
+    final double pillW =
+        padH + chipD + gap + nameTp.width + gap + badgeW + padH;
 
-    const double ox = shadowBlur;
-    const double oy = shadowBlur;
-    final double canvasW = pillW + shadowBlur * 2 + shadowOff;
-    final double canvasH = pillH + tipH + shadowBlur * 2 + shadowOff;
+    // 헤일로 + 그림자 블러가 잘리지 않도록 여백 확보
+    const double m = shadowBlur * 2 + haloW;
+    const double ox = m;
+    const double oy = m;
+    final double canvasW = pillW + m * 2;
+    final double canvasH = pillH + tipH + m * 2;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(
@@ -215,93 +288,124 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
     );
     canvas.scale(scale);
 
-    // Drop shadow (pill)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(ox + shadowOff, oy + shadowOff, pillW, pillH),
-        const Radius.circular(radius),
-      ),
+    // 말풍선(캡슐 + 꼬리)을 하나의 패스로 합쳐 외곽선이 매끄럽게 이어지게 한다.
+    Path bubblePath(double inflate) {
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(ox - inflate, oy - inflate, pillW + inflate * 2,
+            pillH + inflate * 2),
+        Radius.circular(radius + inflate),
+      );
+      final tipX = ox + pillW / 2;
+      final tip = Path()
+        ..moveTo(tipX - tipHalfW - inflate, oy + pillH - radius / 2)
+        ..lineTo(tipX + tipHalfW + inflate, oy + pillH - radius / 2)
+        ..lineTo(tipX, oy + pillH + tipH + inflate)
+        ..close();
+      return Path.combine(
+          PathOperation.union, Path()..addRRect(rrect), tip);
+    }
+
+    final bubble = bubblePath(0);
+
+    // 선택 헤일로
+    if (selected) {
+      canvas.drawPath(
+        bubblePath(haloW),
+        Paint()..color = primary.withValues(alpha: 0.28),
+      );
+    }
+
+    // 2겹 그림자: 넓게 퍼지는 ambient + 경계를 잡아주는 key
+    canvas.drawPath(
+      bubble.shift(const Offset(0, 3)),
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.15)
+        ..color = Colors.black.withValues(alpha: selected ? 0.20 : 0.10)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, shadowBlur),
     );
-
-    // Drop shadow (tip)
     canvas.drawPath(
-      Path()
-        ..moveTo(
-            ox + shadowOff + pillW / 2 - tipHalfW, oy + shadowOff + pillH)
-        ..lineTo(
-            ox + shadowOff + pillW / 2 + tipHalfW, oy + shadowOff + pillH)
-        ..lineTo(ox + shadowOff + pillW / 2, oy + shadowOff + pillH + tipH)
-        ..close(),
+      bubble.shift(const Offset(0, 1)),
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.08)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, shadowBlur),
+        ..color = Colors.black.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0),
     );
 
-    // White pill
+    // 말풍선 본체 (미세한 세로 그라데이션으로 평면감 제거)
+    final Paint pillPaint = Paint()
+      ..shader = ui.Gradient.linear(
+        Offset(0, oy),
+        Offset(0, oy + pillH + tipH),
+        selected
+            ? [
+                Color.lerp(primary, Colors.white, 0.14)!,
+                Color.lerp(primary, Colors.black, 0.08)!,
+              ]
+            : [Colors.white, const Color(0xFFF5FAFD)],
+      );
+    canvas.drawPath(bubble, pillPaint);
+
+    // 외곽선 (선택 시에는 배경색이 곧 브랜드 컬러라 생략)
+    if (!selected) {
+      canvas.drawPath(
+        bubble,
+        Paint()
+          ..color = AppColors.cardBorder
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0,
+      );
+    }
+
+    // 아이콘 칩: 브랜드 그라데이션 스쿼클 + 흰 아이콘 (앱 아이콘 문법)
+    final Rect chipRect =
+        Rect.fromLTWH(ox + padH, oy + (pillH - chipD) / 2, chipD, chipD);
+    final RRect chipRRect = RRect.fromRectAndRadius(
+        chipRect, Radius.circular(chipD * 0.34));
+    final Paint chipPaint = Paint();
+    if (selected) {
+      chipPaint.color = Colors.white.withValues(alpha: 0.26);
+    } else {
+      chipPaint.shader = ui.Gradient.linear(
+        chipRect.topCenter,
+        chipRect.bottomCenter,
+        [accentTop, accent],
+      );
+      // 칩이 필 위에 살짝 떠 보이도록 얇은 그림자
+      canvas.drawRRect(
+        chipRRect.shift(const Offset(0, 1)),
+        Paint()
+          ..color = accent.withValues(alpha: 0.35)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
+      );
+    }
+    canvas.drawRRect(chipRRect, chipPaint);
+    // 상단 광택 하이라이트
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(ox, oy, pillW, pillH),
-        const Radius.circular(radius),
+        Rect.fromLTWH(chipRect.left + 2, chipRect.top + 1.5,
+            chipRect.width - 4, chipRect.height * 0.42),
+        Radius.circular(chipD * 0.26),
       ),
-      Paint()..color = Colors.white,
+      Paint()..color = Colors.white.withValues(alpha: selected ? 0.10 : 0.18),
+    );
+    iconTp.paint(
+      canvas,
+      Offset(chipRect.center.dx - iconTp.width / 2,
+          chipRect.center.dy - iconTp.height / 2),
     );
 
-    // Left accent bar
-    canvas.drawRRect(
-      RRect.fromLTRBAndCorners(
-        ox, oy, ox + 3.5, oy + pillH,
-        topLeft: const Radius.circular(radius),
-        bottomLeft: const Radius.circular(radius),
-      ),
-      Paint()..color = primary,
-    );
+    // 건물명
+    final double nameX = ox + padH + chipD + gap;
+    nameTp.paint(canvas, Offset(nameX, oy + (pillH - nameTp.height) / 2));
 
-    // Border
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(ox, oy, pillW, pillH),
-        const Radius.circular(radius),
-      ),
-      Paint()
-        ..color = const Color(0xFFD5D9F5)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.7,
-    );
-
-    // Arrow tip
-    final tipX = ox + pillW / 2;
-    final tipPath = Path()
-      ..moveTo(tipX - tipHalfW, oy + pillH)
-      ..lineTo(tipX + tipHalfW, oy + pillH)
-      ..lineTo(tipX, oy + pillH + tipH)
-      ..close();
-    canvas.drawPath(tipPath, Paint()..color = Colors.white);
-    canvas.drawPath(
-      tipPath,
-      Paint()
-        ..color = const Color(0xFFD5D9F5)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.7,
-    );
-
-    // Count badge
-    final double badgeX = ox + paddingH + nameTp.width + gap;
+    // 개수 배지
+    final double badgeX = nameX + nameTp.width + gap;
     final double badgeY = oy + (pillH - badgeH) / 2;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(badgeX, badgeY, badgeW, badgeH),
         const Radius.circular(999),
       ),
-      Paint()..color = primary,
+      Paint()..color = badgeBg,
     );
-
-    // Name text
-    nameTp.paint(canvas, Offset(ox + paddingH + 2, oy + (pillH - nameTp.height) / 2));
-
-    // Count text
     countTp.paint(
       canvas,
       Offset(
@@ -314,15 +418,18 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
     final img = await picture.toImage(
         (canvasW * scale).round(), (canvasH * scale).round());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    final icon = BitmapDescriptor.bytes(
-      byteData!.buffer.asUint8List(),
-      imagePixelRatio: scale,
-    );
+    final icon =
+        await NOverlayImage.fromByteArray(byteData!.buffer.asUint8List());
 
-    // 화살표 끝(지리 위치)에 앵커 설정
+    // 꼬리 끝(지리 위치)에 앵커 설정
     final double anchorX = (ox + pillW / 2) / canvasW;
     final double anchorY = (oy + pillH + tipH) / canvasH;
-    return (icon: icon, anchor: Offset(anchorX, anchorY));
+    return (
+      icon: icon,
+      anchor: NPoint(anchorX, anchorY),
+      // 3배 스케일로 그린 비트맵이므로 마커 크기를 논리 크기로 고정한다.
+      size: Size(canvasW, canvasH),
+    );
   }
 
   @override
@@ -376,17 +483,20 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
                 body: Stack(
                   children: [
                     Positioned.fill(
-                      child: GoogleMap(
-                        initialCameraPosition: _initialCamera,
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: false,
-                        onMapCreated: (c) => _mapController = c,
-                        markers: _markers,
-                        mapType: MapType.normal,
-                        padding: EdgeInsets.only(
-                          bottom: _minPanelH,
-                          top: MediaQuery.of(context).padding.top,
+                      child: NaverMap(
+                        options: NaverMapViewOptions(
+                          initialCameraPosition: _initialCamera,
+                          mapType: NMapType.basic,
+                          locationButtonEnable: false,
+                          contentPadding: EdgeInsets.only(
+                            bottom: _minPanelH,
+                            top: MediaQuery.of(context).padding.top,
+                          ),
                         ),
+                        onMapReady: (c) {
+                          _mapController = c;
+                          _applyMarkersToMap();
+                        },
                       ),
                     ),
                     SafeArea(
@@ -576,12 +686,16 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
                     isSelected: items[idx].className == _selectedId,
                     onTap: () {
                       setState(() => _selectedId = items[idx].className);
+                      if (_allData != null) _refreshMarkers(_allData!);
                       try {
-                        _mapController.animateCamera(
-                          CameraUpdate.newLatLng(
-                            LatLng(items[idx].latitude,
+                        _mapController?.updateCamera(
+                          NCameraUpdate.scrollAndZoomTo(
+                            target: NLatLng(items[idx].latitude,
                                 items[idx].longitude),
-                          ),
+                          )..setAnimation(
+                              animation: NCameraAnimation.easing,
+                              duration: const Duration(milliseconds: 300),
+                            ),
                         );
                       } catch (_) {}
                     },
