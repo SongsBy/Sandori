@@ -10,6 +10,7 @@ import 'package:handori/features/school_meal/presentation/model/restaurant_menu.
 import 'package:handori/features/school_meal/presentation/provider/meal_list_notifier.dart';
 import 'package:handori/features/school_meal/presentation/provider/restaurant_list_notifier.dart';
 import 'package:handori/features/school_meal/presentation/provider/selected_restaurant_id_notifier.dart';
+import 'package:handori/features/school_meal/presentation/widget/restaurant_chip.dart';
 
 // ── 색상 상수 ──────────────────────────────────────────────────
 // 홈 화면 식당 칩과 동일한 메인 색상을 사용한다.
@@ -241,37 +242,10 @@ class _RestaurantTabBar extends StatelessWidget {
         itemCount: restaurants.length,
         separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, i) {
-          final isSelected = i == selectedIndex;
-          return GestureDetector(
+          return RestaurantChip(
+            label: restaurants[i].name,
+            isSelected: i == selectedIndex,
             onTap: () => onTabSelected(i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-              decoration: BoxDecoration(
-                color: isSelected ? _kPrimary : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected ? _kPrimary : Colors.grey.shade300,
-                  width: 1.2,
-                ),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: _kPrimary.withValues(alpha: 0.30),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ]
-                    : [],
-              ),
-              child: Text(
-                restaurants[i].name,
-                style: AppTextStyles.caption02.copyWith(
-                  color: isSelected ? Colors.white : Colors.black87,
-                ),
-              ),
-            ),
           );
         },
       ),
