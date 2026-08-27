@@ -14,6 +14,7 @@ import 'package:handori/features/empty_class/presentation/provider/empty_class_p
 
 import 'package:go_router/go_router.dart';
 import 'package:handori/common/layout/root_shell.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class EmptyDetailScreen extends ConsumerStatefulWidget {
   const EmptyDetailScreen({super.key});
@@ -418,7 +419,7 @@ class _EmptyDetailScreenState extends ConsumerState<EmptyDetailScreen> {
       body: classesAsync.when(
         error: (e, _) => Center(child: Text('오류: $e')),
         loading: () =>
-            const Center(child: CircularProgressIndicator(color: _primary)),
+            const Center(child: SandolLoadingIndicator()),
         data: (items) => Stack(
           children: [
             Positioned.fill(

@@ -6,7 +6,7 @@ part of 'meal_dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mealDioHash() => r'e42be1b60fd1c473e813de53597661f6969175e0';
+String _$mealDioHash() => r'fded18e81f464b7f377f28eba4af7e697ccc5f33';
 
 /// See also [mealDio].
 @ProviderFor(mealDio)

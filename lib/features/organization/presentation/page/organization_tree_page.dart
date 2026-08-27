@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/organization/presentation/provider/organization_provider.dart';
 import 'package:handori/features/organization/presentation/widget/organization_node_card.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class OrganizationTreePage extends ConsumerStatefulWidget {
   const OrganizationTreePage({super.key});
@@ -94,7 +95,7 @@ class _OrganizationTreePageState extends ConsumerState<OrganizationTreePage> {
           Expanded(
             child: treeAsync.when(
               loading: () => const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+                child: SandolLoadingIndicator(),
               ),
               error: (e, _) => Center(
                 child: Column(

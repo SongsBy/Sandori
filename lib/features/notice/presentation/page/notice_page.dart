@@ -12,6 +12,7 @@ import 'package:handori/features/notice/presentation/provider/notice_provider.da
 import 'package:handori/features/notice/presentation/widget/notice_card.dart';
 import 'package:handori/features/notice/presentation/widget/shuttle_card.dart';
 import 'package:handori/shared/model/pagination_state.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class NoticePage extends ConsumerStatefulWidget {
   const NoticePage({super.key});
@@ -113,7 +114,7 @@ class _NoticeListTabState extends ConsumerState<_NoticeListTab> {
 
     return state.when(
       data: (data) => _buildList(data),
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      loading: () => const Center(child: SandolLoadingIndicator()),
       error: (e, _) => _ErrorView(
         message: '공지사항을 불러올 수 없습니다.',
         onRetry: () => ref
@@ -193,9 +194,7 @@ class _NoticeListTabState extends ConsumerState<_NoticeListTab> {
                           return const Padding(
                             padding: EdgeInsets.all(16),
                             child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
-                              ),
+                              child: SandolLoadingIndicator(),
                             ),
                           );
                         }
@@ -256,7 +255,7 @@ class _ShuttleListTabState extends ConsumerState<_ShuttleListTab> {
 
     return state.when(
       data: (data) => _buildList(data),
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      loading: () => const Center(child: SandolLoadingIndicator()),
       error: (e, _) => _ErrorView(
         message: '셔틀 정보를 불러올 수 없습니다.',
         onRetry: () => ref.invalidate(shuttleListNotifierProvider),
@@ -277,7 +276,7 @@ class _ShuttleListTabState extends ConsumerState<_ShuttleListTab> {
             return const Padding(
               padding: EdgeInsets.all(16),
               child: Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+                child: SandolLoadingIndicator(),
               ),
             );
           }

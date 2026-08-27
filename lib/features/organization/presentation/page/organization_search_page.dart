@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:handori/features/organization/presentation/provider/organization_provider.dart';
 import 'package:handori/features/organization/presentation/widget/organization_node_card.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class OrganizationSearchPage extends ConsumerWidget {
   final String query;
@@ -34,7 +35,7 @@ class OrganizationSearchPage extends ConsumerWidget {
       ),
       body: searchAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+          child: SandolLoadingIndicator(),
         ),
         error: (e, _) => Center(child: Text('검색 실패: $e')),
         data: (results) {

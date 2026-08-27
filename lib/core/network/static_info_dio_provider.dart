@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:handori/core/constants/api_constants.dart';
+import 'package:handori/core/network/auth_interceptor.dart';
+import 'package:handori/features/auth/presentation/provider/auth_provider.dart';
 
 part 'static_info_dio_provider.g.dart';
 
@@ -18,6 +20,9 @@ Dio staticInfoDio(Ref ref) {
   );
 
   dio.interceptors.addAll([
+    AuthInterceptor(
+      () => ref.read(authRepositoryProvider).getValidAccessToken(),
+    ),
     if (kDebugMode)
       LogInterceptor(
         requestBody: true,

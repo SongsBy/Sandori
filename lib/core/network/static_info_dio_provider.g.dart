@@ -6,7 +6,7 @@ part of 'static_info_dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$staticInfoDioHash() => r'948433cc3142bf566389eb5814fdd34fb638c07e';
+String _$staticInfoDioHash() => r'306fbd3fe3b72f36a5d7a5deb4434265fb1ef9f9';
 
 /// See also [staticInfoDio].
 @ProviderFor(staticInfoDio)

@@ -31,6 +31,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Keycloak 로그인 후 앱으로 돌아오는 딥링크 스킴 (flutter_appauth).
+        // ApiConstants.authRedirectUri 의 스킴과 일치해야 한다.
+        manifestPlaceholders["appAuthRedirectScheme"] = "kr.sandori.handori"
     }
 
     buildTypes {

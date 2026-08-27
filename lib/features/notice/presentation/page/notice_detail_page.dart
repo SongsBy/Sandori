@@ -3,6 +3,7 @@ import 'package:handori/core/constants/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:handori/features/notice/domain/model/notice.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class NoticeDetailPage extends StatefulWidget {
   final Notice notice;
@@ -110,7 +111,7 @@ class _NoticeDetailPageState extends State<NoticeDetailPage> {
         children: [
           WebViewWidget(controller: _controller),
           if (_isLoading)
-            const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+            const Center(child: SandolLoadingIndicator()),
         ],
       ),
     );

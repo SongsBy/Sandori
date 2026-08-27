@@ -37,27 +37,16 @@ class NextShuttleCard extends StatelessWidget {
     final isImminent = next.showsMinutes && remain != null && remain > 0;
     final subText = next.subText;
 
+    // 도착 임박 여부와 무관하게 카드 배경은 항상 기본 색상을 유지한다.
+    // 강조는 분 카운트다운 숫자(_HeroValue)에만 준다.
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isImminent
-              ? [
-                  _kPrimary.withValues(alpha: 0.16),
-                  _kPrimary.withValues(alpha: 0.04),
-                ]
-              : [_kBgBase, _kBgBase],
-        ),
+        color: _kBgBase,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isImminent ? _kPrimary.withValues(alpha: 0.30) : _kBorderSoft,
-        ),
+        border: Border.all(color: _kBorderSoft),
         boxShadow: [
           BoxShadow(
-            color: isImminent
-                ? _kPrimary.withValues(alpha: 0.12)
-                : Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),

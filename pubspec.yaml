@@ -64,6 +64,8 @@ dependencies:
 
   # ── 기타 ─────────────────────────────────────────────────────────────────────
   webview_flutter: ^4.13.1         # WebView
+  flutter_appauth: ^12.0.2
+  lottie: ^3.3.3
 
 
 dev_dependencies:
@@ -81,6 +83,18 @@ dev_dependencies:
   json_serializable: ^6.9.4        # @JsonSerializable → .g.dart 생성
   freezed: ^2.5.7                  # @freezed → .freezed.dart 생성
 
+  # ── 앱 아이콘 ─────────────────────────────────────────────────────────────────
+  flutter_launcher_icons: ^0.14.4  # dart run flutter_launcher_icons
+
+# 런처 아이콘 설정 — 소스는 assets/icon/ (sandol_logo 기반, scripts 참고)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon/app_icon.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#9DE0FB"
+  adaptive_icon_foreground: assets/icon/app_icon_foreground.png
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -89,6 +103,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
+    - assets/lottie/
     - .env
 
   fonts:

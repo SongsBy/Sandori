@@ -11,6 +11,7 @@ import 'package:handori/features/school_meal/presentation/provider/meal_list_not
 import 'package:handori/features/school_meal/presentation/provider/restaurant_list_notifier.dart';
 import 'package:handori/features/school_meal/presentation/provider/selected_restaurant_id_notifier.dart';
 import 'package:handori/features/school_meal/presentation/widget/restaurant_chip.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 // ── 색상 상수 ──────────────────────────────────────────────────
 // 홈 화면 식당 칩과 동일한 메인 색상을 사용한다.
@@ -109,7 +110,7 @@ class _RestaurantDetailPageState extends ConsumerState<RestaurantDetailPage> {
           loading: () => const Padding(
             padding: EdgeInsets.only(top: 80),
             child: Center(
-              child: CircularProgressIndicator(color: _kPrimary),
+              child: SandolLoadingIndicator(),
             ),
           ),
           error: (e, _) => _ErrorView(
@@ -164,7 +165,7 @@ class _RestaurantDetailPageState extends ConsumerState<RestaurantDetailPage> {
           },
           loading: () => const Padding(
             padding: EdgeInsets.only(top: 40, bottom: 40),
-            child: Center(child: CircularProgressIndicator(color: _kPrimary)),
+            child: Center(child: SandolLoadingIndicator()),
           ),
           error: (e, _) => _ErrorView(
             message: '식단 정보를 불러올 수 없습니다.',

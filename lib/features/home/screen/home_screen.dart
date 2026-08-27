@@ -17,6 +17,7 @@ import 'package:handori/features/school_meal/presentation/model/restaurant_menu.
 import 'package:handori/features/school_meal/presentation/provider/meal_list_notifier.dart';
 import 'package:handori/features/school_meal/presentation/provider/restaurant_list_notifier.dart';
 import 'package:handori/features/school_meal/presentation/widget/meal_card.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -158,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                            child: CircularProgressIndicator(color: AppColors.primary),
+                            child: SandolLoadingIndicator(),
                           );
                         }
                         if (snapshot.hasError) {
@@ -204,7 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return const SizedBox(
         height: 120,
         child:
-            Center(child: CircularProgressIndicator(color: AppColors.primary)),
+            Center(child: SandolLoadingIndicator()),
       );
     }
     if (restaurantsAsync.hasError || mealsAsync.hasError) {

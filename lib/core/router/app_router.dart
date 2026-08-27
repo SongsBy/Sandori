@@ -2,8 +2,6 @@ import 'package:go_router/go_router.dart';
 import 'package:handori/common/layout/root_shell.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/auth/screen/login_screen.dart';
-import 'package:handori/features/auth/screen/sign_in_gate_screen.dart';
-import 'package:handori/features/auth/screen/signin_screen.dart';
 import 'package:handori/features/bus/screen/bus_time_detail_screen.dart';
 import 'package:handori/features/bus/screen/shuttle_timetable_screen.dart';
 import 'package:handori/features/empty_class/screen/empty_detail_screen.dart';
@@ -24,19 +22,10 @@ final appRouter = GoRouter(
       path: RoutePaths.splash,
       builder: (_, _) => const Splashscreen(),
     ),
-    GoRoute(
-      path: RoutePaths.gate,
-      builder: (_, _) => const SignInGateScreen(),
-    ),
+    // 회원가입(sign-in) 라우트는 Keycloak self-registration 이 열리기 전까지 제거.
     GoRoute(
       path: RoutePaths.login,
       builder: (_, _) => const Loginscreen(),
-      routes: [
-        GoRoute(
-          path: 'sign-in',
-          builder: (_, _) => const Signinscreen(),
-        ),
-      ],
     ),
 
     // ── 셸: 5개 탭 ─────────────────────────────────────────────

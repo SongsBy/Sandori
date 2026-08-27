@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:handori/core/constants/app_colors.dart';
+import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class FullScreenImageViewer extends StatelessWidget {
   final String imageUrl;
@@ -24,7 +24,7 @@ class FullScreenImageViewer extends StatelessWidget {
             fit: BoxFit.contain,
             loadingBuilder: (_, child, progress) {
               if (progress == null) return child;
-              return const CircularProgressIndicator(color: AppColors.primary);
+              return const SandolLoadingIndicator();
             },
             errorBuilder: (_, __, ___) => const Icon(
               Icons.broken_image,
