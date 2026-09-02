@@ -43,7 +43,6 @@ class _NoticePageState extends ConsumerState<NoticePage>
       backgroundColor: AppColors.background,
       appBar: AppTopBar(
         title: '공지사항',
-        onBell: () => showComingSoonSnackBar(context),
         onUser: () => showComingSoonSnackBar(context),
         bottom: TabBar(
           controller: _tabController,

@@ -16,4 +16,8 @@ abstract class AuthRepository {
 
   /// 서버 세션을 끊고(베스트 에포트) 로컬 토큰을 지운다.
   Future<void> logout();
+
+  /// Keycloak 계정을 영구 삭제하고 로컬 토큰을 지운다.
+  /// 서버 삭제가 실패하면 로컬 세션은 유지한 채 예외를 던진다.
+  Future<void> deleteAccount();
 }

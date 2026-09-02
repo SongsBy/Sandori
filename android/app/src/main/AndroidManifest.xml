@@ -1,15 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 릴리즈 빌드에는 디버그와 달리 자동 주입되지 않으므로 명시 필수 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:label="산돌이"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- taskAffinity="" 를 쓰면 AppAuth(singleTask) 인증 액티비티가 별도
+             태스크로 분리되어 로그인 리다이렉트 응답이 유실된다("No stored
+             state"). 기본 affinity(패키지명)로 두어야 로그인이 동작한다. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -42,6 +46,15 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- flutter_appauth: Android 11+ 패키지 가시성 — 로그인 브라우저(Custom Tabs) 탐색에 필수 -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
         </intent>
     </queries>
 </manifest>

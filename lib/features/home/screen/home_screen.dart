@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:handori/core/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:handori/common/component/coming_soon_snackbar.dart';
 import 'package:handori/common/component/app_top_bar.dart';
 import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/core/router/route_paths.dart';
@@ -120,8 +119,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: AppColors.background,
       appBar: AppTopBar(
         title: '산돌이',
-        onBell: () => showComingSoonSnackBar(context),
-        onUser: () => showComingSoonSnackBar(context),
+        titleWidget: Image.asset(
+          'assets/img/sandol_LG.png',
+          height: 32,
+          fit: BoxFit.contain,
+        ),
+        onUser: () => context.push(RoutePaths.user),
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -4,7 +4,11 @@
   배경은 로고 왼쪽 가장자리에서 추출한 세로 그라데이션으로 채워
   로고 축소 시에도 이음새 없이 자연스럽게 여백이 생긴다.
 - app_icon_foreground.png: 1024x1024 투명 캔버스에 로고를 중앙 배치
-  (Android adaptive foreground, 세이프존 고려).
+  (Android adaptive foreground). adaptive 아이콘은 캔버스의 중앙 72/108만
+  표시되므로, iOS(92%)와 같은 꽉 찬 느낌을 내려면 표시 영역 기준으로
+  스케일을 잡아야 한다.
+- app_icon_bg.png: adaptive background 레이어용 그라데이션 (iOS 아이콘과
+  동일한 배경 → 로고 밖 여백이 민무늬 대신 그라데이션으로 채워진다).
 
 실행: python3 scripts/make_app_icons.py && dart run flutter_launcher_icons
 """
@@ -15,7 +19,8 @@ SRC = "/Users/songjeonghun/Handori/assets/img/sandol_logo.png"
 OUT_DIR = "/Users/songjeonghun/Handori/assets/icon"
 SIZE = 1024
 MAIN_SCALE = 0.92  # 풀블리드 아이콘에서 로고가 차지하는 비율 (여백 조절)
-FG_SCALE = 0.62    # adaptive foreground 세이프존 내 크기
+# adaptive 표시 영역(72/108)에 거의 꽉 차는 크기. 0.667이 표시 영역 경계.
+FG_SCALE = 0.66
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
@@ -65,6 +70,10 @@ fg.alpha_composite(
 )
 fg.save(f"{OUT_DIR}/app_icon_foreground.png")
 print("saved app_icon_foreground.png (scale %.2f)" % FG_SCALE)
+
+# 3) adaptive background: iOS 와 동일한 그라데이션 풀캔버스
+bg.convert("RGB").save(f"{OUT_DIR}/app_icon_bg.png")
+print("saved app_icon_bg.png")
 
 mid = column[h // 2]
 print("adaptive bg hex: #%02X%02X%02X" % mid)

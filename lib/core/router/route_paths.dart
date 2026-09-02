@@ -3,6 +3,7 @@ abstract class RoutePaths {
   static const splash = '/';
   static const login = '/login';
   static const signIn = '/sign-in';
+  static const user = '/user';
 
   // ── 탭 브랜치 루트 ──────────────────────────────────────────
   // 순서가 AppBottomNav 인덱스와 일치한다.

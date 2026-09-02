@@ -1,0 +1,94 @@
+# tuk_sandol_team 레포의 .github/workflows/register-keycloak-client.yml 로 추가한 뒤
+# GitHub → Actions 탭 → "Register Keycloak client (handori-app)" → Run workflow 로 실행.
+# 기존 배포 워크플로우(GCE_CD4MSA.yml)와 동일한 시크릿을 사용하므로 추가 설정 불필요.
+name: Register Keycloak client (handori-app)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: '${{ secrets.GCP_PROJECT_ID }}'
+
+    - name: Generate SSH key
+      run: ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -q -N ""
+
+    - name: Add SSH key to GCP project metadata
+      run: |
+        gcloud compute project-info add-metadata --metadata "ssh-keys=${GCP_VM_USER}:$(cat ~/.ssh/id_rsa.pub)"
+      env:
+        GCP_VM_USER: '${{ secrets.GCP_VM_USER }}'
+
+    - name: Write registration script
+      run: |
+        cat > /tmp/register_client.sh <<'SCRIPT'
+        #!/usr/bin/env bash
+        # Keycloak Sandori realm 에 handori-app public client (PKCE S256) 등록/갱신
+        set -euo pipefail
+        CONTAINER=keycloak
+        REALM=Sandori
+        CLIENT_ID=handori-app
+        REDIRECT_URI="kr.sandori.handori://oauthredirect"
+        KCADM=/opt/keycloak/bin/kcadm.sh
+
+        sudo docker exec "$CONTAINER" sh -c \
+          "$KCADM config credentials --server http://localhost:8080 --realm master \
+             --user \"\${KC_BOOTSTRAP_ADMIN_USERNAME:-\$KEYCLOAK_ADMIN}\" \
+             --password \"\${KC_BOOTSTRAP_ADMIN_PASSWORD:-\$KEYCLOAK_ADMIN_PASSWORD}\""
+
+        EXISTING_ID=$(sudo docker exec "$CONTAINER" sh -c \
+          "$KCADM get clients -r $REALM -q clientId=$CLIENT_ID --fields id --format csv --noquotes" | tr -d '\r')
+
+        CLIENT_JSON=$(cat <<JSON
+        {
+          "clientId": "$CLIENT_ID",
+          "name": "Handori Flutter App",
+          "enabled": true,
+          "publicClient": true,
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": false,
+          "implicitFlowEnabled": false,
+          "serviceAccountsEnabled": false,
+          "redirectUris": ["$REDIRECT_URI"],
+          "webOrigins": [],
+          "attributes": {
+            "pkce.code.challenge.method": "S256",
+            "post.logout.redirect.uris": "$REDIRECT_URI"
+          }
+        }
+        JSON
+        )
+
+        if [ -n "$EXISTING_ID" ]; then
+          echo "이미 존재($EXISTING_ID) → 설정 업데이트"
+          echo "$CLIENT_JSON" | sudo docker exec -i "$CONTAINER" sh -c "$KCADM update clients/$EXISTING_ID -r $REALM -f -"
+        else
+          echo "신규 생성"
+          echo "$CLIENT_JSON" | sudo docker exec -i "$CONTAINER" sh -c "$KCADM create clients -r $REALM -f -"
+        fi
+
+        echo "── 등록 결과 ──"
+        sudo docker exec "$CONTAINER" sh -c \
+          "$KCADM get clients -r $REALM -q clientId=$CLIENT_ID --fields clientId,enabled,publicClient,redirectUris"
+        SCRIPT
+        chmod +x /tmp/register_client.sh
+
+    - name: Copy script to VM and run
+      run: |
+        gcloud compute scp /tmp/register_client.sh "$GCP_VM_USER@$GCP_INSTANCE_NAME:/tmp/register_client.sh" --zone "$GCP_ZONE"
+        gcloud compute ssh "$GCP_VM_USER@$GCP_INSTANCE_NAME" --zone "$GCP_ZONE" --command "bash /tmp/register_client.sh && rm -f /tmp/register_client.sh"
+      env:
+        GCP_INSTANCE_NAME: '${{ secrets.GCP_INSTANCE_NAME }}'
+        GCP_VM_USER: '${{ secrets.GCP_VM_USER }}'
+        GCP_ZONE: '${{ secrets.GCP_ZONE }}'

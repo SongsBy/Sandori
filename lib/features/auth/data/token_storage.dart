@@ -9,6 +9,7 @@ class TokenStorage {
   static const _kIdToken = 'auth_id_token';
   static const _kExpiresAt = 'auth_access_expires_at';
   static const _kUsername = 'auth_username';
+  static const _kEmail = 'auth_email';
 
   final FlutterSecureStorage _storage;
   AuthSession? _cached;
@@ -31,6 +32,7 @@ class TokenStorage {
       accessTokenExpiresAt:
           expiresAtRaw == null ? null : DateTime.tryParse(expiresAtRaw),
       username: await _storage.read(key: _kUsername),
+      email: await _storage.read(key: _kEmail),
     );
     _loaded = true;
     return _cached;
@@ -45,6 +47,7 @@ class TokenStorage {
       session.accessTokenExpiresAt?.toIso8601String(),
     );
     await _writeOrDelete(_kUsername, session.username);
+    await _writeOrDelete(_kEmail, session.email);
     _cached = session;
     _loaded = true;
   }
@@ -56,6 +59,7 @@ class TokenStorage {
       _kIdToken,
       _kExpiresAt,
       _kUsername,
+      _kEmail,
     ]) {
       await _storage.delete(key: key);
     }

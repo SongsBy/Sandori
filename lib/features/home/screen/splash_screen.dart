@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:handori/core/router/route_paths.dart';
 import 'package:handori/features/auth/presentation/provider/auth_provider.dart';
-import 'package:handori/shared/widget/sandol_loading_indicator.dart';
 
 class Splashscreen extends ConsumerStatefulWidget {
   const Splashscreen({super.key});
@@ -26,8 +25,9 @@ class _SplashscreenState extends ConsumerState<Splashscreen>
       duration: const Duration(milliseconds: 800),
     )..forward();
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _scale = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    // 배경 이미지가 화면을 덮은 채 살짝 줌아웃되는 효과 (가장자리 노출 없음)
+    _scale = Tween<double>(begin: 1.08, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
     Future.delayed(const Duration(seconds: 2), _navigateNext);
   }
@@ -51,22 +51,25 @@ class _SplashscreenState extends ConsumerState<Splashscreen>
     return Scaffold(
       ///배경 색
       backgroundColor: const Color(0xFF4A90E2),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // 중앙 로딩 인디케이터 (페이드인 + 스케일 애니메이션)
-            FadeTransition(
-              opacity: _fadeIn,
-              child: ScaleTransition(
-                scale: _scale,
-                child: const Center(
-                  child: SandolLoadingIndicator(size: 140),
-                ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 전체 화면 스플래시: 상하 여백 없이 꽉 채움 (화면이 이미지보다
+          // 길쭉한 기기에서는 좌우가 약간 잘린다). 페이드인 + 줌아웃.
+          FadeTransition(
+            opacity: _fadeIn,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Image.asset(
+                'assets/img/splash.png',
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            // 하단 텍스트 로고
-            Align(
+          // 하단 텍스트 로고
+          SafeArea(
+            child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 40),
@@ -76,8 +79,8 @@ class _SplashscreenState extends ConsumerState<Splashscreen>
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

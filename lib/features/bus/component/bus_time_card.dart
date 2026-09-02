@@ -1,9 +1,10 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:handori/core/constants/app_colors.dart';
 import 'package:handori/core/constants/app_text_styles.dart';
 import 'package:handori/features/bus/domain/model/shuttle_schedule.dart';
-import 'package:handori/features/bus/presentation/provider/bus_image_provider.dart';
 import 'package:handori/features/bus/presentation/provider/next_shuttle_provider.dart';
 
 const _primary = AppColors.primary;
@@ -36,12 +37,6 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
 
   @override
   Widget build(BuildContext context) {
-    final busImagesAsync = ref.watch(busImagesProvider);
-    final List<String?> imageUrls = busImagesAsync.valueOrNull ?? [];
-
-    String? imageUrl(int index) =>
-        index < imageUrls.length ? imageUrls[index] : null;
-
     final String from = _isReverse ? '정왕역' : '학교';
     final String to = _isReverse ? '학교' : '정왕역';
     final String stopName = _isReverse ? '정왕역 버스정류장' : '정문 버스정류장';
@@ -60,13 +55,11 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
 
     final List<Map<String, dynamic>> nextBus = [
       {
-        'busImage': imageUrl(0),
         'busNumber': '33',
         'goTo': destination,
         'time': '2분',
       },
       {
-        'busImage': imageUrl(1),
         'busNumber': '20-1',
         'goTo': destination,
         'time': '5분',
@@ -129,7 +122,7 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                   _DirectionChip(label: from, isOrigin: true),
                   const SizedBox(width: 6),
                   const Icon(
-                    Icons.arrow_forward,
+                    Icons.arrow_forward_rounded,
                     size: 14,
                     color: Colors.black38,
                   ),
@@ -173,7 +166,11 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
 
               Row(
                 children: [
-                  const Icon(Icons.schedule, size: 18, color: Colors.red),
+                  const Icon(
+                    Icons.schedule_rounded,
+                    size: 18,
+                    color: Colors.red,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     _arrivalText(nextShuttle),
@@ -186,7 +183,11 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Icon(Icons.place_outlined, size: 18, color: _primary),
+                  const Icon(
+                    Icons.directions_bus_rounded,
+                    size: 18,
+                    color: _primary,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     stopName,
@@ -195,15 +196,20 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                 ],
               ),
               const SizedBox(height: 8),
-              ...nextBus.map(
-                (item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: _BusTile(
-                    imageUrl: item['busImage'] as String?,
-                    number: item['busNumber'] as String,
-                    destination: item['goTo'] as String,
-                    etaText: item['time'] as String,
-                  ),
+              // 실시간 시내버스 도착 — 공공 API 연동 전까지 블러 + 준비 중 안내.
+              _ComingSoonBlur(
+                child: Column(
+                  children: [
+                    for (final item in nextBus)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: _BusTile(
+                          number: item['busNumber'] as String,
+                          destination: item['goTo'] as String,
+                          etaText: item['time'] as String,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 4),
@@ -220,7 +226,11 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, size: 16, color: _primary),
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 16,
+                      color: _primary,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -236,6 +246,96 @@ class _BustimescreenState extends ConsumerState<Bustimescreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 준비 중 섹션 처리 — 내용을 은은하게 블러하고 중앙에 알림 필을 띄운다.
+///
+/// 실시간 시내버스 도착(공공 API) 연동 전까지의 임시 상태. 내용은 미리보기로
+/// 흐릿하게 남겨 기대감을 주되, 터치·접근성에서는 완전히 제외한다.
+class _ComingSoonBlur extends StatelessWidget {
+  final Widget child;
+
+  const _ComingSoonBlur({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // 미리보기 내용 — 블러 + 살짝 투명. 조작 불가.
+          ExcludeSemantics(
+            child: IgnorePointer(
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                child: Opacity(opacity: 0.8, child: child),
+              ),
+            ),
+          ),
+          // 흰 베일 — 가운데가 살짝 더 밝아 필이 자연스럽게 떠 보인다.
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.35),
+                    Colors.white.withValues(alpha: 0.55),
+                    Colors.white.withValues(alpha: 0.35),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 중앙 알림 필.
+          Container(
+            padding: const EdgeInsets.fromLTRB(10, 7, 14, 7),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.95),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: _border),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryLight,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.notifications_active_outlined,
+                    size: 13,
+                    color: _primary,
+                  ),
+                ),
+                const SizedBox(width: 7),
+                Text(
+                  '주변 마을버스 도착정보 준비중이에요',
+                  style: AppTextStyles.caption04.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -295,13 +395,11 @@ class _Badge extends StatelessWidget {
 }
 
 class _BusTile extends StatelessWidget {
-  final String? imageUrl;
   final String number;
   final String destination;
   final String etaText;
 
   const _BusTile({
-    required this.imageUrl,
     required this.number,
     required this.destination,
     required this.etaText,
@@ -311,27 +409,21 @@ class _BusTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        // 바텀 네비게이션과 같은 글리프. 시내버스는 상태색(초록)으로 구분한다.
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.primaryLight,
+            color: const Color(0xFFEFF9F0),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.primaryBorder),
+            border: Border.all(color: const Color(0xFFCFEAD2)),
           ),
-          padding: const EdgeInsets.all(6),
-          child:
-              imageUrl != null
-                  ? Image.network(
-                    imageUrl!,
-                    fit: BoxFit.contain,
-                    errorBuilder:
-                        (_, _, _) => Image.asset(
-                          'assets/img/bus.png',
-                          fit: BoxFit.contain,
-                        ),
-                  )
-                  : Image.asset('assets/img/bus.png', fit: BoxFit.contain),
+          alignment: Alignment.center,
+          child: const Icon(
+            Icons.directions_bus_rounded,
+            size: 22,
+            color: AppColors.success,
+          ),
         ),
         const SizedBox(width: 10),
         Expanded(

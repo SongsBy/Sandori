@@ -33,6 +33,7 @@ dependencies:
 
   # ── UI ──────────────────────────────────────────────────────────────────────
   cupertino_icons: ^1.0.8          # iOS 스타일 아이콘
+  flutter_svg: ^2.0.10             # 디자인 시안 SVG 아이콘 렌더링
 
   # ── 상태관리 (Riverpod) ──────────────────────────────────────────────────────
   flutter_riverpod: ^2.5.1         # Riverpod 코어
@@ -92,7 +93,8 @@ flutter_launcher_icons:
   ios: true
   image_path: assets/icon/app_icon.png
   remove_alpha_ios: true
-  adaptive_icon_background: "#9DE0FB"
+  # 민무늬 색 대신 iOS 아이콘과 동일한 그라데이션 이미지 → 꽉 찬 느낌
+  adaptive_icon_background: assets/icon/app_icon_bg.png
   adaptive_icon_foreground: assets/icon/app_icon_foreground.png
 
 # For information on the generic Dart part of this file, see the
@@ -103,6 +105,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
+    - assets/icons/bus/
+    - assets/icons/meal/
     - assets/lottie/
     - .env
 

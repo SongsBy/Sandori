@@ -56,4 +56,11 @@ class AuthNotifier extends _$AuthNotifier {
     await ref.read(authRepositoryProvider).logout();
     state = const AsyncData(null);
   }
+
+  /// Keycloak 계정을 영구 삭제한다. 서버 삭제 실패 시 예외가 그대로 올라오며
+  /// 세션 상태는 유지된다 — 호출부(UI)에서 안내한다.
+  Future<void> deleteAccount() async {
+    await ref.read(authRepositoryProvider).deleteAccount();
+    state = const AsyncData(null);
+  }
 }

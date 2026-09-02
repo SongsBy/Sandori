@@ -19,6 +19,9 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   static const Color foreground = AppColors.textPrimary;
 
   final String title;
+
+  /// 제목 자리에 텍스트 대신 그릴 위젯(홈 탭의 로고 이미지 등).
+  final Widget? titleWidget;
   final VoidCallback? onBack;
   final VoidCallback? onBell;
   final VoidCallback? onUser;
@@ -26,6 +29,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   const AppTopBar({
     required this.title,
+    this.titleWidget,
     this.onBack,
     this.onBell,
     this.onUser,
@@ -61,23 +65,28 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             else
               const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.title02.copyWith(color: foreground),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: titleWidget ??
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.title02.copyWith(color: foreground),
+                    ),
               ),
             ),
+            // 바텀 네비게이션과 같은 Material 글리프 계열·크기로 맞춘다.
             if (onBell != null)
               _BarIconButton(
                 icon: Icons.notifications_none_rounded,
-                iconSize: 22,
+                iconSize: 24,
                 tooltip: '알림',
                 onTap: onBell!,
               ),
             if (onUser != null)
               _BarIconButton(
-                icon: Icons.account_circle_outlined,
+                icon: Icons.person_outline_rounded,
                 iconSize: 24,
                 tooltip: '내 정보',
                 onTap: onUser!,

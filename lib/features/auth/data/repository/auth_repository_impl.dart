@@ -50,8 +50,9 @@ class AuthRepositoryImpl implements AuthRepository {
         serviceConfiguration: _serviceConfiguration,
         scopes: _scopes,
         // Keycloak 전용: 카카오 IdP 로 직행해 Keycloak 로그인 화면을 건너뛴다.
+        // alias 는 대소문자 구분 — 프로덕션 realm 에 'Kakao' 로 등록되어 있다.
         additionalParameters:
-            useKakao ? const {'kc_idp_hint': 'kakao'} : null,
+            useKakao ? const {'kc_idp_hint': 'Kakao'} : null,
       ),
     );
     final session = _toSession(response);
@@ -92,6 +93,27 @@ class AuthRepositoryImpl implements AuthRepository {
     await _storage.clear();
   }
 
+  @override
+  Future<void> deleteAccount() async {
+    // 만료됐으면 리프레시된 유효 토큰으로 삭제를 요청한다.
+    final session = await restoreSession();
+    if (session == null) {
+      // 이미 세션이 없으면 지울 계정 접근 권한도 없다 — 로컬만 정리.
+      await _storage.clear();
+      return;
+    }
+    // Keycloak Account REST API. realm 에 'Delete Account' required action 이
+    // 활성화되어 있고 사용자에게 account 클라이언트의 delete-account 롤이
+    // 있어야 한다. 실패 시 예외를 그대로 올려 UI 에서 안내한다.
+    await Dio().delete(
+      '$_issuer/account',
+      options: Options(
+        headers: {'Authorization': 'Bearer ${session.accessToken}'},
+      ),
+    );
+    await _storage.clear();
+  }
+
   Future<AuthSession?> _refresh(AuthSession old) async {
     final refreshToken = old.refreshToken;
     if (refreshToken == null) {
@@ -115,6 +137,7 @@ class AuthRepositoryImpl implements AuthRepository {
         idToken: response.idToken ?? old.idToken,
         accessTokenExpiresAt: response.accessTokenExpirationDateTime,
         username: old.username ?? _usernameFromJwt(response.idToken),
+        email: old.email ?? _emailFromJwt(response.idToken),
       );
       await _storage.save(session);
       return session;
@@ -133,21 +156,31 @@ class AuthRepositoryImpl implements AuthRepository {
         accessTokenExpiresAt: response.accessTokenExpirationDateTime,
         username: _usernameFromJwt(response.idToken) ??
             _usernameFromJwt(response.accessToken),
+        email: _emailFromJwt(response.idToken) ??
+            _emailFromJwt(response.accessToken),
       );
 
   /// JWT payload 에서 표시용 사용자명을 추출한다. (서명 검증은 하지 않는다 —
   /// 검증 책임은 토큰을 소비하는 리소스 서버에 있다.)
   static String? _usernameFromJwt(String? jwt) {
+    final payload = _payloadFromJwt(jwt);
+    if (payload == null) return null;
+    return (payload['preferred_username'] ??
+        payload['name'] ??
+        payload['email']) as String?;
+  }
+
+  static String? _emailFromJwt(String? jwt) =>
+      _payloadFromJwt(jwt)?['email'] as String?;
+
+  static Map<String, dynamic>? _payloadFromJwt(String? jwt) {
     if (jwt == null) return null;
     final parts = jwt.split('.');
     if (parts.length != 3) return null;
     try {
-      final payload = json.decode(
+      return json.decode(
         utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
       ) as Map<String, dynamic>;
-      return (payload['preferred_username'] ??
-          payload['name'] ??
-          payload['email']) as String?;
     } catch (_) {
       return null;
     }

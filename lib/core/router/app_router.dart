@@ -13,6 +13,7 @@ import 'package:handori/features/notice/presentation/page/notice_page.dart';
 import 'package:handori/features/organization/presentation/page/organization_search_page.dart';
 import 'package:handori/features/organization/presentation/page/organization_tree_page.dart';
 import 'package:handori/features/school_meal/presentation/page/restaurant_detail_page.dart';
+import 'package:handori/features/user/presentation/page/user_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: RoutePaths.splash,
@@ -26,6 +27,11 @@ final appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.login,
       builder: (_, _) => const Loginscreen(),
+    ),
+    // 유저 상세(설정): 시안대로 바텀네비 없이 전체 화면으로 띄운다.
+    GoRoute(
+      path: RoutePaths.user,
+      builder: (_, _) => const UserPage(),
     ),
 
     // ── 셸: 5개 탭 ─────────────────────────────────────────────
